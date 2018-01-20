@@ -1,5 +1,5 @@
 
-{% extends 'base.html.twig' %}
+{# {% extends 'base.html.twig' %}
 
 {% block title %}Page de suivi{% endblock %}
 
@@ -7,4 +7,77 @@
 <center>
     <h1>Suivi de {{ nom }}</h1>
 </center>
+{% endblock %} #}
+
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Page de suivi{% endblock %}
+
+{% block body %}
+<div id="menu">
+  <div class="row">
+    <div class="col-xs-8 col-sm-10">
+      <div class="col-sm-offset-3">
+        <img class="center-block" src="https://iutv.univ-paris13.fr/wp-content/uploads/2015/11/IUT-villetaneuse.png" width="160" height="136" alt=""/>
+      </div>
+
+    </div>
+    <div class="avatar col-xs-4 col-sm-2 text-center">
+      <span class="glyphicon glyphicon-user" aria-hidden="true" style="font-size: 70px;"></span>
+    <h5>NOM Prénom</h5>
+    </div>
+</div>
+<div class="row">
+  <ul class="navigation">
+    <li class="active"><a href="#">Page 1</a></li>
+    <li><a href="#">Page 2</a></li>
+    <li><a href="#">Page Suivi</a></li>
+    <li><a href="#">Page 3</a></li>
+  </ul>
+</div>
+</div>
+
+<div class="container">
+<div class="row ligne">
+  <div class="col-xs-12 contenu">
+    <div class="col-xs-12 col-sm-2">
+      <div class="etape etape-valide">
+        <div class="cercle center-block"><img class="img-responsive" src="https://iutv.univ-paris13.fr/wp-content/uploads/2015/11/IUT-villetaneuse.png" alt=""/></div>
+        <p>Tache 1</p>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-2">
+      <div class="etape etape-valide">
+        <div class="cercle center-block"><img class="img-responsive" src="https://iutv.univ-paris13.fr/wp-content/uploads/2015/11/IUT-villetaneuse.png" alt=""/></div>
+        <p>Tache 2</p>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-2">
+      <div class="etape etape-valide">
+        <div class="cercle center-block"><img class="img-responsive" src="https://iutv.univ-paris13.fr/wp-content/uploads/2015/11/IUT-villetaneuse.png" alt=""/></div>
+        <p>Tache 3</p>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-2">
+      <div class="etape etape-actuelle">
+        <div class="cercle center-block"><img class="img-responsive" src="https://iutv.univ-paris13.fr/wp-content/uploads/2015/11/IUT-villetaneuse.png" alt=""/></div>
+        <p>Tache 4</p>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-2">
+      <div class="etape">
+        <div class="cercle center-block"><img class="img-responsive" src="https://iutv.univ-paris13.fr/wp-content/uploads/2015/11/IUT-villetaneuse.png" alt=""/></div>
+        <p>Tache 5</p>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-2">
+      <div class="etape">
+        <div class="cercle center-block"><img class="img-responsive" src="https://iutv.univ-paris13.fr/wp-content/uploads/2015/11/IUT-villetaneuse.png" alt=""/></div>
+        <p>Tache 6</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
 {% endblock %}
