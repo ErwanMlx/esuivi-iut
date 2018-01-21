@@ -8,11 +8,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class AccueilController extends Controller
 {
     /**
-     * @Route("/") //The route to access the next function
+     * @Route("/", name="home") //The route to access the next function
      */
     public function default()
     {
-        return $this->render('accueil/accueil.html.twig');
+        $url_suivi = $this->generateUrl(
+            'suivi'
+        );
+        return $this->render('accueil/accueil.html.twig', array(
+            'url_suivi' => $url_suivi,
+        ));
     }
 }
 ?>
