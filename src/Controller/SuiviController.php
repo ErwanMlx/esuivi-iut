@@ -1,7 +1,7 @@
 <?php
 namespace App\Controller;
 
-use App\Entity\Tests_Erwan;
+use App\Entity\TestsErwan;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route; //To define the route to access it
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -43,7 +43,7 @@ class SuiviController extends Controller
         $nom = "John Doe";
 
         $tests_erwan = $this->getDoctrine()
-            ->getRepository(Tests_Erwan::class)
+            ->getRepository(TestsErwan::class)
             ->find($id);
 
 //        if (!$tests_erwan) {
@@ -54,7 +54,7 @@ class SuiviController extends Controller
 //        return new Response('Check out this great product: '.$tests_erwan->getNom());
 
         if(!$tests_erwan) {
-            throw $this->createNotFoundException('Par d\'apprenti trouvé pour l\'id '.$id);
+            throw $this->createNotFoundException('Pas d\'apprenti trouvé pour l\'id '.$id);
         }
         return $this->render('suivi/suiviDev.html.twig', array(
             'tests_erwan' => $tests_erwan, 'id' => $id,
