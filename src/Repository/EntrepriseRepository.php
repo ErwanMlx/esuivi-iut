@@ -2,15 +2,15 @@
 
 namespace App\Repository;
 
-use App\Entity\Tests_Erwan;
+use App\Entity\Entreprise;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class Tests_ErwanRepository extends ServiceEntityRepository
+class EntrepriseRepository extends ServiceEntityRepository
 {
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, Tests_Erwan::class);
+        parent::__construct($registry, Entreprise::class);
     }
 
     /*
