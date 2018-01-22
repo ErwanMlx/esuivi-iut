@@ -46,6 +46,10 @@ class SuiviController extends Controller
             ->getRepository(Apprenti::class)
             ->find($id);
 
+        if(!$apprenti) {
+            throw $this->createNotFoundException('Pas d\'apprenti trouvé pour l\'ID ' . $id);
+        }
+        
         //On recupère toutes les étapes déjà complétée/en cours du dossier pour les afficher
         $etapes_dossier = $this->getDoctrine()
             ->getRepository(EtapeDossier::class)
@@ -62,9 +66,6 @@ class SuiviController extends Controller
             ->getRepository(TypeEtape::class)
             ->findAll();
 
-        if(!$apprenti) {
-            throw $this->createNotFoundException('Pas d\'apprenti trouvé pour l\'ID ' . $id);
-        }
         return $this->render('suivi/suiviDev.html.twig', array(
             'apprenti' => $apprenti, 'id' => $id, 'liste_etapes' => $liste_etapes, 'etapes_dossier' => $etapes_dossier, 'id_type_etape_actuelle' => $id_type_etape_actuelle,
         ));
