@@ -25,4 +25,16 @@ class TypeEtapeRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    //
+    public function findAllGreaterThanID($id): array
+    {
+        $qb = $this->createQueryBuilder('te')
+            ->andWhere('te.ID > :id')
+            ->setParameter('id', $id)
+            ->orderBy('te.ID', 'ASC')
+            ->getQuery();
+
+        return $qb->execute();
+    }
 }

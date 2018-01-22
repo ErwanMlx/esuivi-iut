@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Entity\TestsErwan;
+use App\Repository\EtapeDossierRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route; //To define the route to access it
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -40,24 +41,32 @@ class SuiviController extends Controller
      */
     public function show($id)
     {
-        $nom = "John Doe";
-
-        $tests_erwan = $this->getDoctrine()
-            ->getRepository(TestsErwan::class)
+        //On récupère l'apprenti pour lequel on veux afficher le suivi
+        $apprenti = $this->getDoctrine()
+            ->getRepository(Apprenti::class)
             ->find($id);
 
-//        if (!$tests_erwan) {
-//            throw $this->createNotFoundException(
-//                'No product found for id '.$id
-//            );
-//        }
-//        return new Response('Check out this great product: '.$tests_erwan->getNom());
+        //On recupère toutes les étapes déjà complétée/en cours du dossier pour les afficher
+        $etapes_dossier = $this->getDoctrine()
+            ->getRepository(EtapeDossier::class)
+            ->findBy(
+                ['ID_Dossier' => $apprenti->getIDDossier()], // Critere
+                ['ID_Type_Etape' => 'ASC'] // Tri
+            );
 
-        if(!$tests_erwan) {
-            throw $this->createNotFoundException('Pas d\'apprenti trouvé pour l\'ID '.$id);
+        //On récupère l'ID type étape de l'étape actuelle du dossier
+        $id_type_etape_actuelle = $apprenti->getIDDossier()->getIDEtapeActuelle()->getIDTypeEtape();
+
+        //On récupère toutes les étapes pour un dossier
+        $liste_etapes = $this->getDoctrine()
+            ->getRepository(TypeEtape::class)
+            ->findAll();
+
+        if(!$apprenti) {
+            throw $this->createNotFoundException('Pas d\'apprenti trouvé pour l\'ID ' . $id);
         }
         return $this->render('suivi/suiviDev.html.twig', array(
-            'tests_erwan' => $tests_erwan, 'id' => $id,
+            'apprenti' => $apprenti, 'id' => $id, 'liste_etapes' => $liste_etapes, 'etapes_dossier' => $etapes_dossier, 'id_type_etape_actuelle' => $id_type_etape_actuelle,
         ));
     }
 }
