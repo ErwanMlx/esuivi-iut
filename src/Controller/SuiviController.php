@@ -54,7 +54,7 @@ class SuiviController extends Controller
 //        return new Response('Check out this great product: '.$tests_erwan->getNom());
 
         if(!$tests_erwan) {
-            throw $this->createNotFoundException('Pas d\'apprenti trouvé pour l\'id '.$id);
+            throw $this->createNotFoundException('Pas d\'apprenti trouvé pour l\'ID '.$id);
         }
         return $this->render('suivi/suiviDev.html.twig', array(
             'tests_erwan' => $tests_erwan, 'id' => $id,
