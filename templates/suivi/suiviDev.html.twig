@@ -10,7 +10,7 @@
     <div class="container">
         <div class="row ligne">
             <div class="col-xs-12 contenu">
-                <h2>Suivi du dossier de {{ apprenti.prenom ~ ' '~ apprenti.nom }} (ID {{ apprenti.ID }})</h2>
+                {#<h2>Suivi du dossier de {{ apprenti.prenom ~ ' '~ apprenti.nom }} (ID {{ apprenti.ID }})</h2>#}
 
                 {% for etape in liste_etapes %}
                     <div class="col-xs-12 col-sm-2">
@@ -25,8 +25,15 @@
                         ">
                             <div class="cercle center-block"><img class="img-responsive" src="https://iutv.univ-paris13.fr/wp-content/uploads/2015/11/IUT-villetaneuse.png" alt=""/></div>
                             <p>{{ etape.NomEtape }}</p>
-                            {% if etape.ID <= id_type_etape_actuelle %}
-                                <p>{{ etapes_dossier[loop.index].DateValidation }}</p>
+                            {% if etape.ID < id_type_etape_actuelle %}
+                                <p>Date de début :</p>
+                                <p>{{ etapes_dossier[loop.index0].DateDebut|date('Y-m-d') }}</p>
+                                <p>Date de validation :</p>
+                                <p>{{ etapes_dossier[loop.index0].DateValidation|date('d-m-Y') }}</p>
+                            {% endif %}
+                            {% if etape.ID == id_type_etape_actuelle %}
+                                <p>Date de début :</p>
+                                <p>{{ etapes_dossier[loop.index0].DateDebut|date('Y-m-d') }}</p>
                             {% endif %}
                         </div>
                     </div>

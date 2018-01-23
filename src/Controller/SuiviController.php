@@ -2,6 +2,8 @@
 namespace App\Controller;
 
 use App\Entity\TestsErwan;
+use App\Entity\EtapeDossier;
+use App\Entity\TypeEtape;
 use App\Repository\EtapeDossierRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route; //To define the route to access it
@@ -41,25 +43,32 @@ class SuiviController extends Controller
      */
     public function show($id)
     {
-        //On récupère l'apprenti pour lequel on veux afficher le suivi
-        $apprenti = $this->getDoctrine()
-            ->getRepository(Apprenti::class)
-            ->find($id);
+        $apprenti = null;
+        $id_type_etape_actuelle = 3;
+        $idDossier = 2;
 
-        if(!$apprenti) {
-            throw $this->createNotFoundException('Pas d\'apprenti trouvé pour l\'ID ' . $id);
-        }
-        
+        //On récupère l'apprenti pour lequel on veux afficher le suivi
+//        $apprenti = $this->getDoctrine()
+//            ->getRepository(Apprenti::class)
+//            ->find($id);
+//
+//        if(!$apprenti) {
+//            throw $this->createNotFoundException('Pas d\'apprenti trouvé pour l\'ID ' . $id);
+//        }
+
+//        $idDossier = $apprenti->getIDDossier();
+
+
         //On recupère toutes les étapes déjà complétée/en cours du dossier pour les afficher
         $etapes_dossier = $this->getDoctrine()
             ->getRepository(EtapeDossier::class)
             ->findBy(
-                ['ID_Dossier' => $apprenti->getIDDossier()], // Critere
-                ['ID_Type_Etape' => 'ASC'] // Tri
+                ['idDossier' => $idDossier], // Critere
+                ['idTypeEtape' => 'ASC'] // Tri
             );
 
         //On récupère l'ID type étape de l'étape actuelle du dossier
-        $id_type_etape_actuelle = $apprenti->getIDDossier()->getIDEtapeActuelle()->getIDTypeEtape();
+//        $id_type_etape_actuelle = $apprenti->getIDDossier()->getIDEtapeActuelle()->getIDTypeEtape();
 
         //On récupère toutes les étapes pour un dossier
         $liste_etapes = $this->getDoctrine()
