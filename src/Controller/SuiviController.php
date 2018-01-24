@@ -64,8 +64,10 @@ class SuiviController extends Controller
             ->getRepository(EtapeDossier::class)
             ->findBy(
                 ['idDossier' => $idDossier], // Critere
-                ['idTypeEtape' => 'ASC'] // Tri
+                ['TypeEtape' => 'ASC'] // Tri
             );
+
+        $test = $etapes_dossier[2]->getTypeEtape()->getNomEtape();
 
         //On récupère l'ID type étape de l'étape actuelle du dossier
 //        $id_type_etape_actuelle = $apprenti->getIDDossier()->getIDEtapeActuelle()->getIDTypeEtape();
@@ -76,7 +78,7 @@ class SuiviController extends Controller
             ->findAll();
 
         return $this->render('suivi/suiviDev.html.twig', array(
-            'apprenti' => $apprenti, 'id' => $id, 'liste_etapes' => $liste_etapes, 'etapes_dossier' => $etapes_dossier, 'id_type_etape_actuelle' => $id_type_etape_actuelle,
+            'test' => $test, 'apprenti' => $apprenti, 'id' => $id, 'liste_etapes' => $liste_etapes, 'etapes_dossier' => $etapes_dossier, 'id_type_etape_actuelle' => $id_type_etape_actuelle,
         ));
     }
 }

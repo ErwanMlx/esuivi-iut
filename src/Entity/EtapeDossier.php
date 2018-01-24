@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,7 +16,7 @@ class EtapeDossier
     /**
      * @var integer
      *
-     * @ORM\Column(name="ID", type="integer", nullable=false)
+     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="SEQUENCE")
      * @ORM\SequenceGenerator(sequenceName="Etape_Dossier_ID_seq", allocationSize=1, initialValue=1)
@@ -23,11 +24,10 @@ class EtapeDossier
     private $id;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="ID_Type_Etape", type="integer", nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Entity\TypeEtape")
+     * @ORM\JoinColumn(name="id_type_etape", referencedColumnName="id")
      */
-    private $idTypeEtape;
+    private $TypeEtape;
 
     /**
      * @var \DateTime
@@ -74,19 +74,19 @@ class EtapeDossier
     }
 
     /**
-     * @return int
+     * @return mixed
      */
-    public function getIdTypeEtape(): int
+    public function getTypeEtape(): TypeEtape
     {
-        return $this->idTypeEtape;
+        return $this->TypeEtape;
     }
 
     /**
-     * @param int $idTypeEtape
+     * @param mixed $TypeEtape
      */
-    public function setIdTypeEtape(int $idTypeEtape): void
+    public function setTypeEtape(TypeEtape $TypeEtape)
     {
-        $this->idTypeEtape = $idTypeEtape;
+        $this->TypeEtape = $TypeEtape;
     }
 
     /**

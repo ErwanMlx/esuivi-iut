@@ -15,31 +15,31 @@ class TypeEtape
     /**
      * @var integer
      *
-     * @ORM\Column(name="ID", type="integer", nullable=false)
+     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="type_etape_ID_seq", allocationSize=1, initialValue=1)
+     * @ORM\SequenceGenerator(sequenceName="type_etape_id_seq", allocationSize=1, initialValue=1)
      */
     private $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="Nom_Etape", type="string", length=32, nullable=false)
+     * @ORM\Column(name="nom_etape", type="string", length=32, nullable=false)
      */
     private $nomEtape;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="Type_Validateur", type="string", length=3, nullable=false)
+     * @ORM\Column(name="type_validateur", type="string", length=3, nullable=false)
      */
     private $typeValidateur;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="ID_Etape_Suivante", type="integer", nullable=true)
+     * @ORM\Column(name="id_etape_suivante", type="integer", nullable=true)
      */
     private $idEtapeSuivante;
 
