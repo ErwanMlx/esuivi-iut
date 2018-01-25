@@ -2,15 +2,15 @@
 
 namespace App\Repository;
 
-use App\Entity\ResponsableCFA;
+use App\Entity\ResponsableIut;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class ResponsableCFARepository extends ServiceEntityRepository
+class ResponsableIutRepository extends ServiceEntityRepository
 {
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, ResponsableCFA::class);
+        parent::__construct($registry, ResponsableIut::class);
     }
 
     /*

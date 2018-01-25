@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="App\Entity\EtapeDossier" table="etape_dossier">
+    <indexes>
+      <index name="IDX_662143EC83D972FD" columns="id_type_etape"/>
+      <index name="IDX_662143EC40E18308" columns="id_validateur_iut"/>
+      <index name="IDX_662143EC4144A3A7" columns="id_validateur_cfa"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="SEQUENCE"/>
+      <sequence-generator sequence-name="etape_dossier_id_seq" allocation-size="1" initial-value="1"/>
+    </id>
+    <field name="dateDebut" type="date" column="date_debut" nullable="false">
+      <options>
+        <option name="default">now</option>
+      </options>
+    </field>
+    <field name="dateValidation" type="date" column="date_validation" nullable="true"/>
+    <field name="idDossier" type="integer" column="id_dossier" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <many-to-one field="idTypeEtape" target-entity="TypeEtape" fetch="LAZY">
+      <join-columns>
+        <join-column name="id_type_etape" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idValidateurIut" target-entity="ResponsableIut" fetch="LAZY">
+      <join-columns>
+        <join-column name="id_validateur_iut" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idValidateurCfa" target-entity="ResponsableCfa" fetch="LAZY">
+      <join-columns>
+        <join-column name="id_validateur_cfa" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

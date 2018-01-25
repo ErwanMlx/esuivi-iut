@@ -32,28 +32,33 @@ class EtapeDossier
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="Date_Debut", type="date", nullable=false)
+     * @ORM\Column(name="date_debut", type="date", nullable=false)
      */
     private $dateDebut;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="Date_Validation", type="date", nullable=false)
+     * @ORM\Column(name="date_validation", type="date", nullable=false)
      */
     private $dateValidation;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="ID_Validateur", type="integer", nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Entity\ResponsableCfa")
+     * @ORM\JoinColumn(name="id_validateur_cfa", referencedColumnName="id", nullable=true)
      */
-    private $idValidateur;
+    private $ValidateurCfa;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\ResponsableIut")
+     * @ORM\JoinColumn(name="id_validateur_iut", referencedColumnName="id", nullable=true)
+     */
+    private $ValidateurIut;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="ID_Dossier", type="integer", nullable=false)
+     * @ORM\Column(name="id_dossier", type="integer", nullable=false)
      */
     private $idDossier;
 
@@ -124,22 +129,6 @@ class EtapeDossier
     /**
      * @return int
      */
-    public function getIdValidateur(): int
-    {
-        return $this->idValidateur;
-    }
-
-    /**
-     * @param int $idValidateur
-     */
-    public function setIdValidateur(int $idValidateur): void
-    {
-        $this->idValidateur = $idValidateur;
-    }
-
-    /**
-     * @return int
-     */
     public function getIdDossier(): int
     {
         return $this->idDossier;
@@ -151,6 +140,26 @@ class EtapeDossier
     public function setIdDossier(int $idDossier): void
     {
         $this->idDossier = $idDossier;
+    }
+
+    public function getValidateurCfa(): ?ResponsableCfa
+    {
+        return $this->ValidateurCfa;
+    }
+
+    public function setValidateurCfa(ResponsableCfa $ValidateurCfa): void
+    {
+        $this->ValidateurCfa = $ValidateurCfa;
+    }
+
+    public function getValidateurIut(): ?ResponsableIut
+    {
+        return $this->ValidateurIut;
+    }
+
+    public function setValidateurIut(ResponsableIut $ValidateurIut): void
+    {
+        $this->ValidateurIut = $ValidateurIut;
     }
 }
 

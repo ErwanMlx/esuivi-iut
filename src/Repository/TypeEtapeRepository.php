@@ -26,6 +26,11 @@ class TypeEtapeRepository extends ServiceEntityRepository
     }
     */
 
+    public function findAll()
+    {
+        return $this->findBy(array(), array('id' => 'ASC'));
+    }
+
     //
     public function findAllGreaterThanID($id): array
     {
@@ -37,4 +42,6 @@ class TypeEtapeRepository extends ServiceEntityRepository
 
         return $qb->execute();
     }
+
+
 }

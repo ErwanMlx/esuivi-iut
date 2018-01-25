@@ -10,8 +10,7 @@
     <div class="container">
         <div class="row ligne">
             <div class="col-xs-12 contenu">
-                {#<h2>Suivi du dossier de {{ apprenti.prenom ~ ' '~ apprenti.nom }} (ID {{ apprenti.ID }})</h2>#}
-                {{ test }}
+                <h2>Suivi du dossier de {{ apprenti.prenom ~ ' '~ apprenti.nom }} (ID {{ apprenti.ID }})</h2>
                 {% for etape in liste_etapes %}
                     <div class="col-xs-12 col-sm-2">
                         <div class="etape
@@ -30,6 +29,13 @@
                                 <p>{{ etapes_dossier[loop.index0].DateDebut|date('Y-m-d') }}</p>
                                 <p>Date de validation :</p>
                                 <p>{{ etapes_dossier[loop.index0].DateValidation|date('d-m-Y') }}</p>
+                                <p>Validé par :
+                                    {% if etapes_dossier[loop.index0].ValidateurCfa == null %}
+                                        {{ etapes_dossier[loop.index0].ValidateurIut.prenom ~ ' ' ~ etapes_dossier[loop.index0].ValidateurIut.nom }}
+                                    {% else %}
+                                        {{ etapes_dossier[loop.index0].ValidateurCfa.prenom ~ ' ' ~ etapes_dossier[loop.index0].ValidateurCfa.nom }}
+                                    {% endif %}
+                                </p>
                             {% endif %}
                             {% if etape.ID == id_type_etape_actuelle %}
                                 <p>Date de début :</p>

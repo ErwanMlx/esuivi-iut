@@ -37,13 +37,6 @@ class TypeEtape
     private $typeValidateur;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="id_etape_suivante", type="integer", nullable=true)
-     */
-    private $idEtapeSuivante;
-
-    /**
      * @return int
      */
     public function getId(): int
@@ -89,22 +82,6 @@ class TypeEtape
     public function setTypeValidateur(string $typeValidateur): void
     {
         $this->typeValidateur = $typeValidateur;
-    }
-
-    /**
-     * @return int
-     */
-    public function getIdEtapeSuivante(): int
-    {
-        return $this->idEtapeSuivante;
-    }
-
-    /**
-     * @param int $idEtapeSuivante
-     */
-    public function setIdEtapeSuivante(int $idEtapeSuivante): void
-    {
-        $this->idEtapeSuivante = $idEtapeSuivante;
     }
 }
 
