@@ -1,0 +1,172 @@
+body {
+  color: #22519C;
+  background-color: #E3E7EA;
+}
+
+#menu {
+  background-color: white;
+  padding-top: 5px;
+  border-bottom: 3px solid #22519C;
+  padding-right: 20px;
+}
+
+/* Barre de navigation*/
+.navigation {
+  text-align: center;
+  padding-left: 0;
+  margin-bottom: 10px;
+  list-style: none;
+  font-size: 18px;
+}
+
+@media (min-width: 767px) {
+  .navigation>li {
+    display: inline;
+    margin-right: 20px;
+    margin-left: 20px;
+  }
+}
+/*********************/
+
+.suivi {
+  margin-right: 0px;
+}
+
+.iut {
+  padding-right: 0px;
+}
+
+.avatar {
+  padding-top: 10px;
+  padding-right: 0px;
+}
+
+.contenu {
+  margin-top: 20px;
+  padding-top: 20px;
+  display: block;
+  background-color: white;
+  padding-bottom: 20px;
+  padding-right: 0px;
+  margin-right:
+
+}
+
+.etape {
+  text-align: center;
+  font-size: 16px;
+  color: #919190;
+
+}
+
+.etape-valide {
+  color: #66B32D;
+}
+
+.etape-actuelle {
+  color: #22519C;
+}
+
+@media (min-width: 1200px){
+  .ligne {
+    height: 350px;
+    padding-right: 30px;
+    border-right: 1px solid black;
+  }
+}
+
+
+/*Ligne entre les cercle
+.ligne [class*='col-']:not(:last-child):after {
+  background: #e0e0e1;
+  content: "";
+  position: absolute;
+  top: 50px;
+  height: 5px;
+}
+
+@media (min-width: 768px) {
+  .ligne [class*='col-']:not(:last-child):after {
+    width: 20px;
+    content: "";
+    left: 115px;
+  }
+}
+
+@media (min-width: 991px) {
+  .ligne [class*='col-']:not(:last-child):after {
+    width: 56px;
+    content: "";
+    left: 129px;
+  }
+}
+
+@media (min-width: 1199px) {
+  .ligne [class*='col-']:not(:last-child):after {
+    width: 56px;
+    content: "";
+    left: 129px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .ligne [class*='col-']:not(:last-child):after {
+    width: 50px;
+    content: "";
+    left: 145px;
+  }
+
+  /*.etape1 {
+    margin-left: 40px;
+  }
+
+  .etape2 {
+    margin-left: 70px;
+  }
+
+  .etape3 {
+    margin-left: 100px;
+  }
+
+  .etape4 {
+    margin-left: 130px;
+  }
+
+  .etape5 {
+    margin-left: 160px;
+  }
+
+  .etape6 {
+    margin-left: 190px;
+  }
+
+  .etape7 {
+    margin-left: 220px;
+  }
+
+  .etape8 {
+    margin-left: 250px;
+  }
+
+  .etape9 {
+    margin-left: 280px;
+  }
+}
+/********************/
+
+.col-lg-8 {
+  margin-top: 30px
+}
+
+.cercle{
+  border-radius:50%;
+  width:100px;
+  height:100px;
+  border:5px solid;
+  margin-bottom: 10px;
+}
+
+.cercle>img {
+  padding-top: 20px;
+  width: 60px;
+}
