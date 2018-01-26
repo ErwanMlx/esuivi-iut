@@ -37,6 +37,13 @@ class TypeEtape
     private $typeValidateur;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="type_icone", type="string", length=100, nullable=true)
+     */
+    private $typeIcone;
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -82,6 +89,22 @@ class TypeEtape
     public function setTypeValidateur(string $typeValidateur): void
     {
         $this->typeValidateur = $typeValidateur;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTypeIcone(): string
+    {
+        return $this->typeIcone;
+    }
+
+    /**
+     * @param string $typeIcone
+     */
+    public function setTypeIcone(string $typeIcone): void
+    {
+        $this->typeIcone = $typeIcone;
     }
 }
 

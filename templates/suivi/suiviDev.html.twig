@@ -7,8 +7,35 @@
 {% block body %}
     <h1><center>Version de Dev</center></h1>
 
+    <div class="row suivi">
+    <div class="col-xs-12 contenu">
+        {% for etape in liste_etapes %}
+        {% if loop.index0 is divisible by(3) and loop.index0 < 6 %}
+        <div class="col-lg-4 ligne">
+            {% elseif loop.index0 is divisible by(3) %}
+            <div class="col-lg-4">
+                {% endif %}
+                <div class="col-lg-12 etape
+                    {% if etape.ID < id_type_etape_actuelle %}
+                        etape-valide
+                    {% elseif etape.ID > id_type_etape_actuelle %}
+                        etape-future
+                    {% else %}
+                        etape-actuelle
+                    {% endif %}
+                        ">
+                    <div class="cercle center-block col-lg-4"><img class="img-responsive" src="/build/img/Icone_{{ etape.typeIcone }}.png" alt=""/></div>
+                    <p class="col-lg-8">{{ etape.NomEtape }}</p>
+                </div>
+                {% if loop.index is divisible by(3) %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
     <div class="container">
-        <div class="row ligne">
+        <div class="row">
             <div class="col-xs-12 contenu">
                 <h2>Suivi du dossier de {{ apprenti.prenom ~ ' '~ apprenti.nom }} (ID {{ apprenti.ID }})</h2>
                 {% for etape in liste_etapes %}

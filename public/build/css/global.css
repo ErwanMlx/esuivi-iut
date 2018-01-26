@@ -7,6 +7,7 @@ body {
   background-color: white;
   padding-top: 5px;
   border-bottom: 3px solid #22519C;
+  padding-right: 20px;
 }
 
 /* Barre de navigation*/
@@ -27,8 +28,17 @@ body {
 }
 /*********************/
 
+.suivi {
+  margin-right: 0px;
+}
+
+.iut {
+  padding-right: 0px;
+}
+
 .avatar {
   padding-top: 10px;
+  padding-right: 0px;
 }
 
 .contenu {
@@ -36,12 +46,15 @@ body {
   padding-top: 20px;
   display: block;
   background-color: white;
+  padding-bottom: 20px;
+  padding-right: 0px;
 }
 
 .etape {
   text-align: center;
   font-size: 16px;
   color: #919190;
+
 }
 
 .etape-valide {
@@ -52,9 +65,18 @@ body {
   color: #22519C;
 }
 
-/*Ligne entre les cercle*/
+@media (min-width: 1200px){
+  .ligne {
+    height: 350px;
+    padding-right: 30px;
+    border-right: 1px solid black;
+  }
+}
+
+
+/*Ligne entre les cercle
 .ligne [class*='col-']:not(:last-child):after {
-  background: #e0e0e0;
+  background: #e0e0e1;
   content: "";
   position: absolute;
   top: 50px;
@@ -87,12 +109,52 @@ body {
 
 @media (min-width: 1200px) {
   .ligne [class*='col-']:not(:last-child):after {
-    width: 90px;
+    width: 50px;
     content: "";
     left: 145px;
   }
+
+  /*.etape1 {
+    margin-left: 40px;
+  }
+
+  .etape2 {
+    margin-left: 70px;
+  }
+
+  .etape3 {
+    margin-left: 100px;
+  }
+
+  .etape4 {
+    margin-left: 130px;
+  }
+
+  .etape5 {
+    margin-left: 160px;
+  }
+
+  .etape6 {
+    margin-left: 190px;
+  }
+
+  .etape7 {
+    margin-left: 220px;
+  }
+
+  .etape8 {
+    margin-left: 250px;
+  }
+
+  .etape9 {
+    margin-left: 280px;
+  }
 }
 /********************/
+
+.col-lg-8 {
+  margin-top: 30px
+}
 
 .cercle{
   border-radius:50%;
@@ -103,6 +165,6 @@ body {
 }
 
 .cercle>img {
-  padding-top: 10px;
-  width: 90%;
+  padding-top: 20px;
+  width: 60px;
 }
