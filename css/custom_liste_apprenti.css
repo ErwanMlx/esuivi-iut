@@ -1,0 +1,25 @@
+.bordure {
+  border: 2px solid #22519C;
+  margin-bottom: 30px;
+}
+
+.bordure>p {
+  margin-left: 5px;
+  margin-top: 5px;
+  font-size: 18px;
+}
+
+.chercher {
+  margin-bottom: 20px
+}
+
+@media(min-width: 768px){
+  .input-group {
+    margin-left: 8%;
+  }
+}
+@media(min-width: 769px){
+  .logo {
+    margin-left: 50%;
+  }
+}
