@@ -26,11 +26,17 @@ body {
     margin-left: 20px;
   }
 }
+
+@media(min-width: 769px){
+  .logo {
+    margin-left: 50%;
+  }
+}
 /*********************/
 
-.suivi {
-  margin-right: 0px;
-}
+/*.suivi {*/
+/*margin-right: 0px;*/
+/*}*/
 
 .iut {
   padding-right: 0px;
@@ -47,7 +53,6 @@ body {
   display: block;
   background-color: white;
   padding-bottom: 20px;
-  padding-right: 0px;
 }
 
 .etape {
@@ -152,6 +157,10 @@ body {
 }
 
 .cercle>img {
-  padding-top: 20px;
+  padding-top: 17px;
   width: 60px;
+}
+
+.margin-bottom20 {
+  margin-bottom: 20px;
 }

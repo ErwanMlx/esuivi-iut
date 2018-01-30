@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}IUT Paris 13{% endblock %}</title>
+  <link rel="icon" type="image/png" href="/build/img/Icone_IUT.png" />
     {% block stylesheets %}
       <link rel="stylesheet" type="text/css" href="/build/css/bootstrap-custom.css">
       <link rel="stylesheet" type="text/css" href="/build/bootstrap/css/bootstrap.min.css">
@@ -17,8 +18,10 @@
   <div id="menu">
     <div class="row">
       <div class="col-xs-8 col-sm-10 iut">
-        <div class="col-sm-offset-3">
-          <img class="center-block" src="https://iutv.univ-paris13.fr/wp-content/uploads/2015/11/IUT-villetaneuse.png" width="160" height="136" alt=""/>
+        <div class="col-sm-offset-2 logo">
+          <a href="{{ path('home') }}">
+            <img src="/build/img/Logo_IUT.png" width="160" height="136" alt=""/>
+          </a>
         </div>
 
       </div>
@@ -29,10 +32,10 @@
     </div>
     <div class="row">
       <ul class="navigation">
-        <li><a href="{{ path('home') }}">Accueil</a></li>
-        <li><a href="{{ path('liste') }}">Liste Apprenti</a></li>
-        <li><a href="{{ path('suivi') }}">Page Suivi Apprenti</a></li>
+        <li><a href="{{ path('liste') }}">Liste Apprentis</a></li>
+        {#<li><a href="{{ path('suivi') }}">Page Suivi Apprenti</a></li>#}
         <li><a href="#">Historique</a></li>
+        <li><a href="#">Gestion IUT</a></li>
       </ul>
     </div>
   </div>
@@ -44,7 +47,6 @@
   <script src="/build/js/jquery-3.2.1.min.js"></script>
   <script src="/build/bootstrap/js/bootstrap.min.js"></script>
   <script src="/build/js/custom.js"></script>
-
 {% endblock %}
 </body>
 </html>

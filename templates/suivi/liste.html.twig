@@ -2,24 +2,47 @@
 
 {% block title %}Liste des apprentis{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="/build/css/custom_liste_apprenti.css">
+{% endblock %}
+
 {% block user %}Test{% endblock %}
 
 {% block body %}
-
-    <div class="row">
-        <div class="col-xs-12">
-            {% if liste is empty %}
-                <center><h3>Aucun apprenti trouvé.</h3></center>
-            {% endif %}
-            {% for apprenti in liste %}
-                <div class="col-lg-12">
-                    <h3>{{ apprenti.nom }}</h3>
-                    <p>Nom de l'entreprise : {{ apprenti.DossierApprenti.Entreprise.nom}}</p>
-                    <p>Mission : {{ apprenti.DossierApprenti.sujetPropose }}</p>
-                    <p>Etat d'avancement : {{ apprenti.DossierApprenti.EtapeActuelle.TypeEtape.nomEtape }}</p>
-                    <a href="{{ path('liste') }}">Regarder le suivi</a>
+    <div class="container">
+        <div class="liste_apprenti">
+            <div class="contenu col-xs-12">
+                <div class="chercher ">
+                    <form class="navbar-form" role="search">
+                        <div class="input-group col-xs-12 col-md-12 col-lg-12">
+                            <input type="text" class="form-control" placeholder="Chercher un apprenti" name="q">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-            {% endfor %}
+                {% if liste is empty %}
+                    <center><h3>Aucun apprenti trouvé.</h3></center>
+                {% endif %}
+                {% for apprenti in liste %}
+                    <a href="{{ path('suivi') ~ apprenti.id}}">
+                        <div class="bordure col-sm-8 col-sm-offset-2">
+                            <p>{{ apprenti.prenom ~ ' ' ~ apprenti.nom }}</p>
+                            <ul>
+                                <li>Nom entreprise : {{ apprenti.DossierApprenti.Entreprise.nom}}</li>
+                                {% if apprenti.DossierApprenti.sujetPropose is empty %}
+                                    <li>Mission : Pas encore saisi</li>
+                                {% else %}
+                                    <li>Mission : {{ apprenti.DossierApprenti.sujetPropose }}</li>
+                                {% endif %}
+                                <li>Etat d'avancement : {{ apprenti.DossierApprenti.EtapeActuelle.TypeEtape.nomEtape }}</li>
+                            </ul>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
         </div>
     </div>
 {% endblock %}

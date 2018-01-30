@@ -26,18 +26,6 @@ class SuiviController extends Controller
     }
 
     /**
-     * @Route("/suiviDev/", name="suivi_dev") //The route to access the next function
-     */
-    public function suiviDev()
-    {
-        $nom = "John Doe";
-
-        return $this->render('suivi/suiviDev.html.twig', array(
-            'nom' => $nom,
-        ));
-    }
-
-    /**
      * Suivi de apprenti corrspondant à l'id
      *
      * @Route("/suivi/{id}", name="suivi_apprenti", requirements={"id"="\d+"}) //requirements permet d'autoriser uniquement les nombres dans l'URL
@@ -75,7 +63,7 @@ class SuiviController extends Controller
             ->getRepository(TypeEtape::class)
             ->findAll();
 
-        return $this->render('suivi/suiviDev.html.twig', array(
+        return $this->render('suivi/suivi.html.twig', array(
             'apprenti' => $apprenti, 'id' => $id, 'liste_etapes' => $liste_etapes, 'etapes_dossier' => $etapes_dossier, 'id_type_etape_actuelle' => $id_type_etape_actuelle,
         ));
     }

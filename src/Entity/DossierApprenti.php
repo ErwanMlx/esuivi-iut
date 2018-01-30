@@ -132,7 +132,7 @@ class DossierApprenti
     /**
      * @return string
      */
-    public function getSujetPropose(): string
+    public function getSujetPropose(): ?string
     {
         return $this->sujetPropose;
     }
