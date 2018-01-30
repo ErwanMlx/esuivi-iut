@@ -1,9 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Erwan
- * Date: 22/01/2018
- * Time: 11:42
+ * Utilisé pour générer les entity
  */
 
 namespace App;

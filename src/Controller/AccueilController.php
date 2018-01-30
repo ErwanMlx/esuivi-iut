@@ -12,12 +12,7 @@ class AccueilController extends Controller
      */
     public function default()
     {
-        $url_suivi = $this->generateUrl(
-            'suivi'
-        );
-        return $this->render('accueil/accueil.html.twig', array(
-            'url_suivi' => $url_suivi,
-        ));
+        return $this->render('accueil/accueil.html.twig');
     }
 }
 ?>

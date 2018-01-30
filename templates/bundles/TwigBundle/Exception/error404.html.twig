@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <center>
+        <h1>Page non trouvée</h1>
+
+        <p>
+            La page demandée n'a pas été trouvée, veuillez vérifier l'URL.{{ status_text }}
+        </p>
+        <p><a class="btn btn-default" href="{{ path('home') }}">Accueil</a></p>
+    </center>
+{% endblock %}

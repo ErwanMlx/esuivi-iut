@@ -59,7 +59,6 @@ class SuiviController extends Controller
 
         $idDossier = $apprenti->getDossierApprenti()->getId();
 
-
         //On recupère toutes les étapes déjà complétée/en cours du dossier pour les afficher
         $etapes_dossier = $this->getDoctrine()
             ->getRepository(EtapeDossier::class)
@@ -80,5 +79,20 @@ class SuiviController extends Controller
             'apprenti' => $apprenti, 'id' => $id, 'liste_etapes' => $liste_etapes, 'etapes_dossier' => $etapes_dossier, 'id_type_etape_actuelle' => $id_type_etape_actuelle,
         ));
     }
+
+    /**
+     * @Route("/liste/", name="liste")
+     */
+    public function liste()
+    {
+        $liste = $this->getDoctrine()
+            ->getRepository(Apprenti::class)
+            ->findAll();
+
+        return $this->render('suivi/liste.html.twig', array(
+            'liste' => $liste,
+        ));
+    }
+
 }
 ?>

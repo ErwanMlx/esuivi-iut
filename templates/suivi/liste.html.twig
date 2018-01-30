@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des apprentis{% endblock %}
+
+{% block user %}Test{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-xs-12">
+            {% if liste is empty %}
+                <center><h3>Aucun apprenti trouvé.</h3></center>
+            {% endif %}
+            {% for apprenti in liste %}
+                <div class="col-lg-12">
+                    <h3>{{ apprenti.nom }}</h3>
+                    <p>Nom de l'entreprise : {{ apprenti.DossierApprenti.Entreprise.nom}}</p>
+                    <p>Mission : {{ apprenti.DossierApprenti.sujetPropose }}</p>
+                    <p>Etat d'avancement : {{ apprenti.DossierApprenti.EtapeActuelle.TypeEtape.nomEtape }}</p>
+                    <a href="{{ path('liste') }}">Regarder le suivi</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
