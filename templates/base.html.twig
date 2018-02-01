@@ -17,15 +17,17 @@
 {% block menu %}
   <div id="menu">
     <div class="row">
-      <div class="col-xs-8 col-sm-10 iut">
+      <div class="col-xs-4 col-sm-4 iut">
         <div class="col-sm-offset-2 logo">
           <a href="{{ path('home') }}">
             <img src="/build/img/Logo_IUT.png" width="160" height="136" alt=""/>
           </a>
         </div>
-
       </div>
-      <div class="avatar col-xs-4 col-sm-2 text-center">
+      <div class="col-xs-4 col-sm-5 titre">
+          <h1>{% block page_title %}Titre page actuelle{% endblock %}</h1>
+      </div>
+      <div class="avatar col-xs-4 col-sm-3 text-center">
         <span class="glyphicon glyphicon-user" aria-hidden="true" style="font-size: 70px;"></span>
         <h5>{% block user %}NOM Prénom{% endblock %}</h5>
       </div>
@@ -34,8 +36,8 @@
       <ul class="navigation">
         <li><a href="{{ path('liste') }}">Liste Apprentis</a></li>
         {#<li><a href="{{ path('suivi') }}">Page Suivi Apprenti</a></li>#}
-        <li><a href="#">Historique</a></li>
-        <li><a href="#">Gestion IUT</a></li>
+        <li><a href="#">Statistiques</a></li>
+        <li><a href="#">Gestion Comptes</a></li>
       </ul>
     </div>
   </div>

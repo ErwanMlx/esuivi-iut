@@ -63,8 +63,17 @@ class SuiviController extends Controller
             ->getRepository(TypeEtape::class)
             ->findAll();
 
+        //On récupère le nombre de type étape
+        $nb_type_etapes = $this->getDoctrine()
+            ->getRepository(TypeEtape::class)->getNbTypeEtape();
+
         return $this->render('suivi/suivi.html.twig', array(
-            'apprenti' => $apprenti, 'id' => $id, 'liste_etapes' => $liste_etapes, 'etapes_dossier' => $etapes_dossier, 'id_type_etape_actuelle' => $id_type_etape_actuelle,
+            'apprenti' => $apprenti,
+            'id' => $id,
+            'liste_etapes' => $liste_etapes,
+            'etapes_dossier' => $etapes_dossier,
+            'id_type_etape_actuelle' => $id_type_etape_actuelle,
+            'nb_type_etapes' => $nb_type_etapes,
         ));
     }
 

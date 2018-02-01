@@ -43,5 +43,12 @@ class TypeEtapeRepository extends ServiceEntityRepository
         return $qb->execute();
     }
 
+    public function  getNbTypeEtape() {
+        return $this->createQueryBuilder('a')
+            ->select('COUNT(a)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
 
 }

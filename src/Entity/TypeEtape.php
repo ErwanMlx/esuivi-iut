@@ -44,6 +44,15 @@ class TypeEtape
     private $typeIcone;
 
     /**
+     * @var string
+     *
+     * @ORM\OneToOne(targetEntity="App\Entity\TypeEtape")
+     * @ORM\JoinColumn(name="id_type_etape_suivante", referencedColumnName="id")
+
+     */
+    private $typeEtapeSuivante;
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -105,6 +114,23 @@ class TypeEtape
     public function setTypeIcone(string $typeIcone): void
     {
         $this->typeIcone = $typeIcone;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getTypeEtapeSuivante(): string
+    {
+        return $this->typeEtapeSuivante;
+    }
+
+    /**
+     * @param string $typeEtapeSuivante
+     */
+    public function setTypeEtapeSuivante(string $typeEtapeSuivante): void
+    {
+        $this->typeEtapeSuivante = $typeEtapeSuivante;
     }
 }
 

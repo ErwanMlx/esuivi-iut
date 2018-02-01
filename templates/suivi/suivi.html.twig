@@ -4,11 +4,30 @@
 
 {% block user %}Test{% endblock %}
 
+{% block page_title %}Suivi du dossier de {{ apprenti.prenom ~ ' '~ apprenti.nom }} (ID {{ apprenti.ID }}){% endblock %}
+
 {% block body %}
     <div class="container">
     <div class="row">
         <div class="col-xs-12 contenu">
-            <p class="h3 text-center margin-bottom20">Suivi du dossier de {{ apprenti.prenom ~ ' '~ apprenti.nom }} (ID {{ apprenti.ID }})</p>
+            {% set index_etape = 0 %}
+            {% set nb_colonnes = 3 %}
+
+            {% set reste = nb_type_etapes%3 %}
+            {% set div_entiere = (nb_type_etapes/3)|round(0, 'floor') %}
+
+            {% for num_colonne in 1..nb_colonnes %}
+                {% set count = div_entiere %}
+                {% if num_colonne <= reste %}
+                    {% set count = count + 1 %}
+                {% endif %}
+                {% for i in 1..count %}
+                    <p>Bonjour {{ index_etape }}</p>
+                    {% set index_etape = index_etape + 1 %}
+                {% endfor %}
+                <p>Coupure</p>
+            {% endfor %}
+
             {% for etape in liste_etapes %}
 
             {% if loop.index0 is divisible by(3) and loop.index0 < 6 %}

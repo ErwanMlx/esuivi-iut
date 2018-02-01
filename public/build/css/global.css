@@ -27,11 +27,10 @@ body {
   }
 }
 
-@media(min-width: 769px){
-  .logo {
-    margin-left: 50%;
-  }
+.titre {
+   /* padding-left: 10%;*/
 }
+
 /*********************/
 
 /*.suivi {*/
@@ -78,70 +77,6 @@ body {
   }
 }
 
-
-/*Ligne entre les cercle
-.ligne [class*='col-']:not(:last-child):after {
-  background: #e0e0e1;
-  content: "";
-  position: absolute;
-  top: 50px;
-  height: 5px;
-}
-@media (min-width: 768px) {
-  .ligne [class*='col-']:not(:last-child):after {
-    width: 20px;
-    content: "";
-    left: 115px;
-  }
-}
-@media (min-width: 991px) {
-  .ligne [class*='col-']:not(:last-child):after {
-    width: 56px;
-    content: "";
-    left: 129px;
-  }
-}
-@media (min-width: 1199px) {
-  .ligne [class*='col-']:not(:last-child):after {
-    width: 56px;
-    content: "";
-    left: 129px;
-  }
-}
-@media (min-width: 1200px) {
-  .ligne [class*='col-']:not(:last-child):after {
-    width: 50px;
-    content: "";
-    left: 145px;
-  }
-  /*.etape1 {
-    margin-left: 40px;
-  }
-  .etape2 {
-    margin-left: 70px;
-  }
-  .etape3 {
-    margin-left: 100px;
-  }
-  .etape4 {
-    margin-left: 130px;
-  }
-  .etape5 {
-    margin-left: 160px;
-  }
-  .etape6 {
-    margin-left: 190px;
-  }
-  .etape7 {
-    margin-left: 220px;
-  }
-  .etape8 {
-    margin-left: 250px;
-  }
-  .etape9 {
-    margin-left: 280px;
-  }
-}
 /********************/
 
 .col-lg-8 {
