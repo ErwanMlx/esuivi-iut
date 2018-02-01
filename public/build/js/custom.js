@@ -1,7 +1,7 @@
 $(document).ready(function() {
   	/*Code json qui teste les droits*/
   	
-  	function Confirm(title, msg, $true, $false, $link) { /*change*/
+  	function Confirm(title, msg, $true, $false) { /*change*/
         var $content =  "<div class='dialog-ovelay'>" +
                         "<div class='dialog'><header>" +
                          " <h3> " + title + " </h3> " +
@@ -18,13 +18,27 @@ $(document).ready(function() {
                      "</footer>" +
                   "</div>" +
                 "</div>";
-         $('body').prepend($content);
+        $('body').prepend($content);
+         
+        $('.doAction').click(function () {
+            $(this).parents('.dialog-ovelay').fadeOut(500, function () {
+              $(this).remove();
+            });
+            return true;
+        });
+        $('.cancelAction, .fa-close').click(function () {
+            $(this).parents('.dialog-ovelay').fadeOut(500, function () {
+              $(this).remove();
+            });
+            return false;
+        });
   	};
   	
 	$(document).on("click",".etape-actuelle",function(){
 
 		//if droits
-		var r = confirm("Etes vous sûr de vouloir valider cette étape? ");
+		var r = Confirm("Confirmation","Etes vous sûr de vouloir valider cette étape?","Oui","Non");
+        console.log(r);
 		if(r == true)
 		{
     		$(this).removeClass('etape-actuelle').addClass('etape-valide');
@@ -39,7 +53,8 @@ $(document).ready(function() {
 
 		//if droits
 		console.log("click");
-		var r = confirm("Etes vous sûr de vouloir invalider cette étape et les suivantes? ");
+		var r = Confirm("Confirmation","Etes vous sûr de vouloir annuler cette étape et les suivantes?","Oui","Non");
+        console.log(r);
 		if(r == true)
 		{
     		$(this).removeClass('etape-valide').addClass('etape-actuelle');

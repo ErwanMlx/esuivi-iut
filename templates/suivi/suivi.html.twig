@@ -4,54 +4,41 @@
 
 {% block user %}Test{% endblock %}
 
-{% block page_title %}Suivi du dossier de {{ apprenti.prenom ~ ' '~ apprenti.nom }} (ID {{ apprenti.ID }}){% endblock %}
+{% block page_title %}Suivi du dossier de {{ apprenti.prenom ~ ' '~ apprenti.nom }}{% endblock %}
 
 {% block body %}
     <div class="container">
-    <div class="row">
-        <div class="col-xs-12 contenu">
-            {% set index_etape = 0 %}
-            {% set nb_colonnes = 3 %}
+        <div class="row">
+            <div class="col-xs-12 contenu">
+                {% set index_etape = 0 %}
+                {% set nb_colonnes = 3 %}
 
-            {% set reste = nb_type_etapes%3 %}
-            {% set div_entiere = (nb_type_etapes/3)|round(0, 'floor') %}
+                {% set reste = nb_type_etapes%3 %}
+                {% set div_entiere = (nb_type_etapes/3)|round(0, 'floor') %}
 
-            {% for num_colonne in 1..nb_colonnes %}
-                {% set count = div_entiere %}
-                {% if num_colonne <= reste %}
-                    {% set count = count + 1 %}
-                {% endif %}
-                {% for i in 1..count %}
-                    <p>Bonjour {{ index_etape }}</p>
-                    {% set index_etape = index_etape + 1 %}
-                {% endfor %}
-                <p>Coupure</p>
-            {% endfor %}
-
-            {% for etape in liste_etapes %}
-
-            {% if loop.index0 is divisible by(3) and loop.index0 < 6 %}
-            <div class="col-lg-4 ligne">
-                {% elseif loop.index0 is divisible by(3) %}
-                <div class="col-lg-4">
+                {% for num_colonne in 1..nb_colonnes %}
+                    {% set count = div_entiere %}
+                    {% if num_colonne <= reste %}
+                        {% set count = count + 1 %}
                     {% endif %}
-
-                    {% set class_type = 'col-lg-12 etape' %}
-                    {% if etape.ID < id_type_etape_actuelle %}
-                        {% set class_type = class_type ~ ' etape-valide' %}
-                    {% elseif etape.ID > id_type_etape_actuelle %}
-                        {% set class_type = class_type ~ ' etape-future' %}
-                    {% else %}
-                        {% set class_type = class_type ~ ' etape-actuelle' %}
-                    {% endif %}
-                    <div class="{{ class_type }}">
-                        <div class="cercle center-block col-lg-4"><img class="img-responsive" src="/build/img/Icone_{{ etape.typeIcone }}.png" alt=""/></div>
-                        <p class="col-lg-8">{{ etape.NomEtape }}</p>
+                    <div class="col-lg-4 {% if num_colonne < 3 %}ligne{% endif %}">
+                        {% for i in 1..count %}
+                            {% set etape = liste_etapes[index_etape] %}
+                            {% set class_type = 'col-lg-12 etape' %}
+                            {% if etape.ID < id_type_etape_actuelle %}
+                                {% set class_type = class_type ~ ' etape-valide' %}
+                            {% elseif etape.ID > id_type_etape_actuelle %}
+                                {% set class_type = class_type ~ ' etape-future' %}
+                            {% else %}
+                                {% set class_type = class_type ~ ' etape-actuelle' %}
+                            {% endif %}
+                            <div class="{{ class_type }}">
+                                <div class="cercle center-block col-lg-4"><img class="img-responsive" src="/build/img/Icone_{{ etape.typeIcone }}.png" alt=""/></div>
+                                <p class="col-lg-8">{{ etape.NomEtape }}</p>
+                            </div>
+                            {% set index_etape = index_etape + 1 %}
+                        {% endfor %}
                     </div>
-
-                    {% if loop.index is divisible by(3) %}
-                </div>
-                {% endif %}
                 {% endfor %}
             </div>
         </div>
