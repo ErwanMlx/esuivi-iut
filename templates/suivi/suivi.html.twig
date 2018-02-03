@@ -2,7 +2,7 @@
 
 {% block title %}Page de suivi{% endblock %}
 
-{% block user %}Test{% endblock %}
+{#{% block user %}Test{% endblock %}#}
 
 {% block page_title %}Suivi du dossier de {{ apprenti.prenom ~ ' '~ apprenti.nom }}{% endblock %}
 
@@ -10,7 +10,7 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12 contenu">
-                <p id="id_dossier" hidden>{{ id }}</p>
+                <p id="id_dossier" hidden>{{ apprenti.DossierApprenti.id }}</p>
                 {% set index_etape = 0 %}
                 {% set nb_colonnes = 3 %}
 
@@ -33,7 +33,7 @@
                             {% else %}
                                 {% set class_type = class_type ~ ' etape-actuelle' %}
                             {% endif %}
-                            <div class="{{ class_type }}">
+                            <div class="{{ class_type }}" id="{{ etape.id }}">
                                 <div class="cercle center-block col-lg-4"><img class="img-responsive" src="/build/img/Icone_{{ etape.typeIcone }}.png" alt=""/></div>
                                 <p class="col-lg-8">{{ etape.NomEtape }}</p>
                             </div>

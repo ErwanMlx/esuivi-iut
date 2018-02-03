@@ -50,6 +50,19 @@ $(document).ready(function() {
             {
                 console.log("ok2");
                 $elem.removeClass('etape-valide').addClass('etape-actuelle');
+
+                $.ajax({
+                    type: "POST",
+                    datatype : "application/json",
+                    url: "annuler_etape",
+                    data: { id:$("#id_dossier").text(), id_etape:$elem.attr('id') },
+                    success: function(data){
+                        if(data.error != "ok") {
+                            alert(data.error);
+                        }
+                    }
+                });
+
                 var $etapes = $('.etape');
                 var $bool = 0;
                 for(var i = 0; i<$etapes.length; i++)

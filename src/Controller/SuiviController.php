@@ -46,7 +46,10 @@ class SuiviController extends Controller
             ->find($id);
 
         if(!$apprenti) {
-            throw $this->createNotFoundException('Pas d\'apprenti trouvé pour l\'ID ' . $id);
+//            throw $this->createNotFoundException('Pas d\'apprenti trouvé pour l\'ID ' . $id);
+            return $this->render('message.html.twig', array(
+                'typeMessage' => "Apprenti non trouvé", 'message' => 'Pas d\'apprenti trouvé pour l\'ID ' . $id
+            ));
         }
 
         $idDossier = $apprenti->getDossierApprenti()->getId();
@@ -84,7 +87,7 @@ class SuiviController extends Controller
     /**
      * Validation d'une etape d'un dossier
      *
-     * @Route("/suivi/valider_etape", name="valider_etape", requirements={"id"="\d+"})
+     * @Route("/suivi/valider_etape", name="valider_etape")
      */
     public function valider_etape(Request $req)
     {
@@ -153,9 +156,48 @@ class SuiviController extends Controller
 
             return new JsonResponse(array('error' => "ok"));
         }
-        return new Response(
-            '<html><body>Accès interdit</body></html>'
-        );
+        return $this->render('message.html.twig', array(
+            'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
+        ));
+    }
+
+    /**
+     * Annulation d'une etape d'un dossier
+     *
+     * @Route("/suivi/annuler_etape", name="annuler_etape")
+     */
+    public function annuler_etape(Request $req)
+    {
+        if($req->isXmlHttpRequest()) { //On vérifie que c'est bien une requête AJAX pour empêcher un accès direct a cette fonction
+
+            $id_dossier = $req->get('id');
+            $id_type_etape = $req->get('id_etape');
+
+            $em = $this->getDoctrine()->getManager();
+            $dossier = $em->getRepository(DossierApprenti::class)->find($id_dossier);
+
+            $type_etape = $em->getRepository(TypeEtape::class)->find($id_type_etape);
+
+            $dossier->setetat('En cours');
+
+            //On créer la nouvelle étape actuelle du dossier
+            $new_etape_dossier = new EtapeDossier();
+            $new_etape_dossier->setTypeEtape($type_etape);
+            $new_etape_dossier->setdateDebut(new \DateTime());
+            $new_etape_dossier->setidDossier($id_dossier);
+
+            $em->persist($new_etape_dossier);
+
+            //On met a jour l'étape actuelle du dossier
+            $dossier->setEtapeActuelle($new_etape_dossier);
+
+            $em->flush();
+
+            return new JsonResponse(array('error' => "ok"));
+        }
+        return $this->render('message.html.twig', array(
+            'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
+        ));
     }
 
     /**

@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ typeMessage }}{% endblock %}
+
+{#{% block user %}Test{% endblock %}#}
+
+{% block page_title %}{{ typeMessage }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 contenu">
+                <div class="text-center">
+                    <h1>{{ message }}</h1>
+                    <p><a class="btn btn-default" href="{{ path('home') }}">Accueil</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
