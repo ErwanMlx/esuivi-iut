@@ -3,11 +3,9 @@ namespace App\Controller;
 
 use App\Entity\DossierApprenti;
 use App\Entity\ResponsableIut;
-use App\Entity\TestsErwan;
 use App\Entity\EtapeDossier;
 use App\Entity\TypeEtape;
 use App\Entity\Apprenti;
-use App\Repository\EtapeDossierRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route; //To define the route to access it
@@ -18,21 +16,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class SuiviController extends Controller
 {
     /**
-     * @Route("/suivi/", name="suivi") //The route to access the next function
-     */
-    public function suivi()
-    {
-        $nom = "John Doe";
-
-        return $this->render('suivi/suivi.html.twig', array(
-            'nom' => $nom,
-        ));
-    }
-
-    /**
      * Suivi de apprenti corrspondant à l'id
      *
-     * @Route("/suivi/{id}", name="suivi_apprenti", requirements={"id"="\d+"}) //requirements permet d'autoriser uniquement les nombres dans l'URL
+     * @Route("/suivi/{id}", name="suivi", requirements={"id"="\d+"}) //requirements permet d'autoriser uniquement les nombres dans l'URL
      */
     public function show($id)
     {
