@@ -7,6 +7,24 @@
 {% block page_title %}Suivi du dossier de {{ apprenti.prenom ~ ' '~ apprenti.nom }}{% endblock %}
 
 {% block body %}
+
+    <div class="modal fade" id="pop" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Titre</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-text">Message</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default cancelAction" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary doAction">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="row">
             <div class="col-xs-12 contenu">
