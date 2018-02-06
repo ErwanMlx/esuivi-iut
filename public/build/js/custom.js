@@ -1,6 +1,6 @@
 $(document).ready(function() {
     /*Code json qui teste les droits*/
-    var blocked = 0;
+    // var blocked = 0;
 
     // function Confirm(title, msg, $true, $false, $elem, n) { /*change*/
     //     var $content =  "<div class='dialog-ovelay'>" +
@@ -98,7 +98,7 @@ $(document).ready(function() {
         $('#pop').modal('show');
 
         $('.doAction').click(function () {
-            blocked = 0;
+            // blocked = 0;
             $('#pop').modal('hide');
             if(n == 1)
             {
@@ -111,14 +111,15 @@ $(document).ready(function() {
                         if(data.error != "ok") {
                             alert(data.error);
                         }
+                        else {
+                            console.log("ok");
+                            $elem.removeClass('etape-actuelle').addClass('etape-valide');
+                            var $etapesSuivantes = $('.etape').not('.etape-valide');
+                            var $etapeSuivante = $etapesSuivantes.first();
+                            $etapeSuivante.addClass('etape-actuelle');
+                        }
                     }
                 });
-
-                console.log("ok");
-                $elem.removeClass('etape-actuelle').addClass('etape-valide');
-                var $etapesSuivantes = $('.etape').not('.etape-valide');
-                var $etapeSuivante = $etapesSuivantes.first();
-                $etapeSuivante.addClass('etape-actuelle');
             }
             if(n == 2)
             {
@@ -134,54 +135,55 @@ $(document).ready(function() {
                         if(data.error != "ok") {
                             alert(data.error);
                         }
-                    }
-                });
-
-                var $etapes = $('.etape');
-                var $bool = 0;
-                for(var i = 0; i<$etapes.length; i++)
-                {
-                    if($bool == 0)
-                    {
-                        if($($etapes[i]).hasClass('etape-actuelle'))
-                        {
-                            $bool = 1;
+                        else {
+                            var $etapes = $('.etape');
+                            var $bool = 0;
+                            for(var i = 0; i<$etapes.length; i++)
+                            {
+                                if($bool == 0)
+                                {
+                                    if($($etapes[i]).hasClass('etape-actuelle'))
+                                    {
+                                        $bool = 1;
+                                    }
+                                }
+                                else
+                                {
+                                    $($etapes[i]).removeClass('etape-valide');
+                                    $($etapes[i]).removeClass('etape-actuelle');
+                                }
+                            }
                         }
                     }
-                    else
-                    {
-                        $($etapes[i]).removeClass('etape-valide');
-                        $($etapes[i]).removeClass('etape-actuelle');
-                    }
-                }
+                });
             }
         });
-        $('.cancelAction, .fa-close').click(function () {
-            blocked = 0;
-        });
+        // $('.cancelAction, .fa-close').click(function () {
+        //     // blocked = 0;
+        // });
     };
 
     $(document).on("click",".etape-actuelle",function(){
 
         //if droits
-        if(blocked == 0)
-        {
-            blocked = 1;
+        // if(blocked == 0)
+        // {
+        //     blocked = 1;
             Confirm("Confirmation","Etes vous sûr de vouloir valider cette étape?",
                 "Oui","Non",$(this),1);
-        }
-        //endif
+        // }
+        // //endif
     });
 
     $(document).on("click",".etape-valide",function(){
 
         //if droits
-        if(blocked == 0)
-        {
-            blocked = 1;
+        // if(blocked == 0)
+        // {
+        //     blocked = 1;
             Confirm("Confirmation","Etes vous sûr de vouloir annuler cette étape et les étapes suivantes?",
                 "Oui","Non",$(this),2);
-        }
+        // }
         //endif
     });
 });
