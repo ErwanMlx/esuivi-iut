@@ -80,6 +80,7 @@ class SuiviController extends Controller
         if($req->isXmlHttpRequest()) { //On vérifie que c'est bien une requête AJAX pour empêcher un accès direct a cette fonction
 
             $id = $req->get('id');
+            $id_etape = $req->get('id_etape');
             $em = $this->getDoctrine()->getManager();
             $dossier = $em->getRepository(DossierApprenti::class)->find($id);
 
@@ -92,9 +93,12 @@ class SuiviController extends Controller
 
             //On enregistre la date de validation
             $etape_actuelle = $dossier->getEtapeActuelle();
-            $etape_actuelle->setdateValidation(new \DateTime());
-            //On détermine le validateur qui est autorisé a valider cette étape
-            $typeValidateur = $dossier->getEtapeActuelle()->getTypeEtape()->gettypeValidateur();
+
+            //On vérifie que l'étape qu'on souhaite valider est bien l'étape actuelle (sécurité si on valide trop vite plusieurs étapes en même temps)
+            if($etape_actuelle->getTypeEtape()->getId() == $id_etape) {
+                $etape_actuelle->setdateValidation(new \DateTime());
+                //On détermine le validateur qui est autorisé a valider cette étape
+                $typeValidateur = $dossier->getEtapeActuelle()->getTypeEtape()->gettypeValidateur();
 
 //            $id_session = 0; //!!! A remplacer lorsque la gestion compte sera en place
 //            if ($typeValidateur == "IUT") {
@@ -109,38 +113,38 @@ class SuiviController extends Controller
 //                    ->find($id_session));
 //            }
 
-            //On identifie l'étape suivante qu'il faudra valider dans le dossier
-            $type_etape_suivante = $dossier->getEtapeActuelle()->getTypeEtape()->gettypeEtapeSuivante();
+                //On identifie l'étape suivante qu'il faudra valider dans le dossier
+                $type_etape_suivante = $dossier->getEtapeActuelle()->getTypeEtape()->gettypeEtapeSuivante();
 
-            if($type_etape_suivante) {
-                //On créer la nouvelle étape actuelle du dossier
-                $new_etape_dossier = new EtapeDossier();
-                $new_etape_dossier->setTypeEtape($type_etape_suivante);
-                $new_etape_dossier->setdateDebut(new \DateTime());
-                $new_etape_dossier->setidDossier($id);
+                if ($type_etape_suivante) {
+                    //On créer la nouvelle étape actuelle du dossier
+                    $new_etape_dossier = new EtapeDossier();
+                    $new_etape_dossier->setTypeEtape($type_etape_suivante);
+                    $new_etape_dossier->setdateDebut(new \DateTime());
+                    $new_etape_dossier->setidDossier($id);
 
-                // tell Doctrine you want to (eventually) save the Product (no queries yet)
-                $em->persist($new_etape_dossier);
+                    // tell Doctrine you want to (eventually) save the Product (no queries yet)
+                    $em->persist($new_etape_dossier);
 
-                //On met a jour l'étape actuelle du dossier
-                $dossier->setEtapeActuelle($new_etape_dossier);
-            }
-            //Sinon il n'y a plus d'étape ensuite, donc le dossier est terminé
-            else {
-                $dossier->setetat('Terminé');
+                    //On met a jour l'étape actuelle du dossier
+                    $dossier->setEtapeActuelle($new_etape_dossier);
+                } //Sinon il n'y a plus d'étape ensuite, donc le dossier est terminé
+                else {
+                    $dossier->setetat('Terminé');
 //                return new Response(
 //                    '<html><body>Validation de l\'étape ' . $etape_actuelle->getTypeEtape()->getnomEtape() . ' du dossier ' . $id . ' le '. (new \DateTime())->format('Y-m-d H:i:s') .' par '.$typeValidateur. ' => Dossier terminé</body></html>'
 //                );
 
-            }
-            $em->flush();
+                }
+                $em->flush();
 
 //            return new Response(
 //                '<html><body>Validation de l\'étape ' . $etape_actuelle->getTypeEtape()->getnomEtape() . ' du dossier ' . $id . ' le '. (new \DateTime())->format('Y-m-d H:i:s') .' par '.$typeValidateur.'. ID type etape suivante : '.$type_etape_suivante->getnomEtape().' qui aura pour id '.
 //                $new_etape_dossier->getId(). '. Nouvelle etape actuelle : '.$dossier->getEtapeActuelle()->getTypeEtape()->getnomEtape().'</body></html>'
 //            );
-
+            }
             return new JsonResponse(array('error' => "ok"));
+
         }
         return $this->render('message.html.twig', array(
             'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."

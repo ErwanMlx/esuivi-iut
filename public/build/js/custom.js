@@ -106,25 +106,25 @@ $(document).ready(function() {
                     type: "POST",
                     datatype : "application/json",
                     url: "valider_etape",
-                    data: { id:$("#id_dossier").text() },
+                    data: { id:$("#id_dossier").text(), id_etape:$elem.attr('id') },
                     success: function(data){
                         if(data.error != "ok") {
                             alert(data.error);
                         }
                         else {
-                            console.log("ok");
-                            $elem.removeClass('etape-actuelle').addClass('etape-valide');
-                            var $etapesSuivantes = $('.etape').not('.etape-valide');
-                            var $etapeSuivante = $etapesSuivantes.first();
-                            $etapeSuivante.addClass('etape-actuelle');
+
                         }
                     }
                 });
+                console.log("ok");
+                $elem.removeClass('etape-actuelle').addClass('etape-valide');
+                var $etapesSuivantes = $('.etape').not('.etape-valide');
+                var $etapeSuivante = $etapesSuivantes.first();
+                $etapeSuivante.addClass('etape-actuelle');
             }
             if(n == 2)
             {
                 console.log("ok2");
-                $elem.removeClass('etape-valide').addClass('etape-actuelle');
 
                 $.ajax({
                     type: "POST",
@@ -136,26 +136,28 @@ $(document).ready(function() {
                             alert(data.error);
                         }
                         else {
-                            var $etapes = $('.etape');
-                            var $bool = 0;
-                            for(var i = 0; i<$etapes.length; i++)
-                            {
-                                if($bool == 0)
-                                {
-                                    if($($etapes[i]).hasClass('etape-actuelle'))
-                                    {
-                                        $bool = 1;
-                                    }
-                                }
-                                else
-                                {
-                                    $($etapes[i]).removeClass('etape-valide');
-                                    $($etapes[i]).removeClass('etape-actuelle');
-                                }
-                            }
+
                         }
                     }
                 });
+                $elem.removeClass('etape-valide').addClass('etape-actuelle');
+                var $etapes = $('.etape');
+                var $bool = 0;
+                for(var i = 0; i<$etapes.length; i++)
+                {
+                    if($bool == 0)
+                    {
+                        if($($etapes[i]).hasClass('etape-actuelle'))
+                        {
+                            $bool = 1;
+                        }
+                    }
+                    else
+                    {
+                        $($etapes[i]).removeClass('etape-valide');
+                        $($etapes[i]).removeClass('etape-actuelle');
+                    }
+                }
             }
         });
         // $('.cancelAction, .fa-close').click(function () {
