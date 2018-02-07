@@ -4,13 +4,14 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+
 /**
  * Apprenti
  *
  * @ORM\Table(name="apprenti", indexes={@ORM\Index(name="IDX_2CB7951C81B56FBD", columns={"id_responsable_iut"}), @ORM\Index(name="IDX_2CB7951CE77D22BA", columns={"id_dossier_apprenti"})})
  * @ORM\Entity(repositoryClass="App\Repository\ApprentiRepository")
  */
-class Apprenti
+class Apprenti extends Compte
 {
     /**
      * @var integer
@@ -25,65 +26,30 @@ class Apprenti
     /**
      * @var string
      *
-     * @ORM\Column(name="nom", type="string", length=64, nullable=false)
-     */
-    private $nom;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="prenom", type="string", length=64, nullable=false)
-     */
-    private $prenom;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="telephone", type="string", length=10, nullable=false)
+     * @ORM\Column(name="telephone", type="string", length=10, nullable=true)
      */
     private $telephone;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="adresse", type="string", length=256, nullable=false)
+     * @ORM\Column(name="adresse", type="string", length=256, nullable=true)
      */
     private $adresse;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="code_postal", type="string", length=5, nullable=false)
+     * @ORM\Column(name="code_postal", type="string", length=5, nullable=true)
      */
     private $codePostal;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="ville", type="string", length=64, nullable=false)
+     * @ORM\Column(name="ville", type="string", length=64, nullable=true)
      */
     private $ville;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=128, nullable=false)
-     */
-    private $email;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=64, nullable=false)
-     */
-    private $password;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="date_creation_compte", type="date", nullable=false)
-     */
-    private $dateCreationCompte;
 
     /**
      * @var ResponsableIut
@@ -115,38 +81,6 @@ class Apprenti
     public function setId(int $id): void
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getNom(): string
-    {
-        return $this->nom;
-    }
-
-    /**
-     * @param string $nom
-     */
-    public function setNom(string $nom): void
-    {
-        $this->nom = $nom;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPrenom(): string
-    {
-        return $this->prenom;
-    }
-
-    /**
-     * @param string $prenom
-     */
-    public function setPrenom(string $prenom): void
-    {
-        $this->prenom = $prenom;
     }
 
     /**
@@ -211,54 +145,6 @@ class Apprenti
     public function setVille(string $ville): void
     {
         $this->ville = $ville;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    /**
-     * @param string $email
-     */
-    public function setEmail(string $email): void
-    {
-        $this->email = $email;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
-    /**
-     * @param string $password
-     */
-    public function setPassword(string $password): void
-    {
-        $this->password = $password;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getDateCreationCompte(): \DateTime
-    {
-        return $this->dateCreationCompte;
-    }
-
-    /**
-     * @param \DateTime $dateCreationCompte
-     */
-    public function setDateCreationCompte(\DateTime $dateCreationCompte): void
-    {
-        $this->dateCreationCompte = $dateCreationCompte;
     }
 
     /**

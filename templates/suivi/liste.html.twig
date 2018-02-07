@@ -33,7 +33,11 @@
                         <div class="bordure col-sm-8 col-sm-offset-2">
                             <p>{{ apprenti.prenom ~ ' ' ~ apprenti.nom }}</p>
                             <ul>
-                                <li>Nom entreprise : {{ apprenti.DossierApprenti.Entreprise.nom}}</li>
+                                {% if apprenti.DossierApprenti.Entreprise is empty %}
+                                    <li>Nom entreprise : Pas encore saisi</li>
+                                {% else %}
+                                    <li>Nom entreprise : {{ apprenti.DossierApprenti.Entreprise.nom}}</li>
+                                {% endif %}
                                 {% if apprenti.DossierApprenti.sujetPropose is empty %}
                                     <li>Mission : Pas encore saisi</li>
                                 {% else %}

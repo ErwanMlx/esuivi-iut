@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="responsable_cfa")
  * @ORM\Entity(repositoryClass="App\Repository\ResponsableCfa")
  */
-class ResponsableCfa
+class ResponsableCfa extends Compte
 {
     /**
      * @var integer
@@ -23,39 +23,12 @@ class ResponsableCfa
     private $id;
 
     /**
-     * @var string
+     * @var ResponsableIut
      *
-     * @ORM\Column(name="nom", type="string", length=32, nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Entity\ResponsableIut")
+     * @ORM\JoinColumn(name="id_responsable_iut", referencedColumnName="id")
      */
-    private $nom;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="prenom", type="string", length=32, nullable=false)
-     */
-    private $prenom;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=256, nullable=false)
-     */
-    private $email;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=64, nullable=false)
-     */
-    private $password;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id_responsable_iut", type="integer", nullable=false)
-     */
-    private $idResponsableIut;
+    private $ResponsableIut;
 
     /**
      * @return int
@@ -74,83 +47,20 @@ class ResponsableCfa
     }
 
     /**
-     * @return string
+     * @return ResponsableIut
      */
-    public function getNom(): string
+    public function getResponsableIut(): ResponsableIut
     {
-        return $this->nom;
+        return $this->ResponsableIut;
     }
 
     /**
-     * @param string $nom
+     * @param ResponsableIut $ResponsableIut
      */
-    public function setNom(string $nom): void
+    public function setResponsableIut(ResponsableIut $ResponsableIut): void
     {
-        $this->nom = $nom;
+        $this->ResponsableIut = $ResponsableIut;
     }
 
-    /**
-     * @return string
-     */
-    public function getPrenom(): string
-    {
-        return $this->prenom;
-    }
-
-    /**
-     * @param string $prenom
-     */
-    public function setPrenom(string $prenom): void
-    {
-        $this->prenom = $prenom;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    /**
-     * @param string $email
-     */
-    public function setEmail(string $email): void
-    {
-        $this->email = $email;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
-    /**
-     * @param string $password
-     */
-    public function setPassword(string $password): void
-    {
-        $this->password = $password;
-    }
-
-    /**
-     * @return int
-     */
-    public function getIdResponsableIut(): int
-    {
-        return $this->idResponsableIut;
-    }
-
-    /**
-     * @param int $idResponsableIut
-     */
-    public function setIdResponsableIut(int $idResponsableIut): void
-    {
-        $this->idResponsableIut = $idResponsableIut;
-    }
 }
 

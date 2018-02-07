@@ -32,7 +32,6 @@ class SuiviController extends Controller
             ->find($id);
 
         if(!$apprenti) {
-//            throw $this->createNotFoundException('Pas d\'apprenti trouvé pour l\'ID ' . $id);
             return $this->render('message.html.twig', array(
                 'typeMessage' => "Apprenti non trouvé", 'message' => 'Pas d\'apprenti trouvé pour l\'ID ' . $id
             ));
@@ -85,9 +84,6 @@ class SuiviController extends Controller
             $dossier = $em->getRepository(DossierApprenti::class)->find($id);
 
             if (!$dossier) {
-//                throw $this->createNotFoundException(
-//                    'Pas de dossier trouvé pour l\'id '.$id
-//                );
                 return new JsonResponse(array('error' => "Pas de dossier trouvé"));
             }
 
@@ -131,17 +127,8 @@ class SuiviController extends Controller
                 } //Sinon il n'y a plus d'étape ensuite, donc le dossier est terminé
                 else {
                     $dossier->setetat('Terminé');
-//                return new Response(
-//                    '<html><body>Validation de l\'étape ' . $etape_actuelle->getTypeEtape()->getnomEtape() . ' du dossier ' . $id . ' le '. (new \DateTime())->format('Y-m-d H:i:s') .' par '.$typeValidateur. ' => Dossier terminé</body></html>'
-//                );
-
                 }
                 $em->flush();
-
-//            return new Response(
-//                '<html><body>Validation de l\'étape ' . $etape_actuelle->getTypeEtape()->getnomEtape() . ' du dossier ' . $id . ' le '. (new \DateTime())->format('Y-m-d H:i:s') .' par '.$typeValidateur.'. ID type etape suivante : '.$type_etape_suivante->getnomEtape().' qui aura pour id '.
-//                $new_etape_dossier->getId(). '. Nouvelle etape actuelle : '.$dossier->getEtapeActuelle()->getTypeEtape()->getnomEtape().'</body></html>'
-//            );
             }
             return new JsonResponse(array('error' => "ok"));
 

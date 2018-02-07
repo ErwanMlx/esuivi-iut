@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajout de compte{% endblock %}
+
+{#{% block user %}Test{% endblock %}#}
+
+{% block page_title %}Ajout d'un compte {{ title }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-offset-3 col-sm-6 col-md-offset-4 col-md-4 contenu">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }} alert-dismissable">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                {{ form(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

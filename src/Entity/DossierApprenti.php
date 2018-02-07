@@ -180,7 +180,7 @@ class DossierApprenti
     /**
      * @return Entreprise
      */
-    public function getEntreprise(): Entreprise
+    public function getEntreprise(): ?Entreprise
     {
         return $this->Entreprise;
     }
