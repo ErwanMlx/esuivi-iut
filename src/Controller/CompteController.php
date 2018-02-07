@@ -64,9 +64,9 @@ class CompteController extends Controller
 
         ;
 
-        if($type == "iut") {
-            $form = $form->add('administrateur',   CheckboxType::class, array('required' => false));
-        }
+//        if($type == "iut") {
+//            $form = $form->add('administrateur',   CheckboxType::class, array('required' => false));
+//        }
 
         $form = $form->add('ajouter', SubmitType::class)->getForm();
 
