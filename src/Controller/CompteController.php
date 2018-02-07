@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormError;
 
@@ -33,16 +34,26 @@ class CompteController extends Controller
     /**
      * Suivi de apprenti corrspondant à l'id
      *
-     * @Route("/ajout_compte/{type}", name="ajout_compte", requirements={"type"="(apprenti|cfa)"})
+     * @Route("/ajout_compte/{type}", name="ajout_compte", requirements={"type"="(apprenti|cfa|iut)"})
      */
     public function ajout_compte(Request $request, $type)
     {
+        //!!! A modif avec gestion de compte pour vérif si un iut a le droit d'add un collègue
+        $autorized = true;
+
         if($type == "apprenti") {
             $title = "apprenti";
             $compte = new Apprenti();
-        } else {
+        } elseif($type == "cfa") {
             $title = "CFA";
             $compte = new ResponsableCfa();
+        } elseif($type == "iut" && $autorized) {
+            $title = "IUT";
+            $compte = new ResponsableIut();
+        } else {
+            return $this->render('message.html.twig', array(
+                'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
+            ));
         }
 
         $form = $this->createFormBuilder($compte, array(
@@ -50,9 +61,14 @@ class CompteController extends Controller
             ->add('nom',      TextType::class)
             ->add('prenom',     TextType::class)
             ->add('email',   EmailType::class)
-            ->add('ajouter',      SubmitType::class)
-            ->getForm()
+
         ;
+
+        if($type == "iut") {
+            $form = $form->add('administrateur',   CheckboxType::class, array('required' => false));
+        }
+
+        $form = $form->add('ajouter', SubmitType::class)->getForm();
 
         // Si la requête est en POST (donc que le formulaire à été validé)
         if ($request->isMethod('POST')) {
@@ -68,9 +84,11 @@ class CompteController extends Controller
                 //On génère le mot de passe
                 $compte->setPassword(base64_encode(random_bytes(10)));
 
-                //!!! Provisoire mais a remplacer par l'id de l'user connecté
-                $user = $this->getDoctrine()->getRepository(ResponsableIut::class)->find(1);
-                $compte->setResponsableIut($user);
+                if($type == "apprenti" || $type == "cfa") {
+                    //!!! Provisoire mais a remplacer par l'id de l'user connecté
+                    $user = $this->getDoctrine()->getRepository(ResponsableIut::class)->find(1);
+                    $compte->setResponsableIut($user);
+                }
 
                 // On enregistre notre objet $compte dans la base de données,
                 $em = $this->getDoctrine()->getManager();
