@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
@@ -27,6 +28,13 @@ class Apprenti extends Compte
      * @var string
      *
      * @ORM\Column(name="telephone", type="string", length=10, nullable=true)
+     * @Assert\Length(min = 10, max = 10,
+     *     exactMessage = "Le numéro de téléphone doit faire {{ limit }} caractères.")
+     * @Assert\NotBlank(message="Le numéro de téléphone ne peut pas être vide.")
+     * @Assert\Type(
+     *     type="numeric",
+     *     message="Le téléphone ne doit contenir que des chiffres."
+     * )
      */
     private $telephone;
 
@@ -34,13 +42,23 @@ class Apprenti extends Compte
      * @var string
      *
      * @ORM\Column(name="adresse", type="string", length=256, nullable=true)
+     * @Assert\Length(max = 256,
+     *     maxMessage = "L'adresse doit faire moins de {{ limit }} caractères.")
+     * @Assert\NotBlank(message="L'adresse ne peut pas être vide.")
      */
     private $adresse;
 
     /**
-     * @var string
+     * @var integer
      *
      * @ORM\Column(name="code_postal", type="string", length=5, nullable=true)
+     * @Assert\Length(max = 5,
+     *     maxMessage = "Le code postal doit faire moins de {{ limit }} caractères.")
+     * @Assert\NotBlank(message="Le code postal ne peut pas être vide.")
+     * @Assert\Type(
+     *     type="numeric",
+     *     message="Le code postal ne doit contenir que des chiffres."
+     * )
      */
     private $codePostal;
 
@@ -48,6 +66,13 @@ class Apprenti extends Compte
      * @var string
      *
      * @ORM\Column(name="ville", type="string", length=64, nullable=true)
+     * @Assert\Length(max = 64,
+     *     maxMessage = "La ville doit faire moins de {{ limit }} caractères.")
+     * @Assert\NotBlank(message="La ville ne peut pas être vide.")
+     * @Assert\Type(
+     *     type="string",
+     *     message="La ville ne doit contenir que des lettres."
+     * )
      */
     private $ville;
 
@@ -86,7 +111,7 @@ class Apprenti extends Compte
     /**
      * @return string
      */
-    public function getTelephone(): string
+    public function getTelephone(): ?string
     {
         return $this->telephone;
     }
@@ -102,7 +127,7 @@ class Apprenti extends Compte
     /**
      * @return string
      */
-    public function getAdresse(): string
+    public function getAdresse(): ?string
     {
         return $this->adresse;
     }
@@ -118,7 +143,7 @@ class Apprenti extends Compte
     /**
      * @return string
      */
-    public function getCodePostal(): string
+    public function getCodePostal(): ?string
     {
         return $this->codePostal;
     }
@@ -134,7 +159,7 @@ class Apprenti extends Compte
     /**
      * @return string
      */
-    public function getVille(): string
+    public function getVille(): ?string
     {
         return $this->ville;
     }

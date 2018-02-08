@@ -7,6 +7,8 @@ use App\Entity\Apprenti;
 use App\Entity\DossierApprenti;
 use App\Entity\ResponsableCfa;
 use App\Entity\ResponsableIut;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route; //To define the route to access it
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -23,7 +25,7 @@ class CompteController extends Controller
 {
 
     /**
-     * Suivi de apprenti corrspondant à l'id
+     * Affichage de la page de choix d'ajout de compte
      *
      * @Route("/ajout_compte", name="choix_ajout")
      */
@@ -32,7 +34,7 @@ class CompteController extends Controller
     }
 
     /**
-     * Suivi de apprenti corrspondant à l'id
+     * Formulaire d'ajout de apprenti/cfa/iut
      *
      * @Route("/ajout_compte/{type}", name="ajout_compte", requirements={"type"="(apprenti|cfa|iut)"})
      */
@@ -116,6 +118,83 @@ class CompteController extends Controller
 
         //Soit on viens d'arriver sur la page, soit le formulaire contient des données incorrectes
         return $this->render('compte/ajout.html.twig', array('title' => $title,
+            'form' => $form->createView(),
+        ));
+    }
+
+    /**
+     * Suivi de apprenti corrspondant à l'id
+     *
+     * @Route("/edition_compte/{id}", name="edition_compte", requirements={"id"="\d+"})
+     */
+    public function edition_compte(Request $request, $id) {
+        $title = "Edition du compte";
+        $compte = $this->getDoctrine()->getRepository(Apprenti::class)->find($id);
+
+        //!!! Il faut vérifier que l'utilisateur connecté est un iut ou que le compte a modifier est bien celui de l'apprenti connecté
+        $autorized = true;
+        if(!$autorized) {
+            return $this->render('message.html.twig', array(
+                'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
+            ));
+        }
+
+        if(!$compte) {
+            return $this->render('message.html.twig', array(
+                'typeMessage' => "Apprenti non trouvé", 'message' => 'Pas d\'apprenti trouvé pour l\'ID ' . $id
+            ));
+        }
+
+        $form = $this->createFormBuilder($compte)
+            ->add('nom',      TextType::class)
+            ->add('prenom',     TextType::class)
+            ->add('email',   EmailType::class)
+            ->add('telephone',   TelType::class, array(
+                'attr' => array('maxlength' => 10)))
+            ->add('adresse',   TextType::class)
+            ->add('code_postal',   NumberType::class, array(
+                'attr' => array('maxlength' => 5)))
+            ->add('ville',   TextType::class)
+            ->add('enregistrer', SubmitType::class)
+            ->getForm();
+
+        // Si la requête est en POST (donc que le formulaire à été validé)
+        if ($request->isMethod('POST')) {
+            // On fait le lien Requête <-> Formulaire
+
+            $old_email = "".$compte->getEmail();
+            // À partir de maintenant, la variable $compte contient les valeurs entrées dans le formulaire par le visiteur
+            $form->handleRequest($request);
+
+            $email_ok = true;
+//            select c.email, a.id from compte c, apprenti a where a.email = c.email AND a.email = 'jakass@gmail.co.uk';
+            //On vérifie s'il n'y a pas déjà un compte lié à cette adresse mail
+            if($old_email != $compte->getEmail()) {
+                $email_exist = $this->getDoctrine()->getRepository(Compte::class)->findOneByEmail($compte->getEmail());
+                if($email_exist) {
+                    $email_ok = false;
+                }
+            }
+
+            // On vérifie que les valeurs entrées sont correctes
+            if ($form->isValid() && $email_ok) {
+
+                // On enregistre notre objet $compte dans la base de données,
+                $em = $this->getDoctrine()->getManager();
+
+                $em->flush();
+
+                $this->addFlash('success', 'Modifications bien enregistrées.');
+
+                // On redirige vers la même page pour donner la possibilité d'ajouter d'autres comptes
+                return $this->redirectToRoute('edition_compte', array('id' => $id));
+            }
+            if(!$email_ok) {
+                $form->get('email')->addError(new FormError('Un compte lié à cet email existe déjà.'));
+            }
+        }
+
+        return $this->render('compte/edition_compte.html.twig', array('title' => $title,
             'form' => $form->createView(),
         ));
     }

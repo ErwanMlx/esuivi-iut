@@ -22,6 +22,10 @@ class Compte
      *     groups={"ajout"}
      *     )
      * @Assert\NotBlank(message="Le nom ne peut pas être vide.", groups={"ajout"})
+     * @Assert\Type(
+     *     type="string",
+     *     message="Le nom ne doit contenir que des lettres."
+     * )
      */
     private $nom;
 
@@ -34,6 +38,10 @@ class Compte
      *     groups={"ajout"}
      *     )
      * @Assert\NotBlank(message="Le prénom ne peut pas être vide.", groups={"ajout"})
+     * @Assert\Type(
+     *     type="string",
+     *     message="Le prénom ne doit contenir que des lettres."
+     * )
      */
     private $prenom;
 
