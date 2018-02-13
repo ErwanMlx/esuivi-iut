@@ -43,6 +43,7 @@ class CompteController extends Controller
         //!!! A modif avec gestion de compte pour vérif si un iut a le droit d'add un collègue
         $autorized = true;
 
+        //On détermine quel type de compte on va créer
         if($type == "apprenti") {
             $title = "apprenti";
             $compte = new Apprenti();
@@ -58,6 +59,7 @@ class CompteController extends Controller
             ));
         }
 
+        //On créer le formulaire
         $form = $this->createFormBuilder($compte, array(
             'validation_groups' => array('ajout'),))
             ->add('nom',      TextType::class)
@@ -66,6 +68,7 @@ class CompteController extends Controller
 
         ;
 
+        //Dans le cas si on souhaite créer d'autres comptes administrateur
 //        if($type == "iut") {
 //            $form = $form->add('administrateur',   CheckboxType::class, array('required' => false));
 //        }
@@ -74,9 +77,8 @@ class CompteController extends Controller
 
         // Si la requête est en POST (donc que le formulaire à été validé)
         if ($request->isMethod('POST')) {
-            // On fait le lien Requête <-> Formulaire
 
-            // À partir de maintenant, la variable $compte contient les valeurs entrées dans le formulaire par le visiteur
+            // À partir de maintenant, la variable $compte contient les valeurs entrées dans le formulaire par l'utilisateur
             $form->handleRequest($request);
 
             //On vérifie s'il n'y a pas déjà un compte lié à cette adresse mail
@@ -106,11 +108,13 @@ class CompteController extends Controller
                 $em->persist($compte);
                 $em->flush();
 
+                //On affiche un message de succès
                 $this->addFlash('success', 'Compte bien enregistré.');
 
                 // On redirige vers la même page pour donner la possibilité d'ajouter d'autres comptes
                 return $this->redirectToRoute('ajout_compte', array('type' => $type));
             }
+            //Si le mail est déjà utilisé on affiche a message d'erreur
             if($email_exist) {
                 $form->get('email')->addError(new FormError('Un compte lié à cet email existe déjà.'));
             }
@@ -123,9 +127,9 @@ class CompteController extends Controller
     }
 
     /**
-     * Suivi de apprenti corrspondant à l'id
+     * Edition du compte de l'apprenti
      *
-     * @Route("/edition_compte/{id}", name="edition_compte", requirements={"id"="\d+"})
+     * @Route("/compte/edition/{id}", name="edition_compte", requirements={"id"="\d+"})
      */
     public function edition_compte(Request $request, $id) {
         $title = "Edition du compte";
@@ -160,14 +164,13 @@ class CompteController extends Controller
 
         // Si la requête est en POST (donc que le formulaire à été validé)
         if ($request->isMethod('POST')) {
-            // On fait le lien Requête <-> Formulaire
 
+            //On copie l'email actuel du compte pour déterminer plus loin si l'utilisateur a changer le mail du compte
             $old_email = "".$compte->getEmail();
             // À partir de maintenant, la variable $compte contient les valeurs entrées dans le formulaire par le visiteur
             $form->handleRequest($request);
 
             $email_ok = true;
-//            select c.email, a.id from compte c, apprenti a where a.email = c.email AND a.email = 'jakass@gmail.co.uk';
             //On vérifie s'il n'y a pas déjà un compte lié à cette adresse mail
             if($old_email != $compte->getEmail()) {
                 $email_exist = $this->getDoctrine()->getRepository(Compte::class)->findOneByEmail($compte->getEmail());
@@ -186,7 +189,7 @@ class CompteController extends Controller
 
                 $this->addFlash('success', 'Modifications bien enregistrées.');
 
-                // On redirige vers la même page pour donner la possibilité d'ajouter d'autres comptes
+                // On redirige vers la même page pour donner la possibilité de modifier d'autres informations
                 return $this->redirectToRoute('edition_compte', array('id' => $id));
             }
             if(!$email_ok) {
@@ -194,8 +197,50 @@ class CompteController extends Controller
             }
         }
 
+
+
         return $this->render('compte/edition_compte.html.twig', array('title' => $title,
             'form' => $form->createView(),
         ));
     }
+
+//    /**
+//     * Modification de mot de passe
+//     *
+//     * @Route("/compte/mot_de_passe/modifier/{id}", name="edition_password", requirements={"id"="\d+"})
+//     */
+//    public function modifier_mot_de_passe(Request $request, $id) {
+//
+//    }
+
+//    /**
+//     * Affichage de la page de profil
+//     *
+//     * @Route("/profil/{type}/{id}", name="profil", requirements={"type"="(apprenti|cfa|iut)", "id"="\d+"})
+//     */
+//    public function profil($type, $id) {
+//        $title = "Profil";
+//        $autorized = true;
+//        if($type == "apprenti") {
+//            $compte = $this->getDoctrine()->getRepository(Apprenti::class)->find($id);
+//        } elseif($type == "cfa") {
+//            $compte = $this->getDoctrine()->getRepository(ResponsableCfa::class)->find($id);
+//        } elseif($type == "iut" && $autorized) {
+//            $compte = $this->getDoctrine()->getRepository(ResponsableIut::class)->find($id);
+//        } else {
+//            return $this->render('message.html.twig', array(
+//                'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
+//            ));
+//        }
+//
+//        if(!$compte) {
+//            return $this->render('message.html.twig', array(
+//                'typeMessage' => "Apprenti non trouvé", 'message' => 'Pas d\'apprenti trouvé pour l\'ID ' . $id
+//            ));
+//        }
+//
+//        return $this->render('compte/profil.html.twig', array('title' => $title,
+//            'form' => $form->createView(),
+//        ));
+//    }
 }

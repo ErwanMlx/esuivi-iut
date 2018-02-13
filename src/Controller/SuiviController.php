@@ -190,6 +190,5 @@ class SuiviController extends Controller
             'liste' => $liste,
         ));
     }
-
 }
 ?>
