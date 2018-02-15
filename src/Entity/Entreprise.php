@@ -102,10 +102,12 @@ class Entreprise
     /**
      * @var CorrespondantEntreprise
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\CorrespondantEntreprise")
-     * @ORM\JoinColumn(name="id_correspondant_entreprise", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="CorrespondantEntreprise")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_correspondant_entreprise", referencedColumnName="id")
+     * })
      */
-    private $CorrespondantEntreprise;
+    private $correspondantEntreprise;
 
     /**
      * @return int
@@ -304,15 +306,17 @@ class Entreprise
      */
     public function getCorrespondantEntreprise(): CorrespondantEntreprise
     {
-        return $this->CorrespondantEntreprise;
+        return $this->correspondantEntreprise;
     }
 
     /**
-     * @param CorrespondantEntreprise $CorrespondantEntreprise
+     * @param CorrespondantEntreprise $correspondantEntreprise
      */
-    public function setCorrespondantEntreprise(CorrespondantEntreprise $CorrespondantEntreprise): void
+    public function setCorrespondantEntreprise(CorrespondantEntreprise $correspondantEntreprise): void
     {
-        $this->CorrespondantEntreprise = $CorrespondantEntreprise;
+        $this->correspondantEntreprise = $correspondantEntreprise;
     }
+
+
 }
 

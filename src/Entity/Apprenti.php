@@ -5,25 +5,14 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
 /**
  * Apprenti
  *
- * @ORM\Table(name="apprenti", indexes={@ORM\Index(name="IDX_2CB7951C81B56FBD", columns={"id_responsable_iut"}), @ORM\Index(name="IDX_2CB7951CE77D22BA", columns={"id_dossier_apprenti"})})
+ * @ORM\Table(name="apprenti", indexes={@ORM\Index(name="IDX_2CB7951CE77D22BA", columns={"id_dossier_apprenti"}), @ORM\Index(name="IDX_2CB7951C81B56FBD", columns={"id_responsable_iut"})})
  * @ORM\Entity(repositoryClass="App\Repository\ApprentiRepository")
  */
-class Apprenti extends Compte
+class Apprenti
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="apprenti_id_seq", allocationSize=1, initialValue=1)
-     */
-    private $id;
-
     /**
      * @var string
      *
@@ -42,6 +31,7 @@ class Apprenti extends Compte
      * @var string
      *
      * @ORM\Column(name="adresse", type="string", length=256, nullable=true)
+     * @ORM\Column(name="adresse", type="string", length=256, nullable=true)
      * @Assert\Length(max = 256,
      *     maxMessage = "L'adresse doit faire moins de {{ limit }} caractères.")
      * @Assert\NotBlank(message="L'adresse ne peut pas être vide.")
@@ -49,7 +39,7 @@ class Apprenti extends Compte
     private $adresse;
 
     /**
-     * @var integer
+     * @var string
      *
      * @ORM\Column(name="code_postal", type="string", length=5, nullable=true)
      * @Assert\Length(max = 5,
@@ -77,41 +67,42 @@ class Apprenti extends Compte
     private $ville;
 
     /**
-     * @var ResponsableIut
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\ResponsableIut")
-     * @ORM\JoinColumn(name="id_responsable_iut", referencedColumnName="id")
-     */
-    private $ResponsableIut;
-
-    /**
      * @var DossierApprenti
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\DossierApprenti")
-     * @ORM\JoinColumn(name="id_dossier_apprenti", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="DossierApprenti")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_dossier_apprenti", referencedColumnName="id")
+     * })
      */
-    private $DossierApprenti;
+    private $dossier;
 
     /**
-     * @return int
+     * @var Compte
+     *
+     * @ORM\ManyToOne(targetEntity="Compte")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_responsable_iut", referencedColumnName="id")
+     * })
      */
-    public function getId(): int
-    {
-        return $this->id;
-    }
+    private $responsableIut;
 
     /**
-     * @param int $id
+     * @var Compte
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="Compte")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_compte", referencedColumnName="id")
+     * })
+     * @Assert\Valid()
      */
-    public function setId(int $id): void
-    {
-        $this->id = $id;
-    }
+    private $compte;
 
     /**
      * @return string
      */
-    public function getTelephone(): ?string
+    public function getTelephone(): string
     {
         return $this->telephone;
     }
@@ -127,7 +118,7 @@ class Apprenti extends Compte
     /**
      * @return string
      */
-    public function getAdresse(): ?string
+    public function getAdresse(): string
     {
         return $this->adresse;
     }
@@ -143,7 +134,7 @@ class Apprenti extends Compte
     /**
      * @return string
      */
-    public function getCodePostal(): ?string
+    public function getCodePostal(): string
     {
         return $this->codePostal;
     }
@@ -159,7 +150,7 @@ class Apprenti extends Compte
     /**
      * @return string
      */
-    public function getVille(): ?string
+    public function getVille(): string
     {
         return $this->ville;
     }
@@ -173,35 +164,52 @@ class Apprenti extends Compte
     }
 
     /**
-     * @return ResponsableIut
-     */
-    public function getResponsableIut(): ResponsableIut
-    {
-        return $this->ResponsableIut;
-    }
-
-    /**
-     * @param ResponsableIut $ResponsableIut
-     */
-    public function setResponsableIut(ResponsableIut $ResponsableIut): void
-    {
-        $this->ResponsableIut = $ResponsableIut;
-    }
-
-    /**
      * @return DossierApprenti
      */
     public function getDossierApprenti(): DossierApprenti
     {
-        return $this->DossierApprenti;
+        return $this->dossier;
     }
 
     /**
-     * @param DossierApprenti $DossierApprenti
+     * @param DossierApprenti $dossierApprenti
      */
-    public function setDossierApprenti(DossierApprenti $DossierApprenti): void
+    public function setDossierApprenti(DossierApprenti $dossierApprenti): void
     {
-        $this->DossierApprenti = $DossierApprenti;
+        $this->dossier = $dossierApprenti;
     }
+
+    /**
+     * @return Compte
+     */
+    public function getResponsableIut(): Compte
+    {
+        return $this->idResponsableIut;
+    }
+
+    /**
+     * @param Compte $idResponsableIut
+     */
+    public function setResponsableIut(Compte $idResponsableIut): void
+    {
+        $this->idResponsableIut = $idResponsableIut;
+    }
+
+    /**
+     * @return Compte
+     */
+    public function getCompte(): Compte
+    {
+        return $this->compte;
+    }
+
+    /**
+     * @param Compte $compte
+     */
+    public function setCompte(Compte $compte): void
+    {
+        $this->compte = $compte;
+    }
+
 }
 

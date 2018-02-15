@@ -29,9 +29,9 @@
                     <h3 class="text-center">Aucun apprenti trouvé.</h3>
                 {% endif %}
                 {% for apprenti in liste %}
-                    <a href="{{ path('suivi', {'id': apprenti.id}) }}">
+                    <a href="{{ path('suivi', {'id': apprenti.compte.id}) }}">
                         <div class="bordure col-sm-8 col-sm-offset-2">
-                            <p>{{ apprenti.prenom ~ ' ' ~ apprenti.nom }}</p>
+                            <p>{{ apprenti.compte.prenom ~ ' ' ~ apprenti.compte.nom }}</p>
                             <ul>
                                 {% if apprenti.DossierApprenti.Entreprise is empty %}
                                     <li>Nom entreprise : Pas encore saisi</li>

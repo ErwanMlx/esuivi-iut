@@ -43,8 +43,8 @@ class SuiviController extends Controller
         $etapes_dossier = $this->getDoctrine()
             ->getRepository(EtapeDossier::class)
             ->findBy(
-                ['idDossier' => $idDossier], // Critere
-                ['TypeEtape' => 'ASC'] // Tri
+                ['dossier' => $idDossier], // Critere
+                ['typeEtape' => 'ASC'] // Tri
             );
 
         //On récupère l'ID type étape de l'étape actuelle du dossier
@@ -76,7 +76,7 @@ class SuiviController extends Controller
      */
     public function valider_etape(Request $req)
     {
-        if($req->isXmlHttpRequest()) { //On vérifie que c'est bien une requête AJAX pour empêcher un accès direct a cette fonction
+//        if($req->isXmlHttpRequest()) { //On vérifie que c'est bien une requête AJAX pour empêcher un accès direct a cette fonction
 
             $id = $req->get('id');
             $id_etape = $req->get('id_etape');
@@ -117,7 +117,7 @@ class SuiviController extends Controller
                     $new_etape_dossier = new EtapeDossier();
                     $new_etape_dossier->setTypeEtape($type_etape_suivante);
                     $new_etape_dossier->setdateDebut(new \DateTime());
-                    $new_etape_dossier->setidDossier($id);
+                    $new_etape_dossier->setDossier($dossier);
 
                     // tell Doctrine you want to (eventually) save the Product (no queries yet)
                     $em->persist($new_etape_dossier);
@@ -132,7 +132,7 @@ class SuiviController extends Controller
             }
             return new JsonResponse(array('error' => "ok"));
 
-        }
+//        }
         return $this->render('message.html.twig', array(
             'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
         ));
@@ -161,7 +161,7 @@ class SuiviController extends Controller
             $new_etape_dossier = new EtapeDossier();
             $new_etape_dossier->setTypeEtape($type_etape);
             $new_etape_dossier->setdateDebut(new \DateTime());
-            $new_etape_dossier->setidDossier($id_dossier);
+            $new_etape_dossier->setDossier($dossier);
 
             $em->persist($new_etape_dossier);
 

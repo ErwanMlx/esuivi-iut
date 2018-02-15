@@ -8,11 +8,21 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Compte
  *
- * @ORM\MappedSuperclass
- *
+ * @ORM\Table(name="compte")
+ * @ORM\Entity(repositoryClass="App\Repository\CompteRepository")
  */
 class Compte
 {
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\SequenceGenerator(sequenceName="compte_id_seq", allocationSize=1, initialValue=1)
+     */
+    private $id;
+
     /**
      * @var string
      *
@@ -49,6 +59,7 @@ class Compte
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=128, nullable=false)
+     * @ORM\Column(name="email", type="string", length=128, nullable=false)
      * @Assert\Length(max = 128,
      *     maxMessage = "L'email doit faire moins de {{ limit }} caractères.",
      *     groups={"ajout"}
@@ -62,6 +73,7 @@ class Compte
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=128, nullable=false)
+     * @ORM\Column(name="password", type="string", length=128, nullable=false)
      * @Assert\Length(min = 8, max = 128,
      *     minMessage = "Le mot de passe doit faire au moins {{ limit }} caractères.",
      *     maxMessage = "Le mot de passe doit faire moins de {{ limit }} caractères."
@@ -69,6 +81,22 @@ class Compte
      * @Assert\NotBlank(message="Le mot de passe ne peut pas être vide.")
      */
     private $password;
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
 
     /**
      * @return string
@@ -133,5 +161,8 @@ class Compte
     {
         $this->password = $password;
     }
+
+
+
 }
 

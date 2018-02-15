@@ -7,59 +7,63 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ResponsableCfa
  *
- * @ORM\Table(name="responsable_cfa")
- * @ORM\Entity(repositoryClass="App\Repository\ResponsableCfa")
+ * @ORM\Table(name="responsable_cfa", indexes={@ORM\Index(name="IDX_694E8C9A81B56FBD", columns={"id_responsable_iut"})})
+ * @ORM\Entity(repositoryClass="App\Repository\ResponsableCfaRepository")
  */
-class ResponsableCfa extends Compte
+class ResponsableCfa
 {
     /**
-     * @var integer
+     * @var Compte
      *
-     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Compte")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_responsable_iut", referencedColumnName="id")
+     * })
+     */
+    private $responsableIut;
+
+    /**
+     * @var Compte
+     *
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="responsable_cfa_id_seq", allocationSize=1, initialValue=1)
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="Compte")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_compte", referencedColumnName="id")
+     * })
      */
-    private $id;
+    private $compte;
 
     /**
-     * @var ResponsableIut
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\ResponsableIut")
-     * @ORM\JoinColumn(name="id_responsable_iut", referencedColumnName="id")
+     * @return Compte
      */
-    private $ResponsableIut;
-
-    /**
-     * @return int
-     */
-    public function getId(): int
+    public function getResponsableIut(): Compte
     {
-        return $this->id;
+        return $this->responsableIut;
     }
 
     /**
-     * @param int $id
+     * @param Compte $responsableIut
      */
-    public function setId(int $id): void
+    public function setResponsableIut(Compte $responsableIut): void
     {
-        $this->id = $id;
+        $this->responsableIut = $responsableIut;
     }
 
     /**
-     * @return ResponsableIut
+     * @return Compte
      */
-    public function getResponsableIut(): ResponsableIut
+    public function getCompte(): Compte
     {
-        return $this->ResponsableIut;
+        return $this->compte;
     }
 
     /**
-     * @param ResponsableIut $ResponsableIut
+     * @param Compte $compte
      */
-    public function setResponsableIut(ResponsableIut $ResponsableIut): void
+    public function setCompte(Compte $compte): void
     {
-        $this->ResponsableIut = $ResponsableIut;
+        $this->compte = $compte;
     }
 
 }

@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * DossierApprenti
  *
- * @ORM\Table(name="dossier_apprenti", indexes={@ORM\Index(name="IDX_4F7776BA8937AB7", columns={"id_entreprise"}), @ORM\Index(name="IDX_4F7776BF0FBA8F9", columns={"id_maitre_apprentissage"}), @ORM\Index(name="IDX_4F7776BF72552AC", columns={"id_etape_actuelle"})})
+ * @ORM\Table(name="dossier_apprenti", indexes={@ORM\Index(name="IDX_4F7776BA8937AB7", columns={"id_entreprise"}), @ORM\Index(name="IDX_4F7776BF72552AC", columns={"id_etape_actuelle"}), @ORM\Index(name="IDX_4F7776BF0FBA8F9", columns={"id_maitre_apprentissage"})})
  * @ORM\Entity(repositoryClass="App\Repository\DossierApprentiRepository")
  */
 class DossierApprenti
@@ -27,7 +27,7 @@ class DossierApprenti
      *
      * @ORM\Column(name="etat", type="string", length=16, nullable=false)
      */
-    private $etat;
+    private $etat = 'En cours';
 
     /**
      * @var \DateTime
@@ -60,26 +60,32 @@ class DossierApprenti
     /**
      * @var Entreprise
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Entreprise")
-     * @ORM\JoinColumn(name="id_entreprise", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="Entreprise")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_entreprise", referencedColumnName="id")
+     * })
      */
-    private $Entreprise;
-
-    /**
-     * @var MaitreApprentissage
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\MaitreApprentissage")
-     * @ORM\JoinColumn(name="id_maitre_apprentissage", referencedColumnName="id")
-     */
-    private $MaitreApprentissage;
+    private $entreprise;
 
     /**
      * @var EtapeDossier
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\EtapeDossier")
-     * @ORM\JoinColumn(name="id_etape_actuelle", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="EtapeDossier")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_etape_actuelle", referencedColumnName="id")
+     * })
      */
-    private $EtapeActuelle;
+    private $etapeActuelle;
+
+    /**
+     * @var Compte
+     *
+     * @ORM\ManyToOne(targetEntity="Compte")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_maitre_apprentissage", referencedColumnName="id")
+     * })
+     */
+    private $maitreApprentissage;
 
     /**
      * @return int
@@ -182,31 +188,15 @@ class DossierApprenti
      */
     public function getEntreprise(): ?Entreprise
     {
-        return $this->Entreprise;
+        return $this->entreprise;
     }
 
     /**
-     * @param Entreprise $Entreprise
+     * @param Entreprise $entreprise
      */
-    public function setEntreprise(Entreprise $Entreprise): void
+    public function setEntreprise(Entreprise $entreprise): void
     {
-        $this->Entreprise = $Entreprise;
-    }
-
-    /**
-     * @return MaitreApprentissage
-     */
-    public function getMaitreApprentissage(): MaitreApprentissage
-    {
-        return $this->MaitreApprentissage;
-    }
-
-    /**
-     * @param MaitreApprentissage $MaitreApprentissage
-     */
-    public function setMaitreApprentissage(MaitreApprentissage $MaitreApprentissage): void
-    {
-        $this->MaitreApprentissage = $MaitreApprentissage;
+        $this->entreprise = $entreprise;
     }
 
     /**
@@ -214,15 +204,31 @@ class DossierApprenti
      */
     public function getEtapeActuelle(): EtapeDossier
     {
-        return $this->EtapeActuelle;
+        return $this->etapeActuelle;
     }
 
     /**
-     * @param EtapeDossier $EtapeActuelle
+     * @param EtapeDossier $etapeActuelle
      */
-    public function setEtapeActuelle(EtapeDossier $EtapeActuelle): void
+    public function setEtapeActuelle(EtapeDossier $etapeActuelle): void
     {
-        $this->EtapeActuelle = $EtapeActuelle;
+        $this->etapeActuelle = $etapeActuelle;
+    }
+
+    /**
+     * @return Compte
+     */
+    public function getMaitreApprentissage(): Compte
+    {
+        return $this->maitreApprentissage;
+    }
+
+    /**
+     * @param Compte $maitreApprentissage
+     */
+    public function setMaitreApprentissage(Compte $maitreApprentissage): void
+    {
+        $this->maitreApprentissage = $maitreApprentissage;
     }
 }
 

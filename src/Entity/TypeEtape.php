@@ -5,9 +5,9 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * "typeEtape"
+ * TypeEtape
  *
- * @ORM\Table(name="type_etape")
+ * @ORM\Table(name="type_etape", indexes={@ORM\Index(name="IDX_2653F22A16EF75A2", columns={"id_type_etape_suivante"})})
  * @ORM\Entity(repositoryClass="App\Repository\TypeEtapeRepository")
  */
 class TypeEtape
@@ -25,7 +25,7 @@ class TypeEtape
     /**
      * @var string
      *
-     * @ORM\Column(name="nom_etape", type="string", length=32, nullable=false)
+     * @ORM\Column(name="nom_etape", type="string", length=100, nullable=false)
      */
     private $nomEtape;
 
@@ -44,10 +44,12 @@ class TypeEtape
     private $typeIcone;
 
     /**
+     * @var TypeEtape
      *
-     * @ORM\OneToOne(targetEntity="App\Entity\TypeEtape")
-     * @ORM\JoinColumn(name="id_type_etape_suivante", referencedColumnName="id")
-
+     * @ORM\ManyToOne(targetEntity="TypeEtape")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_type_etape_suivante", referencedColumnName="id")
+     * })
      */
     private $typeEtapeSuivante;
 
@@ -115,11 +117,10 @@ class TypeEtape
         $this->typeIcone = $typeIcone;
     }
 
-
     /**
      * @return TypeEtape
      */
-    public function getTypeEtapeSuivante(): ?TypeEtape
+    public function getTypeEtapeSuivante(): TypeEtape
     {
         return $this->typeEtapeSuivante;
     }
@@ -131,5 +132,6 @@ class TypeEtape
     {
         $this->typeEtapeSuivante = $typeEtapeSuivante;
     }
+
 }
 

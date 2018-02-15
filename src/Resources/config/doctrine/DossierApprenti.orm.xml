@@ -3,8 +3,8 @@
   <entity name="App\Entity\DossierApprenti" table="dossier_apprenti">
     <indexes>
       <index name="IDX_4F7776BA8937AB7" columns="id_entreprise"/>
-      <index name="IDX_4F7776BF0FBA8F9" columns="id_maitre_apprentissage"/>
       <index name="IDX_4F7776BF72552AC" columns="id_etape_actuelle"/>
+      <index name="IDX_4F7776BF0FBA8F9" columns="id_maitre_apprentissage"/>
     </indexes>
     <id name="id" type="integer" column="id">
       <generator strategy="SEQUENCE"/>
@@ -37,14 +37,14 @@
         <join-column name="id_entreprise" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="idMaitreApprentissage" target-entity="MaitreApprentissage" fetch="LAZY">
-      <join-columns>
-        <join-column name="id_maitre_apprentissage" referenced-column-name="id"/>
-      </join-columns>
-    </many-to-one>
     <many-to-one field="idEtapeActuelle" target-entity="EtapeDossier" fetch="LAZY">
       <join-columns>
         <join-column name="id_etape_actuelle" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idMaitreApprentissage" target-entity="Compte" fetch="LAZY">
+      <join-columns>
+        <join-column name="id_maitre_apprentissage" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
   </entity>

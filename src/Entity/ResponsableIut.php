@@ -10,55 +10,58 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="responsable_iut")
  * @ORM\Entity(repositoryClass="App\Repository\ResponsableIutRepository")
  */
-class ResponsableIut extends Compte
+class ResponsableIut
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="responsable_iut_id_seq", allocationSize=1, initialValue=1)
-     */
-    private $id;
-
     /**
      * @var boolean
      *
      * @ORM\Column(name="acces", type="boolean", nullable=false)
      */
-    private $administrateur = false;
+    private $acces = false;
 
     /**
-     * @return int
+     * @var Compte
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="Compte")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_compte", referencedColumnName="id")
+     * })
      */
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId(int $id): void
-    {
-        $this->id = $id;
-    }
+    private $compte;
 
     /**
      * @return bool
      */
-    public function isAdministrateur(): bool
+    public function isAcces(): bool
     {
-        return $this->administrateur;
+        return $this->acces;
     }
 
     /**
-     * @param bool $administrateur
+     * @param bool $acces
      */
-    public function setAdministrateur(bool $administrateur): void
+    public function setAcces(bool $acces): void
     {
-        $this->administrateur = $administrateur;
+        $this->acces = $acces;
     }
+
+    /**
+     * @return Compte
+     */
+    public function getCompte(): Compte
+    {
+        return $this->compte;
+    }
+
+    /**
+     * @param Compte $compte
+     */
+    public function setCompte(Compte $compte): void
+    {
+        $this->compte = $compte;
+    }
+
 }
 

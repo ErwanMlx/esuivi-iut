@@ -2,13 +2,12 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * etapedossier
+ * EtapeDossier
  *
- * @ORM\Table(name="etape_dossier")
+ * @ORM\Table(name="etape_dossier", indexes={@ORM\Index(name="IDX_662143ECE3D54947", columns={"id_dossier"}), @ORM\Index(name="IDX_662143EC1E108449", columns={"id_validateur"}), @ORM\Index(name="IDX_662143EC83D972FD", columns={"id_type_etape"})})
  * @ORM\Entity(repositoryClass="App\Repository\EtapeDossierRepository")
  */
 class EtapeDossier
@@ -19,48 +18,53 @@ class EtapeDossier
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="Etape_Dossier_ID_seq", allocationSize=1, initialValue=1)
+     * @ORM\SequenceGenerator(sequenceName="etape_dossier_id_seq", allocationSize=1, initialValue=1)
      */
     private $id;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\TypeEtape")
-     * @ORM\JoinColumn(name="id_type_etape", referencedColumnName="id")
-     */
-    private $TypeEtape;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="date_debut", type="date", nullable=false)
      */
-    private $dateDebut;
+    private $dateDebut = 'now';
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date_validation", type="date", nullable=false)
+     * @ORM\Column(name="date_validation", type="date", nullable=true)
      */
     private $dateValidation;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\ResponsableCfa")
-     * @ORM\JoinColumn(name="id_validateur_cfa", referencedColumnName="id", nullable=true)
-     */
-    private $ValidateurCfa;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\ResponsableIut")
-     * @ORM\JoinColumn(name="id_validateur_iut", referencedColumnName="id", nullable=true)
-     */
-    private $ValidateurIut;
-
-    /**
-     * @var integer
+     * @var DossierApprenti
      *
-     * @ORM\Column(name="id_dossier", type="integer", nullable=false)
+     * @ORM\ManyToOne(targetEntity="DossierApprenti")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_dossier", referencedColumnName="id")
+     * })
      */
-    private $idDossier;
+    private $dossier;
+
+    /**
+     * @var Compte
+     *
+     * @ORM\ManyToOne(targetEntity="Compte")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_validateur", referencedColumnName="id")
+     * })
+     */
+    private $validateur;
+
+    /**
+     * @var TypeEtape
+     *
+     * @ORM\ManyToOne(targetEntity="TypeEtape")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_type_etape", referencedColumnName="id")
+     * })
+     */
+    private $typeEtape;
 
     /**
      * @return int
@@ -76,22 +80,6 @@ class EtapeDossier
     public function setId(int $id): void
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTypeEtape(): TypeEtape
-    {
-        return $this->TypeEtape;
-    }
-
-    /**
-     * @param mixed $TypeEtape
-     */
-    public function setTypeEtape(TypeEtape $TypeEtape)
-    {
-        $this->TypeEtape = $TypeEtape;
     }
 
     /**
@@ -127,39 +115,52 @@ class EtapeDossier
     }
 
     /**
-     * @return int
+     * @return DossierApprenti
      */
-    public function getIdDossier(): int
+    public function getDossier(): DossierApprenti
     {
-        return $this->idDossier;
+        return $this->dossier;
     }
 
     /**
-     * @param int $idDossier
+     * @param DossierApprenti $dossier
      */
-    public function setIdDossier(int $idDossier): void
+    public function setDossier(DossierApprenti $dossier): void
     {
-        $this->idDossier = $idDossier;
+        $this->dossier = $dossier;
     }
 
-    public function getValidateurCfa(): ?ResponsableCfa
+    /**
+     * @return Compte
+     */
+    public function getValidateur(): Compte
     {
-        return $this->ValidateurCfa;
+        return $this->validateur;
     }
 
-    public function setValidateurCfa(ResponsableCfa $ValidateurCfa): void
+    /**
+     * @param Compte $validateur
+     */
+    public function setValidateur(Compte $validateur): void
     {
-        $this->ValidateurCfa = $ValidateurCfa;
+        $this->validateur = $validateur;
     }
 
-    public function getValidateurIut(): ?ResponsableIut
+    /**
+     * @return TypeEtape
+     */
+    public function getTypeEtape(): TypeEtape
     {
-        return $this->ValidateurIut;
+        return $this->typeEtape;
     }
 
-    public function setValidateurIut(ResponsableIut $ValidateurIut): void
+    /**
+     * @param TypeEtape $typeEtape
+     */
+    public function setTypeEtape(TypeEtape $typeEtape): void
     {
-        $this->ValidateurIut = $ValidateurIut;
+        $this->typeEtape = $typeEtape;
     }
+
 }
 

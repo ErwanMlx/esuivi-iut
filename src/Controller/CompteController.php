@@ -7,6 +7,9 @@ use App\Entity\Apprenti;
 use App\Entity\DossierApprenti;
 use App\Entity\ResponsableCfa;
 use App\Entity\ResponsableIut;
+use App\Form\ApprentiType;
+use App\Form\CompteType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,23 +39,21 @@ class CompteController extends Controller
     /**
      * Formulaire d'ajout de apprenti/cfa/iut
      *
-     * @Route("/ajout_compte/{type}", name="ajout_compte", requirements={"type"="(apprenti|cfa|iut)"})
+     * @Route("/compte/ajout/{type}", name="ajout_compte", requirements={"type"="(apprenti|cfa|iut)"})
      */
     public function ajout_compte(Request $request, $type)
     {
         //!!! A modif avec gestion de compte pour vérif si un iut a le droit d'add un collègue
         $autorized = true;
 
+        $compte = new Compte();
         //On détermine quel type de compte on va créer
         if($type == "apprenti") {
             $title = "apprenti";
-            $compte = new Apprenti();
         } elseif($type == "cfa") {
             $title = "CFA";
-            $compte = new ResponsableCfa();
         } elseif($type == "iut" && $autorized) {
             $title = "IUT";
-            $compte = new ResponsableIut();
         } else {
             return $this->render('message.html.twig', array(
                 'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
@@ -60,20 +61,22 @@ class CompteController extends Controller
         }
 
         //On créer le formulaire
-        $form = $this->createFormBuilder($compte, array(
-            'validation_groups' => array('ajout'),))
-            ->add('nom',      TextType::class)
-            ->add('prenom',     TextType::class)
-            ->add('email',   EmailType::class)
+//        $form = $this->createFormBuilder($compte, array(
+//            'validation_groups' => array('ajout'),))
+//            ->add('nom',      TextType::class)
+//            ->add('prenom',     TextType::class)
+//            ->add('email',   EmailType::class)
+//
+//        ;
 
-        ;
+        $form = $this->createForm(CompteType::class, $compte);
 
         //Dans le cas si on souhaite créer d'autres comptes administrateur
 //        if($type == "iut") {
 //            $form = $form->add('administrateur',   CheckboxType::class, array('required' => false));
 //        }
 
-        $form = $form->add('ajouter', SubmitType::class)->getForm();
+        $form = $form->add('ajouter', SubmitType::class);
 
         // Si la requête est en POST (donc que le formulaire à été validé)
         if ($request->isMethod('POST')) {
@@ -88,24 +91,38 @@ class CompteController extends Controller
                 //On génère le mot de passe
                 $compte->setPassword(base64_encode(random_bytes(10)));
 
+                if($type == "apprenti") {
+                    $role = new Apprenti();
+                }
+                elseif ($type == "cfa") {
+                    $role = new ResponsableCfa();
+                }
+                elseif ($type == "iut") {
+                    $role = new ResponsableIut();
+                }
                 if($type == "apprenti" || $type == "cfa") {
+
                     //!!! Provisoire mais a remplacer par l'id de l'user connecté
-                    $user = $this->getDoctrine()->getRepository(ResponsableIut::class)->find(1);
-                    $compte->setResponsableIut($user);
+                    $user = $this->getDoctrine()->getRepository(Compte::class)->find(1);
+                    $role->setResponsableIut($user);
                 }
 
                 // On enregistre notre objet $compte dans la base de données,
                 $em = $this->getDoctrine()->getManager();
 
+
+
                 //On créer et rattache un dossier à l'apprenti
                 if($type == "apprenti") {
                     $dossier = new DossierApprenti();
-                    $compte->setDossierApprenti($dossier);
+                    $role->setDossierApprenti($dossier);
                     $dossier->setEtat("En cours");
                     $em->persist($dossier);
                 }
 
                 $em->persist($compte);
+                $role->setCompte($compte);
+                $em->persist($role);
                 $em->flush();
 
                 //On affiche un message de succès
@@ -133,7 +150,7 @@ class CompteController extends Controller
      */
     public function edition_compte(Request $request, $id) {
         $title = "Edition du compte";
-        $compte = $this->getDoctrine()->getRepository(Apprenti::class)->find($id);
+        $apprenti = $this->getDoctrine()->getRepository(Apprenti::class)->find($id);
 
         //!!! Il faut vérifier que l'utilisateur connecté est un iut ou que le compte a modifier est bien celui de l'apprenti connecté
         $autorized = true;
@@ -143,37 +160,26 @@ class CompteController extends Controller
             ));
         }
 
-        if(!$compte) {
+        if(!$apprenti) {
             return $this->render('message.html.twig', array(
                 'typeMessage' => "Apprenti non trouvé", 'message' => 'Pas d\'apprenti trouvé pour l\'ID ' . $id
             ));
         }
 
-        $form = $this->createFormBuilder($compte)
-            ->add('nom',      TextType::class)
-            ->add('prenom',     TextType::class)
-            ->add('email',   EmailType::class)
-            ->add('telephone',   TelType::class, array(
-                'attr' => array('maxlength' => 10)))
-            ->add('adresse',   TextType::class)
-            ->add('code_postal',   NumberType::class, array(
-                'attr' => array('maxlength' => 5)))
-            ->add('ville',   TextType::class)
-            ->add('enregistrer', SubmitType::class)
-            ->getForm();
+        $form = $this->createForm(ApprentiType::class, $apprenti);
 
         // Si la requête est en POST (donc que le formulaire à été validé)
         if ($request->isMethod('POST')) {
 
             //On copie l'email actuel du compte pour déterminer plus loin si l'utilisateur a changer le mail du compte
-            $old_email = "".$compte->getEmail();
+            $old_email = "".$apprenti->getCompte()->getEmail();
             // À partir de maintenant, la variable $compte contient les valeurs entrées dans le formulaire par le visiteur
             $form->handleRequest($request);
 
             $email_ok = true;
             //On vérifie s'il n'y a pas déjà un compte lié à cette adresse mail
-            if($old_email != $compte->getEmail()) {
-                $email_exist = $this->getDoctrine()->getRepository(Compte::class)->findOneByEmail($compte->getEmail());
+            if($old_email != $apprenti->getCompte()->getEmail()) {
+                $email_exist = $this->getDoctrine()->getRepository(Compte::class)->findOneByEmail($apprenti->getCompte()->getEmail());
                 if($email_exist) {
                     $email_ok = false;
                 }
@@ -193,7 +199,7 @@ class CompteController extends Controller
                 return $this->redirectToRoute('edition_compte', array('id' => $id));
             }
             if(!$email_ok) {
-                $form->get('email')->addError(new FormError('Un compte lié à cet email existe déjà.'));
+                $form->get('compte')->get('email')->addError(new FormError('Un compte lié à cet email existe déjà.'));
             }
         }
 
