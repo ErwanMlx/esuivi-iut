@@ -102,7 +102,7 @@ class Apprenti
     /**
      * @return string
      */
-    public function getTelephone(): string
+    public function getTelephone(): ?string
     {
         return $this->telephone;
     }
@@ -118,7 +118,7 @@ class Apprenti
     /**
      * @return string
      */
-    public function getAdresse(): string
+    public function getAdresse(): ?string
     {
         return $this->adresse;
     }
@@ -134,7 +134,7 @@ class Apprenti
     /**
      * @return string
      */
-    public function getCodePostal(): string
+    public function getCodePostal(): ?string
     {
         return $this->codePostal;
     }
@@ -150,7 +150,7 @@ class Apprenti
     /**
      * @return string
      */
-    public function getVille(): string
+    public function getVille(): ?string
     {
         return $this->ville;
     }
