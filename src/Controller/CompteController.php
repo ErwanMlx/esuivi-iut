@@ -87,9 +87,12 @@ class CompteController extends Controller
             //On vérifie s'il n'y a pas déjà un compte lié à cette adresse mail
             $email_exist = $this->getDoctrine()->getRepository(Compte::class)->findByEmail($compte->getEmail());
             // On vérifie que les valeurs entrées sont correctes
-            if ($form->isValid() && !$email_exist) {
+            if ($form->isSubmitted() && $form->isValid() && !$email_exist) {
                 //On génère le mot de passe
                 $compte->setPassword(base64_encode(random_bytes(10)));
+
+                // Par defaut l'utilisateur aura toujours le rôle ROLE_USER
+                $compte->setRoles(['ROLE_USER']);
 
                 if($type == "apprenti") {
                     $role = new Apprenti();

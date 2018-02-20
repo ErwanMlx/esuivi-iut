@@ -85,9 +85,9 @@ class Compte implements UserInterface, \Serializable
 
 
     /**
-     * @ORM\Column(name="roles", type="array")
+     * @ORM\Column(name="roles", type="json")
      */
-    private $roles = array();
+    private $roles = [];
 
     /**
      * @return int
@@ -185,6 +185,11 @@ class Compte implements UserInterface, \Serializable
         return array_unique($roles);
     }
 
+    public function setRoles(array $roles): void
+    {
+        $this->roles = $roles;
+    }
+
     public function getUsername()
     {
         return $this->getEmail();
@@ -193,12 +198,6 @@ class Compte implements UserInterface, \Serializable
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
-    }
-
-
-    public function setRoles(array $roles): void
-    {
-        $this->roles = $roles;
     }
 
     /**

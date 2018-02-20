@@ -23,7 +23,7 @@ security:
                 # il sera redirigé sur cette page
                 login_path: connexion
                 # Securisation des formulaires
-#                csrf_token_generator: security.csrf.token_manager
+                csrf_token_generator: security.csrf.token_manager
                 # La page par defaut apres une connexion reussie
                 default_target_path: admin
 

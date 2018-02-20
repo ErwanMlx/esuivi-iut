@@ -110,8 +110,8 @@ class SuiviController extends Controller
 //            }
 
                 //On identifie l'étape suivante qu'il faudra valider dans le dossier
-                $type_etape_suivante = $dossier->getEtapeActuelle()->getTypeEtape()->gettypeEtapeSuivante();
-
+//                $type_etape_suivante = $dossier->getEtapeActuelle()->getTypeEtape()->gettypeEtapeSuivante();
+                $type_etape_suivante = $em->getRepository(TypeEtape::class)->findOneByPositionEtape(($dossier->getEtapeActuelle()->getTypeEtape()->getId())+1);
                 if ($type_etape_suivante) {
                     //On créer la nouvelle étape actuelle du dossier
                     $new_etape_dossier = new EtapeDossier();
