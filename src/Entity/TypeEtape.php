@@ -46,12 +46,9 @@ class TypeEtape
     /**
      * @var TypeEtape
      *
-     * @ORM\ManyToOne(targetEntity="TypeEtape")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="id_type_etape_suivante", referencedColumnName="id")
-     * })
+     * @ORM\Column(name="position_etape", type="integer", nullable=true)
      */
-    private $typeEtapeSuivante;
+    private $positionEtape;
 
     /**
      * @return int
@@ -120,17 +117,17 @@ class TypeEtape
     /**
      * @return TypeEtape
      */
-    public function getTypeEtapeSuivante(): TypeEtape
+    public function getPositionEtape(): TypeEtape
     {
-        return $this->typeEtapeSuivante;
+        return $this->positionEtape;
     }
 
     /**
-     * @param TypeEtape $typeEtapeSuivante
+     * @param TypeEtape $positionEtape
      */
-    public function setTypeEtapeSuivante(TypeEtape $typeEtapeSuivante): void
+    public function setPositionEtape(TypeEtape $positionEtape): void
     {
-        $this->typeEtapeSuivante = $typeEtapeSuivante;
+        $this->positionEtape = $positionEtape;
     }
 
 }
