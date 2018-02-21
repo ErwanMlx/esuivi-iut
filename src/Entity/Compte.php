@@ -5,7 +5,6 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
-use FOS\UserBundle\Model\User as BaseUser;
 
 /**
  * Compte
@@ -86,7 +85,7 @@ class Compte implements UserInterface, \Serializable
 
 
     /**
-     * @ORM\Column(name="roles", type="json")
+     * @ORM\Column(name="roles", type="json", nullable=true)
      */
     private $roles = [];
 

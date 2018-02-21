@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * TypeEtape
  *
- * @ORM\Table(name="type_etape", indexes={@ORM\Index(name="IDX_2653F22A16EF75A2", columns={"id_type_etape_suivante"})})
+ * @ORM\Table(name="type_etape")
  * @ORM\Entity(repositoryClass="App\Repository\TypeEtapeRepository")
  */
 class TypeEtape
