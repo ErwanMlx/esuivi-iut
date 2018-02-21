@@ -13,7 +13,9 @@ security:
         main:
             # les urls auxquels s'appliquent ce firewall, dans ce cas, ce sont toutes les urls
             pattern: ^/
-            anonymous: true
+            anonymous: ~
+            http_basic: ~
+            provider: database_users
 
             form_login:
                 # Le nom de la route de la page de connexion
@@ -21,15 +23,15 @@ security:
                 # Le nom de la route où se trouve le formulaire de connexion
                 # Si un utilisateur tente d'acceder à une page protégée sans en avoir les droits
                 # il sera redirigé sur cette page
-                login_path: connexion
+                login_path: login
                 # Securisation des formulaires
                 csrf_token_generator: security.csrf.token_manager
                 # La page par defaut apres une connexion reussie
-                default_target_path: admin
+                default_target_path: index
 
             logout:
                 # La route où se trouve le process de deconnexion
-                path: deconnexion
+                path: logout
                 # La route sur laquelle doit etre rediriger l'utilisateur apres une deconnexion
                 target: index
 

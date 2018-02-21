@@ -22,6 +22,8 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+
 
 
 class CompteController extends Controller
@@ -41,7 +43,7 @@ class CompteController extends Controller
      *
      * @Route("/compte/ajout/{type}", name="ajout_compte", requirements={"type"="(apprenti|cfa|iut)"})
      */
-    public function ajout_compte(Request $request, $type)
+    public function ajout_compte(Request $request, UserPasswordEncoderInterface $encoder, $type)
     {
         //!!! A modif avec gestion de compte pour vérif si un iut a le droit d'add un collègue
         $autorized = true;
@@ -89,7 +91,13 @@ class CompteController extends Controller
             // On vérifie que les valeurs entrées sont correctes
             if ($form->isSubmitted() && $form->isValid() && !$email_exist) {
                 //On génère le mot de passe
-                $compte->setPassword(base64_encode(random_bytes(10)));
+//                $compte->setPassword(base64_encode(random_bytes(10)));
+
+
+                $plainPassword = 'password';
+                $encoded = $encoder->encodePassword($compte, $plainPassword);
+
+                $compte->setPassword($encoded);
 
                 // Par defaut l'utilisateur aura toujours le rôle ROLE_USER
                 $compte->setRoles(['ROLE_USER']);

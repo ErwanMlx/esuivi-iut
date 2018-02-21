@@ -6,13 +6,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\HttpFoundation\Request;
 
 class SecurityController extends AbstractController
 {
     /**
-     * @Route("/connexion", name="security_login")
+     * @Route("/connexion", name="login")
      */
-    public function login(AuthenticationUtils $helper): Response
+    public function login(Request $request, AuthenticationUtils $helper): Response
     {
 
         return $this->render('security/login.html.twig', [
@@ -29,7 +30,7 @@ class SecurityController extends AbstractController
      * Mais celle ci ne doit jamais être executé car symfony l'interceptera avant.
      *
      *
-     * @Route("/deconnexion", name="security_logout")
+     * @Route("/deconnexion", name="logout")
      */
     public function logout(): void
     {
