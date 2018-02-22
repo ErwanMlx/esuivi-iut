@@ -2,8 +2,15 @@
 
 {% trans_default_domain 'FOSUserBundle' %}
 
-{% block fos_user_content %}
-<p>
-{{ 'resetting.check_email'|trans({'%tokenLifetime%': tokenLifetime})|nl2br }}
-</p>
-{% endblock %}
+{% block title %}Réinitialisation du mot de passe{% endblock %}
+
+{% block page_title %}Email envoyé{% endblock %}
+
+    {% block fos_user_content %}
+        <div class="contenu col-sm-offset-3 col-sm-6">
+            <p>
+                {{ 'resetting.check_email'|trans({'%tokenLifetime%': tokenLifetime})|nl2br }}
+            </p>
+        </div>
+    {% endblock %}
+
