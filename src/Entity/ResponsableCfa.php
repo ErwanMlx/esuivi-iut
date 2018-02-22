@@ -13,9 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
 class ResponsableCfa
 {
     /**
-     * @var Compte
+     * @var User
      *
-     * @ORM\ManyToOne(targetEntity="Compte")
+     * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_responsable_iut", referencedColumnName="id")
      * })
@@ -23,11 +23,11 @@ class ResponsableCfa
     private $responsableIut;
 
     /**
-     * @var Compte
+     * @var User
      *
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="Compte")
+     * @ORM\OneToOne(targetEntity="User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_compte", referencedColumnName="id")
      * })
@@ -35,33 +35,33 @@ class ResponsableCfa
     private $compte;
 
     /**
-     * @return Compte
+     * @return User
      */
-    public function getResponsableIut(): Compte
+    public function getResponsableIut(): User
     {
         return $this->responsableIut;
     }
 
     /**
-     * @param Compte $responsableIut
+     * @param User $responsableIut
      */
-    public function setResponsableIut(Compte $responsableIut): void
+    public function setResponsableIut(User $responsableIut): void
     {
         $this->responsableIut = $responsableIut;
     }
 
     /**
-     * @return Compte
+     * @return User
      */
-    public function getCompte(): Compte
+    public function getCompte(): User
     {
         return $this->compte;
     }
 
     /**
-     * @param Compte $compte
+     * @param User $compte
      */
-    public function setCompte(Compte $compte): void
+    public function setCompte(User $compte): void
     {
         $this->compte = $compte;
     }

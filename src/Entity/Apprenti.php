@@ -77,9 +77,9 @@ class Apprenti
     private $dossier;
 
     /**
-     * @var Compte
+     * @var User
      *
-     * @ORM\ManyToOne(targetEntity="Compte")
+     * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_responsable_iut", referencedColumnName="id")
      * })
@@ -87,11 +87,11 @@ class Apprenti
     private $responsableIut;
 
     /**
-     * @var Compte
+     * @var User
      *
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="Compte")
+     * @ORM\OneToOne(targetEntity="User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_compte", referencedColumnName="id")
      * })
@@ -180,33 +180,33 @@ class Apprenti
     }
 
     /**
-     * @return Compte
+     * @return User
      */
-    public function getResponsableIut(): Compte
+    public function getResponsableIut(): User
     {
         return $this->idResponsableIut;
     }
 
     /**
-     * @param Compte $idResponsableIut
+     * @param User $idResponsableIut
      */
-    public function setResponsableIut(Compte $idResponsableIut): void
+    public function setResponsableIut(User $idResponsableIut): void
     {
         $this->idResponsableIut = $idResponsableIut;
     }
 
     /**
-     * @return Compte
+     * @return User
      */
-    public function getCompte(): Compte
+    public function getCompte(): User
     {
         return $this->compte;
     }
 
     /**
-     * @param Compte $compte
+     * @param User $compte
      */
-    public function setCompte(Compte $compte): void
+    public function setCompte(User $compte): void
     {
         $this->compte = $compte;
     }

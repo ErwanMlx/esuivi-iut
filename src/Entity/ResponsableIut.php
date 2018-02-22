@@ -20,11 +20,11 @@ class ResponsableIut
     private $acces = false;
 
     /**
-     * @var Compte
+     * @var User
      *
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="Compte")
+     * @ORM\OneToOne(targetEntity="User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_compte", referencedColumnName="id")
      * })
@@ -48,17 +48,17 @@ class ResponsableIut
     }
 
     /**
-     * @return Compte
+     * @return User
      */
-    public function getCompte(): Compte
+    public function getCompte(): User
     {
         return $this->compte;
     }
 
     /**
-     * @param Compte $compte
+     * @param User $compte
      */
-    public function setCompte(Compte $compte): void
+    public function setCompte(User $compte): void
     {
         $this->compte = $compte;
     }

@@ -27,7 +27,7 @@ class EtapeDossier
      *
      * @ORM\Column(name="date_debut", type="date", nullable=false)
      */
-    private $dateDebut = 'now';
+    private $dateDebut;
 
     /**
      * @var \DateTime
@@ -47,9 +47,9 @@ class EtapeDossier
     private $dossier;
 
     /**
-     * @var Compte
+     * @var User
      *
-     * @ORM\ManyToOne(targetEntity="Compte")
+     * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_validateur", referencedColumnName="id")
      * })
@@ -131,17 +131,17 @@ class EtapeDossier
     }
 
     /**
-     * @return Compte
+     * @return User
      */
-    public function getValidateur(): Compte
+    public function getValidateur(): User
     {
         return $this->validateur;
     }
 
     /**
-     * @param Compte $validateur
+     * @param User $validateur
      */
-    public function setValidateur(Compte $validateur): void
+    public function setValidateur(User $validateur): void
     {
         $this->validateur = $validateur;
     }
@@ -160,6 +160,11 @@ class EtapeDossier
     public function setTypeEtape(TypeEtape $typeEtape): void
     {
         $this->typeEtape = $typeEtape;
+    }
+
+    public function __construct()
+    {
+        $this->dateDebut = new \DateTime();
     }
 
 }

@@ -29,16 +29,21 @@
           <h1>{% block page_title %}{% endblock %}</h1>
         </div>
       </div>
-      <a href="{{ path('fos_user_security_login')  }}">
-        <div class="avatar col-xs-4 col-sm-3 text-center">
-          <span class="glyphicon glyphicon-user" aria-hidden="true" style="font-size: 70px;"></span>
-          <h5>{% block user %}NOM Prénom{% endblock %}</h5>
-        </div>
-      </a>
+        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+          <a href="{{ path('fos_user_security_logout')  }}">
+            <div class="avatar col-xs-4 col-sm-3 text-center">
+              <span class="glyphicon glyphicon-user" aria-hidden="true" style="font-size: 70px;"></span>
+              <h5>{% block user %}{{ app.user.nom ~ ' ' ~ app.user.prenom }}{% endblock %}</h5>
+            </div>
+          </a>
+        {% else %}
+          <a href="{{ path('fos_user_security_login') }}">Connexion</a>
+        {% endif %}
       <div class="col-xs-12 titre visible-xs-block">
         <h1>{{ block('page_title') }}</h1>
       </div>
     </div>
+      {#{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}#}
     <div class="row">
       <ul class="navigation">
         <li><a href="{{ path('liste') }}">Liste Apprentis</a></li>
@@ -46,6 +51,7 @@
         <li><a href="{{ path('choix_ajout') }}">Gestion Comptes</a></li>
       </ul>
     </div>
+      {#{% endif %}#}
   </div>
 {% endblock %}
 

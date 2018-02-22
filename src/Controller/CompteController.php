@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\Compte;
 use App\Entity\Apprenti;
 use App\Entity\DossierApprenti;
+use App\Entity\EtapeDossier;
+use App\Entity\User;
 use App\Entity\ResponsableCfa;
 use App\Entity\ResponsableIut;
+use App\Entity\TypeEtape;
 use App\Form\ApprentiType;
 use App\Form\CompteType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -48,7 +50,7 @@ class CompteController extends Controller
         //!!! A modif avec gestion de compte pour vérif si un iut a le droit d'add un collègue
         $autorized = true;
 
-        $compte = new Compte();
+        $user = new User();
         //On détermine quel type de compte on va créer
         if($type == "apprenti") {
             $title = "apprenti";
@@ -71,7 +73,7 @@ class CompteController extends Controller
 //
 //        ;
 
-        $form = $this->createForm(CompteType::class, $compte);
+        $form = $this->createForm(CompteType::class, $user);
 
         //Dans le cas si on souhaite créer d'autres comptes administrateur
 //        if($type == "iut") {
@@ -86,42 +88,55 @@ class CompteController extends Controller
             // À partir de maintenant, la variable $compte contient les valeurs entrées dans le formulaire par l'utilisateur
             $form->handleRequest($request);
 
+            $email_exist = false;
+            $userManager = $this->get('fos_user.user_manager');
+
+
+            $exists = $userManager->findUserBy(array('email' => $user->getEmail()));
+            if ($exists instanceof User) {
+                $email_exist = true;            }
+
             //On vérifie s'il n'y a pas déjà un compte lié à cette adresse mail
-            $email_exist = $this->getDoctrine()->getRepository(Compte::class)->findByEmail($compte->getEmail());
+//            $email_exist = $this->getDoctrine()->getRepository(Compte::class)->findByEmail($user->getEmail());
             // On vérifie que les valeurs entrées sont correctes
             if ($form->isSubmitted() && $form->isValid() && !$email_exist) {
                 //On génère le mot de passe
 //                $compte->setPassword(base64_encode(random_bytes(10)));
 
+//                $userManager->updateUser($user);
+
 
                 $plainPassword = 'password';
-                $encoded = $encoder->encodePassword($compte, $plainPassword);
+                $encoded = $encoder->encodePassword($user, $plainPassword);
 
-                $compte->setPassword($encoded);
+                $user->setPassword($encoded);
+
+                $user->setEnabled(true);
 
                 // Par defaut l'utilisateur aura toujours le rôle ROLE_USER
-                $compte->setRoles(['ROLE_USER']);
+
 
                 if($type == "apprenti") {
                     $role = new Apprenti();
+                    $user->addRole('ROLE_APPRENTI');
                 }
                 elseif ($type == "cfa") {
                     $role = new ResponsableCfa();
+                    $user->addRole('ROLE_CFA');
                 }
                 elseif ($type == "iut") {
                     $role = new ResponsableIut();
+                    $user->addRole('ROLE_IUT');
                 }
                 if($type == "apprenti" || $type == "cfa") {
 
                     //!!! Provisoire mais a remplacer par l'id de l'user connecté
-                    $user = $this->getDoctrine()->getRepository(Compte::class)->find(1);
-                    $role->setResponsableIut($user);
+                    $user_connected = $this->getDoctrine()->getRepository(User::class)->find(1);
+                    $role->setResponsableIut($user_connected);
                 }
 
                 // On enregistre notre objet $compte dans la base de données,
                 $em = $this->getDoctrine()->getManager();
-
-
 
                 //On créer et rattache un dossier à l'apprenti
                 if($type == "apprenti") {
@@ -129,10 +144,15 @@ class CompteController extends Controller
                     $role->setDossierApprenti($dossier);
                     $dossier->setEtat("En cours");
                     $em->persist($dossier);
+                    $etape_dossier = new EtapeDossier();
+                    $etape_dossier->setDossier($dossier);
+                    $etape_dossier->setTypeEtape($this->getDoctrine()->getRepository(TypeEtape::class)->find(1));
+                    $em->persist($etape_dossier);
+                    $dossier->setEtapeActuelle($etape_dossier);
                 }
 
-                $em->persist($compte);
-                $role->setCompte($compte);
+                $em->persist($user);
+                $role->setCompte($user);
                 $em->persist($role);
                 $em->flush();
 
@@ -190,7 +210,7 @@ class CompteController extends Controller
             $email_ok = true;
             //On vérifie s'il n'y a pas déjà un compte lié à cette adresse mail
             if($old_email != $apprenti->getCompte()->getEmail()) {
-                $email_exist = $this->getDoctrine()->getRepository(Compte::class)->findOneByEmail($apprenti->getCompte()->getEmail());
+                $email_exist = $this->getDoctrine()->getRepository(User::class)->findOneByEmail($apprenti->getCompte()->getEmail());
                 if($email_exist) {
                     $email_ok = false;
                 }

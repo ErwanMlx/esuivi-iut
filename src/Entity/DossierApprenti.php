@@ -78,9 +78,9 @@ class DossierApprenti
     private $etapeActuelle;
 
     /**
-     * @var Compte
+     * @var User
      *
-     * @ORM\ManyToOne(targetEntity="Compte")
+     * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_maitre_apprentissage", referencedColumnName="id")
      * })
@@ -216,17 +216,17 @@ class DossierApprenti
     }
 
     /**
-     * @return Compte
+     * @return User
      */
-    public function getMaitreApprentissage(): Compte
+    public function getMaitreApprentissage(): User
     {
         return $this->maitreApprentissage;
     }
 
     /**
-     * @param Compte $maitreApprentissage
+     * @param User $maitreApprentissage
      */
-    public function setMaitreApprentissage(Compte $maitreApprentissage): void
+    public function setMaitreApprentissage(User $maitreApprentissage): void
     {
         $this->maitreApprentissage = $maitreApprentissage;
     }
