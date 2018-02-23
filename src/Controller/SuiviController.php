@@ -2,7 +2,6 @@
 namespace App\Controller;
 
 use App\Entity\DossierApprenti;
-use App\Entity\ResponsableIut;
 use App\Entity\EtapeDossier;
 use App\Entity\TypeEtape;
 use App\Entity\Apprenti;

@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * TypeEtape
  *
- * @ORM\Table(name="type_etape")
+ * @ORM\Table(name="type_etape", options={"comment":"Les types d'étapes d'un dossier"})
  * @ORM\Entity(repositoryClass="App\Repository\TypeEtapeRepository")
  */
 class TypeEtape

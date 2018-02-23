@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * CorrespondantEntreprise
  *
- * @ORM\Table(name="correspondant_entreprise")
+ * @ORM\Table(name="correspondant_entreprise", options={"comment":"Les informations des correspondants des entreprises des apprentis"})
  * @ORM\Entity(repositoryClass="App\Repository\CorrespondantEntrepriseRepository")
  */
 class CorrespondantEntreprise

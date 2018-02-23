@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * EtapeDossier
  *
- * @ORM\Table(name="etape_dossier", indexes={@ORM\Index(name="IDX_662143ECE3D54947", columns={"id_dossier"}), @ORM\Index(name="IDX_662143EC1E108449", columns={"id_validateur"}), @ORM\Index(name="IDX_662143EC83D972FD", columns={"id_type_etape"})})
+ * @ORM\Table(name="etape_dossier", options={"comment":"Les étapes du dossier de l'apprenti"}, indexes={@ORM\Index(name="IDX_662143ECE3D54947", columns={"id_dossier"}), @ORM\Index(name="IDX_662143EC1E108449", columns={"id_validateur"}), @ORM\Index(name="IDX_662143EC83D972FD", columns={"id_type_etape"})})
  * @ORM\Entity(repositoryClass="App\Repository\EtapeDossierRepository")
  */
 class EtapeDossier

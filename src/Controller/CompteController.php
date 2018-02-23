@@ -6,8 +6,6 @@ use App\Entity\Apprenti;
 use App\Entity\DossierApprenti;
 use App\Entity\EtapeDossier;
 use App\Entity\User;
-use App\Entity\ResponsableCfa;
-use App\Entity\ResponsableIut;
 use App\Entity\TypeEtape;
 use App\Form\ApprentiType;
 use App\Form\CompteType;
@@ -113,26 +111,14 @@ class CompteController extends Controller
 
                 $user->setEnabled(true);
 
-                // Par defaut l'utilisateur aura toujours le rôle ROLE_USER
-
-
                 if($type == "apprenti") {
-                    $role = new Apprenti();
                     $user->addRole('ROLE_APPRENTI');
                 }
                 elseif ($type == "cfa") {
-                    $role = new ResponsableCfa();
                     $user->addRole('ROLE_CFA');
                 }
                 elseif ($type == "iut") {
-                    $role = new ResponsableIut();
                     $user->addRole('ROLE_IUT');
-                }
-                if($type == "apprenti" || $type == "cfa") {
-
-                    //!!! Provisoire mais a remplacer par l'id de l'user connecté
-                    $user_connected = $this->getDoctrine()->getRepository(User::class)->find(1);
-                    $role->setResponsableIut($user_connected);
                 }
 
                 // On enregistre notre objet $compte dans la base de données,
@@ -140,6 +126,14 @@ class CompteController extends Controller
 
                 //On créer et rattache un dossier à l'apprenti
                 if($type == "apprenti") {
+                    $role = new Apprenti();
+
+                    //!!! Provisoire mais a remplacer par l'id de l'user connecté
+
+                    $user_connected = $this->getDoctrine()->getRepository(User::class)->find(1);
+                    $role->setResponsableIut($user_connected);
+
+
                     $dossier = new DossierApprenti();
                     $role->setDossierApprenti($dossier);
                     $dossier->setEtat("En cours");
@@ -152,8 +146,10 @@ class CompteController extends Controller
                 }
 
                 $em->persist($user);
-                $role->setCompte($user);
-                $em->persist($role);
+                if($type == "apprenti") {
+                    $role->setCompte($user);
+                    $em->persist($role);
+                }
                 $em->flush();
 
                 //On affiche un message de succès
