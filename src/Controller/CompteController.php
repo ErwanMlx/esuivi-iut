@@ -32,7 +32,7 @@ class CompteController extends Controller
     /**
      * Affichage de la page de choix d'ajout de compte
      *
-     * @Route("/ajout_compte", name="choix_ajout")
+     * @Route("/ajout_compte/", name="choix_ajout")
      */
     public function choix_ajout() {
         return $this->render('compte/choix_ajout.html.twig');

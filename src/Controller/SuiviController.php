@@ -15,11 +15,22 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class SuiviController extends Controller
 {
     /**
+     * Si l'utilisateur est un apprenti, on récupère son ID pour afficher son dossier
+     *
+     * @Route("/suivi/", name="suiviPerso")
+     */
+    public function suiviPerso()
+    {
+        $id = $this->getUser()->getId();
+        return $this->suivi($id);
+    }
+
+    /**
      * Suivi de apprenti corrspondant à l'id
      *
      * @Route("/suivi/{id}", name="suivi", requirements={"id"="\d+"}) //requirements permet d'autoriser uniquement les nombres dans l'URL
      */
-    public function show($id)
+    public function suivi($id)
     {
         $apprenti = null;
         $id_type_etape_actuelle = 3;
