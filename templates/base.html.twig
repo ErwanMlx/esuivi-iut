@@ -30,7 +30,7 @@
         </div>
       </div>
         {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-          <a href="{{ path('fos_user_security_logout')  }}">
+          <a href="{{ path('profil_perso')  }}">
             <div class="avatar col-xs-4 col-sm-3 text-center">
               <span class="glyphicon glyphicon-user" aria-hidden="true" style="font-size: 70px;"></span>
               <h5>{% block user %}{{ app.user.nom ~ ' ' ~ app.user.prenom }}{% endblock %}</h5>

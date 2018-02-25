@@ -18,6 +18,12 @@ fos_user_change_password:
     resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
     prefix: /profil
 
+fos_user_profile_show:
+    path:  /profil
+    defaults: { _controller: App\Controller\CompteController::profil }
+    requirements:
+        _method: GET
+
 #fos_user_register:
 #    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
 #    prefix: /inscription

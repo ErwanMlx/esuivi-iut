@@ -184,15 +184,15 @@ class Apprenti
      */
     public function getResponsableIut(): User
     {
-        return $this->idResponsableIut;
+        return $this->responsableIut;
     }
 
     /**
-     * @param User $idResponsableIut
+     * @param User $responsableIut
      */
-    public function setResponsableIut(User $idResponsableIut): void
+    public function setResponsableIut(User $responsableIut): void
     {
-        $this->idResponsableIut = $idResponsableIut;
+        $this->responsableIut = $responsableIut;
     }
 
     /**

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Apprenti;
 use App\Entity\DossierApprenti;
 use App\Entity\EtapeDossier;
+use App\Entity\MaitreApprentissage;
 use App\Entity\User;
 use App\Entity\TypeEtape;
 use App\Form\ApprentiType;
@@ -14,6 +15,9 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route; //To define the route to access it
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted; //Pour vérifier si l'utilisateur est autorisé a accéder à la page
+use Symfony\Component\Security\Core\Exception\AccessDeniedException; //Erreur 403
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface; //Pour vérifier les droits
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -33,6 +37,7 @@ class CompteController extends Controller
      * Affichage de la page de choix d'ajout de compte
      *
      * @Route("/ajout_compte/", name="choix_ajout")
+     * @IsGranted("ROLE_IUT")
      */
     public function choix_ajout() {
         return $this->render('compte/choix_ajout.html.twig');
@@ -42,35 +47,25 @@ class CompteController extends Controller
      * Formulaire d'ajout de apprenti/cfa/iut
      *
      * @Route("/compte/ajout/{type}", name="ajout_compte", requirements={"type"="(apprenti|cfa|iut)"})
+     * @IsGranted("ROLE_IUT")
      */
-    public function ajout_compte(Request $request, UserPasswordEncoderInterface $encoder, $type)
+    public function ajout_compte(AuthorizationCheckerInterface $authChecker, Request $request, UserPasswordEncoderInterface $encoder, $type)
     {
-        //!!! A modif avec gestion de compte pour vérif si un iut a le droit d'add un collègue
-        $autorized = true;
-
         $user = new User();
         //On détermine quel type de compte on va créer
         if($type == "apprenti") {
             $title = "apprenti";
         } elseif($type == "cfa") {
             $title = "CFA";
-        } elseif($type == "iut" && $autorized) {
+        }
+        //Si on souhaite ajouter un compte IUT, on vérifie si le compte connecté possède les droits
+        elseif($type == "iut" && $authChecker->isGranted('ROLE_ADMIN')) {
             $title = "IUT";
         } else {
-            return $this->render('message.html.twig', array(
-                'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
-            ));
+            throw new AccessDeniedException("Vous n'êtes pas autorisé à accéder à cette page.");
         }
 
         //On créer le formulaire
-//        $form = $this->createFormBuilder($compte, array(
-//            'validation_groups' => array('ajout'),))
-//            ->add('nom',      TextType::class)
-//            ->add('prenom',     TextType::class)
-//            ->add('email',   EmailType::class)
-//
-//        ;
-
         $form = $this->createForm(CompteType::class, $user);
 
         //Dans le cas si on souhaite créer d'autres comptes administrateur
@@ -89,20 +84,15 @@ class CompteController extends Controller
             $email_exist = false;
             $userManager = $this->get('fos_user.user_manager');
 
-
+            //On vérifie s'il n'y a pas déjà un compte lié à cette adresse mail
             $exists = $userManager->findUserBy(array('email' => $user->getEmail()));
             if ($exists instanceof User) {
                 $email_exist = true;            }
 
-            //On vérifie s'il n'y a pas déjà un compte lié à cette adresse mail
-//            $email_exist = $this->getDoctrine()->getRepository(Compte::class)->findByEmail($user->getEmail());
             // On vérifie que les valeurs entrées sont correctes
             if ($form->isSubmitted() && $form->isValid() && !$email_exist) {
                 //On génère le mot de passe
 //                $compte->setPassword(base64_encode(random_bytes(10)));
-
-//                $userManager->updateUser($user);
-
 
                 $plainPassword = 'password';
                 $encoded = $encoder->encodePassword($user, $plainPassword);
@@ -124,31 +114,25 @@ class CompteController extends Controller
                 // On enregistre notre objet $compte dans la base de données,
                 $em = $this->getDoctrine()->getManager();
 
+                $em->persist($user);
+
                 //On créer et rattache un dossier à l'apprenti
                 if($type == "apprenti") {
-                    $role = new Apprenti();
-
-                    //!!! Provisoire mais a remplacer par l'id de l'user connecté
-
-                    $user_connected = $this->getDoctrine()->getRepository(User::class)->find(1);
-                    $role->setResponsableIut($user_connected);
-
-
                     $dossier = new DossierApprenti();
-                    $role->setDossierApprenti($dossier);
                     $dossier->setEtat("En cours");
                     $em->persist($dossier);
+
+                    $role = new Apprenti();
+                    $role->setCompte($user);
+                    $role->setResponsableIut($this->getUser());
+                    $role->setDossierApprenti($dossier);
+                    $em->persist($role);
+
                     $etape_dossier = new EtapeDossier();
                     $etape_dossier->setDossier($dossier);
                     $etape_dossier->setTypeEtape($this->getDoctrine()->getRepository(TypeEtape::class)->find(1));
                     $em->persist($etape_dossier);
                     $dossier->setEtapeActuelle($etape_dossier);
-                }
-
-                $em->persist($user);
-                if($type == "apprenti") {
-                    $role->setCompte($user);
-                    $em->persist($role);
                 }
                 $em->flush();
 
@@ -173,39 +157,56 @@ class CompteController extends Controller
     /**
      * Edition du compte de l'apprenti
      *
+     * @Route("/compte/edition/", name="edition_compte_perso")
+     * @IsGranted("ROLE_APPRENTI")
+     */
+    public function edition_compte_perso(AuthorizationCheckerInterface $authChecker, Request $request)
+    {
+        $id = $this->getUser()->getId();
+        return $this->edition_compte($authChecker, $request, $id);
+    }
+
+    /**
+     * Edition du compte de l'apprenti
+     *
      * @Route("/compte/edition/{id}", name="edition_compte", requirements={"id"="\d+"})
      */
-    public function edition_compte(Request $request, $id) {
+    public function edition_compte(AuthorizationCheckerInterface $authChecker, Request $request, $id) {
         $title = "Edition du compte";
-        $apprenti = $this->getDoctrine()->getRepository(Apprenti::class)->find($id);
 
-        //!!! Il faut vérifier que l'utilisateur connecté est un iut ou que le compte a modifier est bien celui de l'apprenti connecté
-        $autorized = true;
-        if(!$autorized) {
+        //On vérifie que l'utilisateur connecté est un iut ou que le compte a modifier est bien celui de l'utilisateur connecté
+        if(!($authChecker->isGranted('ROLE_IUT') || $this->getUser()->getId()==$id)) {
+            throw new AccessDeniedException("Vous n'êtes pas autorisé à accéder à cette page.");
+        }
+
+        //On récupère l'apprenti
+//        $apprenti = $this->getDoctrine()->getRepository(Apprenti::class)->find($id);
+        $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+
+        if(!$user) {
             return $this->render('message.html.twig', array(
-                'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
+                'typeMessage' => "Utilisateur non trouvé", 'message' => 'Pas d`\'utilisateur trouvé pour l\'ID ' . $id
             ));
         }
 
-        if(!$apprenti) {
-            return $this->render('message.html.twig', array(
-                'typeMessage' => "Apprenti non trouvé", 'message' => 'Pas d\'apprenti trouvé pour l\'ID ' . $id
-            ));
+        if($user->hasRole('ROLE_APPRENTI')) {
+            $apprenti = $this->getDoctrine()->getRepository(Apprenti::class)->find($id);
+            $form = $this->createForm(ApprentiType::class, $apprenti);
+        } else {
+            $form = $this->createForm(CompteType::class, $user);
         }
-
-        $form = $this->createForm(ApprentiType::class, $apprenti);
 
         // Si la requête est en POST (donc que le formulaire à été validé)
         if ($request->isMethod('POST')) {
 
             //On copie l'email actuel du compte pour déterminer plus loin si l'utilisateur a changer le mail du compte
-            $old_email = "".$apprenti->getCompte()->getEmail();
+            $old_email = "".$user->getEmail();
             // À partir de maintenant, la variable $compte contient les valeurs entrées dans le formulaire par le visiteur
             $form->handleRequest($request);
 
             $email_ok = true;
             //On vérifie s'il n'y a pas déjà un compte lié à cette adresse mail
-            if($old_email != $apprenti->getCompte()->getEmail()) {
+            if($old_email != $user->getEmail()) {
                 $email_exist = $this->getDoctrine()->getRepository(User::class)->findOneByEmail($apprenti->getCompte()->getEmail());
                 if($email_exist) {
                     $email_ok = false;
@@ -237,43 +238,57 @@ class CompteController extends Controller
         ));
     }
 
-//    /**
-//     * Modification de mot de passe
-//     *
-//     * @Route("/compte/mot_de_passe/modifier/{id}", name="edition_password", requirements={"id"="\d+"})
-//     */
-//    public function modifier_mot_de_passe(Request $request, $id) {
-//
-//    }
 
-//    /**
-//     * Affichage de la page de profil
-//     *
-//     * @Route("/profil/{type}/{id}", name="profil", requirements={"type"="(apprenti|cfa|iut)", "id"="\d+"})
-//     */
-//    public function profil($type, $id) {
-//        $title = "Profil";
-//        $autorized = true;
-//        if($type == "apprenti") {
-//            $compte = $this->getDoctrine()->getRepository(Apprenti::class)->find($id);
-//        } elseif($type == "cfa") {
-//            $compte = $this->getDoctrine()->getRepository(ResponsableCfa::class)->find($id);
-//        } elseif($type == "iut" && $autorized) {
-//            $compte = $this->getDoctrine()->getRepository(ResponsableIut::class)->find($id);
-//        } else {
-//            return $this->render('message.html.twig', array(
-//                'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
-//            ));
-//        }
-//
-//        if(!$compte) {
-//            return $this->render('message.html.twig', array(
-//                'typeMessage' => "Apprenti non trouvé", 'message' => 'Pas d\'apprenti trouvé pour l\'ID ' . $id
-//            ));
-//        }
-//
-//        return $this->render('compte/profil.html.twig', array('title' => $title,
-//            'form' => $form->createView(),
-//        ));
-//    }
+    /**
+     * Affichage de la page de profil perso
+     *
+     * @Route("/compte/profil/", name="profil_perso")
+     */
+    public function profil_perso(AuthorizationCheckerInterface $authChecker) {
+        $id = $this->getUser()->getId();
+        return $this->profil($authChecker, $id);
+    }
+
+    /**
+     * Affichage de la page de profil
+     *
+     * @Route("/compte/profil/{id}", name="profil", requirements={"id"="\d+"})
+     */
+    public function profil(AuthorizationCheckerInterface $authChecker, $id) {
+
+        $edit = false;
+        $apprenti = null;
+        $maitreapp = null;
+
+        $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+
+        if(!$user) {
+            return $this->render('message.html.twig', array(
+                'typeMessage' => "Utilisateur non trouvé", 'message' => 'Pas d`\'utilisateur trouvé pour l\'ID ' . $id
+            ));
+        }
+        if ($this->getUser()->getId()==$id || ($authChecker->isGranted('ROLE_IUT') && !$user->hasRole('ROLE_IUT'))) {
+            $edit = true;
+        }
+
+        if($user->hasRole('ROLE_APPRENTI')) {
+            if(($authChecker->isGranted('ROLE_APPRENTI') && $this->getUser()->getID()!=$user->getId())) {
+                throw new AccessDeniedException();
+            }
+            $apprenti = $this->getDoctrine()->getRepository(Apprenti::class)->find($id);
+            if ($authChecker->isGranted('ROLE_MAITRE_APP')) {
+                $ma = $apprenti->getDossierApprenti()->getMaitreApprentissage()->getId;
+                if ($ma != $this->getUser()->getId) {
+                    throw new AccessDeniedException();
+                }
+            }
+
+        } elseif ($user->hasRole('ROLE_MAITRE_APP')) {
+            $maitreapp = $this->getDoctrine()->getRepository(MaitreApprentissage::class)->find($id);
+        }
+
+        return $this->render('compte/profil.html.twig', array(
+            'user' => $user, 'apprenti' => $apprenti, 'maitreapp' => $maitreapp, 'edit' => $edit
+        ));
+    }
 }
