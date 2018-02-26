@@ -153,7 +153,6 @@ class SuiviController extends Controller
                 $em->flush();
             }
             return new JsonResponse(array('error' => "ok"));
-
         }
         return $this->render('message.html.twig', array(
             'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
@@ -203,16 +202,25 @@ class SuiviController extends Controller
     }
 
     /**
+     * Affichage de la liste des apprentis
      * @Route("/liste/", name="liste")
      */
-    public function liste(AuthorizationCheckerInterface $authChecker)
+    public function liste(AuthorizationCheckerInterface $authChecker, Request $req)
     {
         if ($authChecker->isGranted('ROLE_APPRENTI')) {
             throw new AccessDeniedException();
         }
-        $liste = $this->getDoctrine()
-            ->getRepository(Apprenti::class)
-            ->findAll();
+
+
+        $search = $req->get('search');
+        if($search != null) {
+            $liste = $this->getDoctrine()
+                ->getRepository(Apprenti::class)->search($search);
+        } else {
+            $liste = $this->getDoctrine()
+                ->getRepository(Apprenti::class)
+                ->findAll();
+        }
 
         return $this->render('suivi/liste.html.twig', array(
             'liste' => $liste,
@@ -220,6 +228,21 @@ class SuiviController extends Controller
     }
 
 
+    /**
+     * Recherche des apprentis
+     * @Route("/liste/recherche/", name="recherche_liste")
+     */
+    public function recherche(AuthorizationCheckerInterface $authChecker, Request $req) {
+        if($req->isXmlHttpRequest()) {
+            if ($authChecker->isGranted('ROLE_APPRENTI')) {
+                throw new AccessDeniedException();
+            }
+            $search = $req->get('search');
+        }
+        return $this->render('message.html.twig', array(
+            'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
+        ));
+    }
 
 
 

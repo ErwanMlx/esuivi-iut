@@ -92,10 +92,11 @@ class CompteController extends Controller
             // On vérifie que les valeurs entrées sont correctes
             if ($form->isSubmitted() && $form->isValid() && !$email_exist) {
                 //On génère le mot de passe
-//                $compte->setPassword(base64_encode(random_bytes(10)));
+//                $tokenGenerator = $this->getContainer()->get('fos_user.util.token_generator');
+//                $password = substr($tokenGenerator->generateToken(), 0, 8);
 
-                $plainPassword = 'password';
-                $encoded = $encoder->encodePassword($user, $plainPassword);
+                $password = 'password';
+                $encoded = $encoder->encodePassword($user, $password);
 
                 $user->setPassword($encoded);
 

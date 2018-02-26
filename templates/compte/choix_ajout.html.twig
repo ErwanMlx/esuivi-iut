@@ -15,7 +15,6 @@
                 {% if is_granted('ROLE_ADMIN') %}
                     <a class="btn btn-default" href="{{ path('ajout_compte', {'type': "iut"}) }}">Ajouter un responsable IUT</a>
                 {% endif %}
-                <a class="btn btn-default" href="{{ path('fos_user_change_password') }}">Modification mot de passe</a>
             </div>
         </div>
     </div>
