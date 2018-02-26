@@ -32,7 +32,7 @@ class TypeEtape
     /**
      * @var string
      *
-     * @ORM\Column(name="type_validateur", type="string", length=3, nullable=false)
+     * @ORM\Column(name="type_validateur", type="string", length=32, nullable=false)
      */
     private $typeValidateur;
 
@@ -44,7 +44,7 @@ class TypeEtape
     private $typeIcone;
 
     /**
-     * @var TypeEtape
+     * @var integer
      *
      * @ORM\Column(name="position_etape", type="integer", nullable=true)
      */
@@ -115,17 +115,17 @@ class TypeEtape
     }
 
     /**
-     * @return TypeEtape
+     * @return integer
      */
-    public function getPositionEtape(): TypeEtape
+    public function getPositionEtape(): int
     {
         return $this->positionEtape;
     }
 
     /**
-     * @param TypeEtape $positionEtape
+     * @param integer $positionEtape
      */
-    public function setPositionEtape(TypeEtape $positionEtape): void
+    public function setPositionEtape(int $positionEtape): void
     {
         $this->positionEtape = $positionEtape;
     }

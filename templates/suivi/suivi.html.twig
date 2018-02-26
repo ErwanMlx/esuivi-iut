@@ -44,12 +44,15 @@
                         {% for i in 1..count %}
                             {% set etape = liste_etapes[index_etape] %}
                             {% set class_type = 'col-lg-12 etape' %}
-                            {% if etape.ID < id_type_etape_actuelle %}
+                            {% if etape.positionEtape < position_etape_actuelle %}
                                 {% set class_type = class_type ~ ' etape-valide' %}
-                            {% elseif etape.ID > id_type_etape_actuelle %}
+                            {% elseif etape.positionEtape > position_etape_actuelle %}
                                 {% set class_type = class_type ~ ' etape-future' %}
                             {% else %}
                                 {% set class_type = class_type ~ ' etape-actuelle' %}
+                            {% endif %}
+                            {% if is_granted(etape.typeValidateur) or is_granted('ROLE_IUT') %}
+                                {% set class_type = class_type ~ ' validable' %}
                             {% endif %}
                             <div class="{{ class_type }}" id="{{ etape.id }}">
                                 <div class="cercle center-block col-lg-4"><img class="img-responsive" src="/build/img/Icone_{{ etape.typeIcone }}.png" alt=""/></div>

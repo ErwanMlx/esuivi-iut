@@ -33,16 +33,8 @@
                         <div class="bordure col-sm-8 col-sm-offset-2">
                             <p>{{ apprenti.compte.prenom ~ ' ' ~ apprenti.compte.nom }}</p>
                             <ul>
-                                {% if apprenti.DossierApprenti.Entreprise is empty %}
-                                    <li>Nom entreprise : Pas encore saisi</li>
-                                {% else %}
-                                    <li>Nom entreprise : {{ apprenti.DossierApprenti.Entreprise.nom}}</li>
-                                {% endif %}
-                                {% if apprenti.DossierApprenti.sujetPropose is empty %}
-                                    <li>Mission : Pas encore saisi</li>
-                                {% else %}
-                                    <li>Mission : {{ apprenti.DossierApprenti.sujetPropose }}</li>
-                                {% endif %}
+                                <li>Nom entreprise : {{ apprenti.DossierApprenti.Entreprise.nom|default('Pas encore saisi')}}</li>
+                                <li>Mission : {{ apprenti.DossierApprenti.sujetPropose|default('Pas encore saisi') }}</li>
                                 <li>Etat d'avancement : {{ apprenti.DossierApprenti.EtapeActuelle.TypeEtape.nomEtape }}</li>
                             </ul>
                         </div>

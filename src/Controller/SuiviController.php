@@ -8,6 +8,9 @@ use App\Entity\Apprenti;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route; //To define the route to access it
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted; //Pour vérifier si l'utilisateur est autorisé a accéder à la page
+use Symfony\Component\Security\Core\Exception\AccessDeniedException; //Erreur 403
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface; //Pour vérifier les droits
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException; //Erreur 404
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,11 +21,12 @@ class SuiviController extends Controller
      * Si l'utilisateur est un apprenti, on récupère son ID pour afficher son dossier
      *
      * @Route("/suivi/", name="suiviPerso")
+     * @IsGranted("ROLE_APPRENTI")
      */
-    public function suiviPerso()
+    public function suiviPerso(AuthorizationCheckerInterface $authChecker)
     {
         $id = $this->getUser()->getId();
-        return $this->suivi($id);
+        return $this->suivi($authChecker, $id);
     }
 
     /**
@@ -30,11 +34,12 @@ class SuiviController extends Controller
      *
      * @Route("/suivi/{id}", name="suivi", requirements={"id"="\d+"}) //requirements permet d'autoriser uniquement les nombres dans l'URL
      */
-    public function suivi($id)
+    public function suivi(AuthorizationCheckerInterface $authChecker, $id)
     {
-        $apprenti = null;
-        $id_type_etape_actuelle = 3;
-        $idDossier = 2;
+        //Un apprenti ne peux pas voir le suivi d'un autre apprenti
+        if ($authChecker->isGranted('ROLE_APPRENTI') && $this->getUser()->getId()!=$id) {
+            throw new AccessDeniedException();
+        }
 
         //On récupère l'apprenti pour lequel on veux afficher le suivi
         $apprenti = $this->getDoctrine()
@@ -47,18 +52,30 @@ class SuiviController extends Controller
             ));
         }
 
-        $idDossier = $apprenti->getDossierApprenti()->getId();
+        $dossier = $apprenti->getDossierApprenti()->getId();
 
+        //Un maitre d'apprentissage ne peux voir le suivi que de ses apprenti
+        if ($authChecker->isGranted('ROLE_MAITRE_APP')) {
+            $ma = $dossier->getMaitreApprentissage()->getId;
+            if ($ma != $this->getUser()->getId) {
+                throw new AccessDeniedException();
+            }
+        }
+
+
+//        select * from type_etape te LEFT JOIN etape_dossier ed ON (ed.id_type_etape = te.id) WHERE id_dossier=2 OR id_dossier IS NULL ORDER BY te.position_etape
+//        select * from type_etape te LEFT JOIN etape_dossier ed ON (ed.id_type_etape = te.id) WHERE
+//    (id_dossier=2 OR id_dossier IS NULL) AND (ed.date_debut = (SELECT MAX(ed2.date_debut) FROM etape_dossier ed2 WHERE ed2.id_type_etape=te.id AND ed2.id_dossier=2) OR ed.date_debut IS NULL) ORDER BY te.position_etape
         //On recupère toutes les étapes déjà complétée/en cours du dossier pour les afficher
         $etapes_dossier = $this->getDoctrine()
             ->getRepository(EtapeDossier::class)
             ->findBy(
-                ['dossier' => $idDossier], // Critere
+                ['dossier' => $dossier], // Critere
                 ['typeEtape' => 'ASC'] // Tri
             );
 
         //On récupère l'ID type étape de l'étape actuelle du dossier
-        $id_type_etape_actuelle = $apprenti->getDossierApprenti()->getEtapeActuelle()->getTypeEtape()->getId();
+        $position_etape_actuelle = $apprenti->getDossierApprenti()->getEtapeActuelle()->getTypeEtape()->getpositionEtape();
 
         //On récupère toutes les étapes pour un dossier
         $liste_etapes = $this->getDoctrine()
@@ -74,7 +91,7 @@ class SuiviController extends Controller
             'id' => $id,
             'liste_etapes' => $liste_etapes,
             'etapes_dossier' => $etapes_dossier,
-            'id_type_etape_actuelle' => $id_type_etape_actuelle,
+            'position_etape_actuelle' => $position_etape_actuelle,
             'nb_type_etapes' => $nb_type_etapes,
         ));
     }
@@ -84,9 +101,9 @@ class SuiviController extends Controller
      *
      * @Route("/suivi/valider_etape", name="valider_etape")
      */
-    public function valider_etape(Request $req)
+    public function valider_etape(AuthorizationCheckerInterface $authChecker, Request $req)
     {
-//        if($req->isXmlHttpRequest()) { //On vérifie que c'est bien une requête AJAX pour empêcher un accès direct a cette fonction
+        if($req->isXmlHttpRequest()) { //On vérifie que c'est bien une requête AJAX pour empêcher un accès direct a cette fonction
 
             $id = $req->get('id');
             $id_etape = $req->get('id_etape');
@@ -102,25 +119,20 @@ class SuiviController extends Controller
 
             //On vérifie que l'étape qu'on souhaite valider est bien l'étape actuelle (sécurité si on valide trop vite plusieurs étapes en même temps)
             if($etape_actuelle->getTypeEtape()->getId() == $id_etape) {
+
+                $typeValidateur = $etape_actuelle->getTypeEtape()->getTypeValidateur();
+                if(!$authChecker->isGranted('ROLE_IUT')) {
+                    if (!$authChecker->isGranted($typeValidateur)) {
+                        return new JsonResponse(array('error' => "Vous n'êtes pas autorisé a valider cette étape"));
+                    }
+                }
+
                 $etape_actuelle->setdateValidation(new \DateTime());
                 //On détermine le validateur qui est autorisé a valider cette étape
                 $typeValidateur = $dossier->getEtapeActuelle()->getTypeEtape()->gettypeValidateur();
 
-//            $id_session = 0; //!!! A remplacer lorsque la gestion compte sera en place
-//            if ($typeValidateur == "IUT") {
-//                $etape_actuelle->setValidateurIut($this->getDoctrine()
-//                    ->getRepository(ResponsableIut::class)
-//                    ->find($id_session)
-//                );
-//            }
-//            elseif ($typeValidateur == "CFA") {
-//                $etape_actuelle->setValidateurCfa($this->getDoctrine()
-//                    ->getRepository(ResponsableCfa::class)
-//                    ->find($id_session));
-//            }
 
                 //On identifie l'étape suivante qu'il faudra valider dans le dossier
-//                $type_etape_suivante = $dossier->getEtapeActuelle()->getTypeEtape()->gettypeEtapeSuivante();
                 $type_etape_suivante = $em->getRepository(TypeEtape::class)->findOneByPositionEtape(($dossier->getEtapeActuelle()->getTypeEtape()->getId())+1);
                 if ($type_etape_suivante) {
                     //On créer la nouvelle étape actuelle du dossier
@@ -142,7 +154,7 @@ class SuiviController extends Controller
             }
             return new JsonResponse(array('error' => "ok"));
 
-//        }
+        }
         return $this->render('message.html.twig', array(
             'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
         ));
@@ -153,9 +165,12 @@ class SuiviController extends Controller
      *
      * @Route("/suivi/annuler_etape", name="annuler_etape")
      */
-    public function annuler_etape(Request $req)
+    public function annuler_etape(AuthorizationCheckerInterface $authChecker, Request $req)
     {
         if($req->isXmlHttpRequest()) { //On vérifie que c'est bien une requête AJAX pour empêcher un accès direct a cette fonction
+            if(!$authChecker->isGranted('ROLE_IUT')) {
+                return new JsonResponse(array('error' => "Vous n'êtes pas autorisé a annuler cette étape"));
+            }
 
             $id_dossier = $req->get('id');
             $id_type_etape = $req->get('id_etape');
@@ -190,8 +205,11 @@ class SuiviController extends Controller
     /**
      * @Route("/liste/", name="liste")
      */
-    public function liste()
+    public function liste(AuthorizationCheckerInterface $authChecker)
     {
+        if ($authChecker->isGranted('ROLE_APPRENTI')) {
+            throw new AccessDeniedException();
+        }
         $liste = $this->getDoctrine()
             ->getRepository(Apprenti::class)
             ->findAll();
@@ -199,6 +217,82 @@ class SuiviController extends Controller
         return $this->render('suivi/liste.html.twig', array(
             'liste' => $liste,
         ));
+    }
+
+
+
+
+
+
+    /**
+     * Suivi de apprenti corrspondant à l'id
+     *
+     * @Route("/test/{id}", name="test_suivi", requirements={"id"="\d+"}) //requirements permet d'autoriser uniquement les nombres dans l'URL
+     */
+    public function testsuivi(AuthorizationCheckerInterface $authChecker, $id)
+    {
+        //Un apprenti ne peux pas voir le suivi d'un autre apprenti
+        if ($authChecker->isGranted('ROLE_APPRENTI') && $this->getUser()->getId()!=$id) {
+            throw new AccessDeniedException();
+        }
+
+        //On récupère l'apprenti pour lequel on veux afficher le suivi
+        $apprenti = $this->getDoctrine()
+            ->getRepository(Apprenti::class)
+            ->find($id);
+
+        if(!$apprenti) {
+            return $this->render('message.html.twig', array(
+                'typeMessage' => "Apprenti non trouvé", 'message' => 'Pas d\'apprenti trouvé pour l\'ID ' . $id
+            ));
+        }
+
+        $iddossier = $apprenti->getDossierApprenti()->getId();
+
+        //Un maitre d'apprentissage ne peux voir le suivi que de ses apprenti
+        if ($authChecker->isGranted('ROLE_MAITRE_APP')) {
+            $ma = $apprenti->getDossierApprenti()->getMaitreApprentissage()->getId;
+            if ($ma != $this->getUser()->getId) {
+                throw new AccessDeniedException();
+            }
+        }
+
+
+//        select * from type_etape te LEFT JOIN etape_dossier ed ON (ed.id_type_etape = te.id) WHERE id_dossier=2 OR id_dossier IS NULL ORDER BY te.position_etape
+//        select * from type_etape te LEFT JOIN etape_dossier ed ON (ed.id_type_etape = te.id) WHERE
+//    (id_dossier=2 OR id_dossier IS NULL) AND (ed.date_debut = (SELECT MAX(ed2.date_debut) FROM etape_dossier ed2 WHERE ed2.id_type_etape=te.id AND ed2.id_dossier=2) OR ed.date_debut IS NULL) ORDER BY te.position_etape
+        //On recupère toutes les étapes déjà complétée/en cours du dossier pour les afficher
+        $etapes_dossier = $this->getDoctrine()
+            ->getRepository(EtapeDossier::class)->findAllCurrent($iddossier);
+
+//        $etapes_dossier = $this->getDoctrine()
+//            ->getRepository(EtapeDossier::class)
+//            ->findBy(
+//                ['dossier' => $dossier], // Critere
+//                ['typeEtape' => 'ASC'] // Tri
+//            );
+
+        //On récupère l'ID type étape de l'étape actuelle du dossier
+//        $id_type_etape_actuelle = $apprenti->getDossierApprenti()->getEtapeActuelle()->getTypeEtape()->getId();
+//
+//        //On récupère toutes les étapes pour un dossier
+//        $liste_etapes = $this->getDoctrine()
+//            ->getRepository(TypeEtape::class)
+//            ->findAll();
+//
+//        //On récupère le nombre de type étape
+//        $nb_type_etapes = $this->getDoctrine()
+//            ->getRepository(TypeEtape::class)->getNbTypeEtape();
+//
+//        return $this->render('suivi/suivi.html.twig', array(
+//            'apprenti' => $apprenti,
+//            'id' => $id,
+//            'liste_etapes' => $liste_etapes,
+//            'etapes_dossier' => $etapes_dossier,
+//            'id_type_etape_actuelle' => $id_type_etape_actuelle,
+//            'nb_type_etapes' => $nb_type_etapes,
+//        ));
+        return new Response(dump($etapes_dossier));
     }
 }
 ?>

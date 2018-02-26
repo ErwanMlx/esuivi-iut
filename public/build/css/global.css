@@ -68,7 +68,7 @@ a:hover {
     color: #919190;
 }
 
-.etape-valide, .etape-actuelle {
+.etape-valide.validable, .etape-actuelle.validable {
     cursor: pointer;
 }
 

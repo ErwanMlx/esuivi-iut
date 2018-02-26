@@ -62,7 +62,7 @@ class CompteController extends Controller
         elseif($type == "iut" && $authChecker->isGranted('ROLE_ADMIN')) {
             $title = "IUT";
         } else {
-            throw new AccessDeniedException("Vous n'êtes pas autorisé à accéder à cette page.");
+            throw new AccessDeniedException();
         }
 
         //On créer le formulaire
@@ -176,7 +176,7 @@ class CompteController extends Controller
 
         //On vérifie que l'utilisateur connecté est un iut ou que le compte a modifier est bien celui de l'utilisateur connecté
         if(!($authChecker->isGranted('ROLE_IUT') || $this->getUser()->getId()==$id)) {
-            throw new AccessDeniedException("Vous n'êtes pas autorisé à accéder à cette page.");
+            throw new AccessDeniedException();
         }
 
         //On récupère l'apprenti

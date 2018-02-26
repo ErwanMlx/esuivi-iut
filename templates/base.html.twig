@@ -1,4 +1,3 @@
-{# {% form_theme form 'bootstrap_3_layout.html.twig' %} #}
 <!DOCTYPE html>
 <html>
 <head>
@@ -36,22 +35,27 @@
               <h5>{% block user %}{{ app.user.nom ~ ' ' ~ app.user.prenom }}{% endblock %}</h5>
             </div>
           </a>
-        {% else %}
-          <a href="{{ path('fos_user_security_login') }}">Connexion</a>
         {% endif %}
       <div class="col-xs-12 titre visible-xs-block">
         <h1>{{ block('page_title') }}</h1>
       </div>
     </div>
-      {#{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}#}
+      {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
     <div class="row">
       <ul class="navigation">
-        <li><a href="{{ path('liste') }}">Liste Apprentis</a></li>
-        <li><a href="#">Statistiques</a></li>
-        <li><a href="{{ path('choix_ajout') }}">Gestion Comptes</a></li>
+          {% if not is_granted('ROLE_APPRENTI') %}
+            <li><a href="{{ path('liste') }}">Liste Apprentis</a></li>
+          {% endif %}
+          {% if is_granted('ROLE_APPRENTI') %}
+            <li><a href="{{ path('suivi_perso') }}">Dossier</a></li>
+          {% endif %}
+          {% if is_granted('ROLE_IUT') %}
+            <li><a href="#">Statistiques</a></li>
+            <li><a href="{{ path('choix_ajout') }}">Gestion Comptes</a></li>
+          {% endif %}
       </ul>
     </div>
-      {#{% endif %}#}
+      {% endif %}
   </div>
 {% endblock %}
 
