@@ -181,8 +181,7 @@ class CompteController extends Controller
             throw new AccessDeniedException();
         }
 
-        //On récupère l'apprenti
-//        $apprenti = $this->getDoctrine()->getRepository(Apprenti::class)->find($id);
+        //On récupère l'user
         $user = $this->getDoctrine()->getRepository(User::class)->find($id);
 
         if(!$user) {
@@ -195,7 +194,9 @@ class CompteController extends Controller
             $apprenti = $this->getDoctrine()->getRepository(Apprenti::class)->find($id);
             $form = $this->createForm(ApprentiType::class, $apprenti);
         } else {
-            $form = $this->createForm(CompteType::class, $user);
+            $form = $this->createForm(CompteType::class, $user)
+                ->add('Enregistrer', SubmitType::class);
+
         }
 
         // Si la requête est en POST (donc que le formulaire à été validé)
@@ -225,8 +226,8 @@ class CompteController extends Controller
 
                 $this->addFlash('success', 'Modifications bien enregistrées.');
 
-                // On redirige vers la même page pour donner la possibilité de modifier d'autres informations
-                return $this->redirectToRoute('edition_compte', array('id' => $id));
+                // On redirige vers le profil
+                return $this->redirectToRoute('profil', array('id' => $id));
             }
             if(!$email_ok) {
                 $form->get('compte')->get('email')->addError(new FormError('Un compte lié à cet email existe déjà.'));

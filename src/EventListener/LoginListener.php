@@ -11,6 +11,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Entity\Apprenti;
 use Doctrine\ORM\EntityManager;
 
+/**
+ * Class LoginListener
+ * @package App\EventListener
+ */
 class LoginListener
 {
 
@@ -35,9 +39,11 @@ class LoginListener
     private $router;
 
     /**
-     * @param AuthorizationCheckerInterface    $authChecker
-     * @param Router             $router
-     * @param ValidatorInterface $validator
+     * LoginListener constructor.
+     * @param AuthorizationCheckerInterface $authChecker
+     * @param TokenStorage $tokenStorage
+     * @param Router $router
+     * @param EntityManager $em
      */
     public function __construct(AuthorizationCheckerInterface $authChecker, TokenStorage $tokenStorage, Router $router, EntityManager $em) {
         $this->authChecker = $authChecker;
