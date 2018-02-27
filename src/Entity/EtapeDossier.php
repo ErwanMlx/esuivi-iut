@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * EtapeDossier
@@ -25,14 +26,14 @@ class EtapeDossier
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date_debut", type="date", nullable=false)
+     * @ORM\Column(name="date_debut", type="datetime", nullable=false)
      */
     private $dateDebut;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date_validation", type="date", nullable=true)
+     * @ORM\Column(name="date_validation", type="datetime", nullable=true)
      */
     private $dateValidation;
 
@@ -101,7 +102,7 @@ class EtapeDossier
     /**
      * @return \DateTime
      */
-    public function getDateValidation(): \DateTime
+    public function getDateValidation() : ?\DateTime
     {
         return $this->dateValidation;
     }

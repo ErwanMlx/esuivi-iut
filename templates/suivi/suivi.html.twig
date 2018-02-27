@@ -2,8 +2,6 @@
 
 {% block title %}Page de suivi{% endblock %}
 
-{#{% block user %}Test{% endblock %}#}
-
 {% block page_title %}Suivi du dossier de {{ apprenti.compte.prenom ~ ' '~ apprenti.compte.nom }}{% endblock %}
 
 {% block body %}
@@ -62,6 +60,13 @@
                         {% endfor %}
                     </div>
                 {% endfor %}
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-xs-12 text-center contenu">
+                <a class="btn btn-default" href="{{ path('profil', {"id":apprenti.compte.id}) }}">Profil</a>
+                <a class="btn btn-default" href="{{ path('historique', {"id":apprenti.compte.id}) }}">Historique</a>
             </div>
         </div>
     </div>

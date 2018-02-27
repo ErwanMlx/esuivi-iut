@@ -18,6 +18,51 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class SuiviController extends Controller
 {
     /**
+     * Affichage de la liste des apprentis
+     *
+     * @Route("/liste/", name="liste")
+     */
+    public function liste(AuthorizationCheckerInterface $authChecker, Request $req)
+    {
+        if ($authChecker->isGranted('ROLE_APPRENTI')) {
+            throw new AccessDeniedException();
+        }
+
+
+        $search = $req->get('search');
+        if($search != null) {
+            $liste = $this->getDoctrine()
+                ->getRepository(Apprenti::class)->search($search);
+        } else {
+            $liste = $this->getDoctrine()
+                ->getRepository(Apprenti::class)
+                ->findAll();
+        }
+
+        return $this->render('suivi/liste.html.twig', array(
+            'liste' => $liste,
+        ));
+    }
+
+
+    /**
+     * Recherche des apprentis
+     *
+     * @Route("/liste/recherche/", name="recherche_liste")
+     */
+    public function recherche(AuthorizationCheckerInterface $authChecker, Request $req) {
+        if($req->isXmlHttpRequest()) {
+            if ($authChecker->isGranted('ROLE_APPRENTI')) {
+                throw new AccessDeniedException();
+            }
+            $search = $req->get('search');
+        }
+        return $this->render('message.html.twig', array(
+            'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
+        ));
+    }
+
+    /**
      * Si l'utilisateur est un apprenti, on récupère son ID pour afficher son dossier
      *
      * @Route("/suivi/", name="suiviPerso")
@@ -29,13 +74,15 @@ class SuiviController extends Controller
         return $this->suivi($authChecker, $id);
     }
 
+
     /**
-     * Suivi de apprenti corrspondant à l'id
+     * On récupère l'apprenti et son dossier si la personne qui souhaite y accéder y est autorisée
      *
-     * @Route("/suivi/{id}", name="suivi", requirements={"id"="\d+"}) //requirements permet d'autoriser uniquement les nombres dans l'URL
+     * @param AuthorizationCheckerInterface $authChecker
+     * @param $id
+     * @return array|Response
      */
-    public function suivi(AuthorizationCheckerInterface $authChecker, $id)
-    {
+    public function recup_dossier(AuthorizationCheckerInterface $authChecker, $id) {
         //Un apprenti ne peux pas voir le suivi d'un autre apprenti
         if ($authChecker->isGranted('ROLE_APPRENTI') && $this->getUser()->getId()!=$id) {
             throw new AccessDeniedException();
@@ -61,11 +108,24 @@ class SuiviController extends Controller
                 throw new AccessDeniedException();
             }
         }
+        return array($apprenti, $dossier);
+    }
+
+    /**
+     * Suivi de apprenti corrspondant à l'id
+     *
+     * @Route("/suivi/{id}", name="suivi", requirements={"id"="\d+"}) //requirements permet d'autoriser uniquement les nombres dans l'URL
+     */
+    public function suivi(AuthorizationCheckerInterface $authChecker, $id)
+    {
+        $res = $this->recup_dossier($authChecker, $id);
+        $apprenti = $res[0];
+        $dossier = $res[1];
 
 
-//        select * from type_etape te LEFT JOIN etape_dossier ed ON (ed.id_type_etape = te.id) WHERE id_dossier=2 OR id_dossier IS NULL ORDER BY te.position_etape
 //        select * from type_etape te LEFT JOIN etape_dossier ed ON (ed.id_type_etape = te.id) WHERE
 //    (id_dossier=2 OR id_dossier IS NULL) AND (ed.date_debut = (SELECT MAX(ed2.date_debut) FROM etape_dossier ed2 WHERE ed2.id_type_etape=te.id AND ed2.id_dossier=2) OR ed.date_debut IS NULL) ORDER BY te.position_etape
+
         //On recupère toutes les étapes déjà complétée/en cours du dossier pour les afficher
         $etapes_dossier = $this->getDoctrine()
             ->getRepository(EtapeDossier::class)
@@ -88,7 +148,6 @@ class SuiviController extends Controller
 
         return $this->render('suivi/suivi.html.twig', array(
             'apprenti' => $apprenti,
-            'id' => $id,
             'liste_etapes' => $liste_etapes,
             'etapes_dossier' => $etapes_dossier,
             'position_etape_actuelle' => $position_etape_actuelle,
@@ -202,51 +261,40 @@ class SuiviController extends Controller
     }
 
     /**
-     * Affichage de la liste des apprentis
-     * @Route("/liste/", name="liste")
+     * Annulation d'une etape d'un dossier
+     *
+     * @Route("/suivi/{id}/historique", name="historique")
      */
-    public function liste(AuthorizationCheckerInterface $authChecker, Request $req)
-    {
-        if ($authChecker->isGranted('ROLE_APPRENTI')) {
-            throw new AccessDeniedException();
-        }
+    public function historique(AuthorizationCheckerInterface $authChecker, $id) {
+        $res = $this->recup_dossier($authChecker, $id);
+        $apprenti = $res[0];
+        $dossier = $res[1];
 
+        $etapes_dossier = $this->getDoctrine()
+            ->getRepository(EtapeDossier::class)
+            ->findBy(
+                ['dossier' => $dossier], // Critere
+                ['dateDebut' => 'DESC'] // Tri
+            );
 
-        $search = $req->get('search');
-        if($search != null) {
-            $liste = $this->getDoctrine()
-                ->getRepository(Apprenti::class)->search($search);
-        } else {
-            $liste = $this->getDoctrine()
-                ->getRepository(Apprenti::class)
-                ->findAll();
-        }
-
-        return $this->render('suivi/liste.html.twig', array(
-            'liste' => $liste,
+        return $this->render('suivi/historique.html.twig', array(
+            'apprenti' => $apprenti,
+            'etapes_dossier' => $etapes_dossier
         ));
-    }
 
-
-    /**
-     * Recherche des apprentis
-     * @Route("/liste/recherche/", name="recherche_liste")
-     */
-    public function recherche(AuthorizationCheckerInterface $authChecker, Request $req) {
-        if($req->isXmlHttpRequest()) {
-            if ($authChecker->isGranted('ROLE_APPRENTI')) {
-                throw new AccessDeniedException();
-            }
-            $search = $req->get('search');
-        }
-        return $this->render('message.html.twig', array(
-            'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
-        ));
     }
 
 
 
 
+
+
+
+
+
+
+
+    /* !!!!                TESTS                 !!!!*/
     /**
      * Suivi de apprenti corrspondant à l'id
      *

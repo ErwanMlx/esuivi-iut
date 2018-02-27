@@ -95,6 +95,7 @@ class CompteController extends Controller
 //                $tokenGenerator = $this->getContainer()->get('fos_user.util.token_generator');
 //                $password = substr($tokenGenerator->generateToken(), 0, 8);
 
+                //PROVISOIRE
                 $password = 'password';
                 $encoded = $encoder->encodePassword($user, $password);
 

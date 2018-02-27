@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique des étapes{% endblock %}
+
+{% block page_title %}Historique du dossier de {{ apprenti.compte.prenom ~ ' '~ apprenti.compte.nom }}{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 contenu">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Nom étape</th>
+                        <th>Date début</th>
+                        <th>Date validation</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for etape in etapes_dossier %}
+                        <tr>
+                            <td>{{ etape.typeEtape.positionEtape }}</td>
+                            <td>{{ etape.typeEtape.nomEtape }}</td>
+                            <td>{{ etape.dateDebut|date('d/m/Y H:i') }}</td>
+                                <td>{{ etape.dateValidation ? etape.dateValidation|date('d/m/Y H:i') : (apprenti.dossierApprenti.etapeActuelle == etape ? "En cours" : "Abandonnée")}}</td>
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 text-center contenu">
+                <a class="btn btn-default" href="{{ path('suivi', {"id":apprenti.compte.id}) }}">Retour suivi</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
