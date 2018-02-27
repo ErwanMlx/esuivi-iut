@@ -67,6 +67,9 @@
             <div class="col-xs-12 text-center contenu">
                 <a class="btn btn-default" href="{{ path('profil', {"id":apprenti.compte.id}) }}">Profil</a>
                 <a class="btn btn-default" href="{{ path('historique', {"id":apprenti.compte.id}) }}">Historique</a>
+                {% if apprenti.DossierApprenti.etat != "Abandonné" and (is_granted('ROLE_IUT') or app.user.id == apprenti.compte.id) %}
+                    <a class="btn btn-default" href="#{#{{ path('abandon') }}#}">Abandonner dossier</a>
+                {% endif %}
             </div>
         </div>
     </div>

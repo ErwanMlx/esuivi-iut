@@ -65,7 +65,7 @@ class SuiviController extends Controller
     /**
      * Si l'utilisateur est un apprenti, on récupère son ID pour afficher son dossier
      *
-     * @Route("/suivi/", name="suiviPerso")
+     * @Route("/suivi/", name="suivi_perso")
      * @IsGranted("ROLE_APPRENTI")
      */
     public function suiviPerso(AuthorizationCheckerInterface $authChecker)
@@ -213,9 +213,7 @@ class SuiviController extends Controller
             }
             return new JsonResponse(array('error' => "ok"));
         }
-        return $this->render('message.html.twig', array(
-            'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
-        ));
+        throw new AccessDeniedException();
     }
 
     /**
@@ -255,9 +253,7 @@ class SuiviController extends Controller
 
             return new JsonResponse(array('error' => "ok"));
         }
-        return $this->render('message.html.twig', array(
-            'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
-        ));
+        throw new AccessDeniedException();
     }
 
     /**
