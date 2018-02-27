@@ -17,7 +17,7 @@
             {% if is_granted('ROLE_IUT') or is_granted('ROLE_CFA')%}
                 <a class="btn btn-primary" href="{{ path('liste') }}">Liste Apprentis</a>
             {% elseif is_granted('ROLE_APPRENTI') %}
-                <a class="btn btn-primary" href="{{ path('suiviPerso') }}">Suivi dossier</a>
+                <a class="btn btn-primary" href="{{ path('suivi_perso') }}">Suivi dossier</a>
             {% else %}
                 <a class="btn btn-primary" href="{{ path('page_logauto') }}">Connexion</a>
             {%- endif %}
