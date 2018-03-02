@@ -48,12 +48,12 @@
                     {% endif %}
                     {% if is_granted('ROLE_APPRENTI') %}
                         <li><a href="{{ path('suivi_perso') }}">Suivi Dossier</a></li>
-                        <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
                     {% endif %}
                     {% if is_granted('ROLE_IUT') %}
                         <li><a href="#">Statistiques</a></li>
                         <li><a href="{{ path('choix_ajout') }}">Gestion Comptes</a></li>
                     {% endif %}
+                    <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
                 </ul>
             </div>
         {% endif %}

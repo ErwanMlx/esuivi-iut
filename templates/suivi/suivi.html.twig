@@ -49,8 +49,13 @@
                             {% else %}
                                 {% set class_type = class_type ~ ' etape-actuelle' %}
                             {% endif %}
-                            {% if is_granted(etape.typeValidateur) or is_granted('ROLE_IUT') %}
-                                {% set class_type = class_type ~ ' validable' %}
+                            {% if apprenti.DossierApprenti.etat == 'En cours' %}
+                                {% if is_granted(etape.typeValidateur) or is_granted('ROLE_IUT') %}
+                                    {% set class_type = class_type ~ ' validable' %}
+                                {% endif %}
+                                {% if is_granted('ROLE_IUT') %}
+                                    {% set class_type = class_type ~ ' annulable' %}
+                                {% endif %}
                             {% endif %}
                             <div class="{{ class_type }}" id="{{ etape.id }}">
                                 <div class="cercle center-block col-lg-4"><img class="img-responsive" src="/build/img/Icone_{{ etape.typeIcone }}.png" alt=""/></div>
@@ -68,7 +73,7 @@
                 <a class="btn btn-default" href="{{ path('profil', {"id":apprenti.compte.id}) }}">Profil</a>
                 <a class="btn btn-default" href="{{ path('historique', {"id":apprenti.compte.id}) }}">Historique</a>
                 {% if apprenti.DossierApprenti.etat != "Abandonné" and (is_granted('ROLE_IUT') or app.user.id == apprenti.compte.id) %}
-                    <a class="btn btn-default" href="#{#{{ path('abandon') }}#}">Abandonner dossier</a>
+                    <button id="abandon" class="btn btn-default">Abandonner dossier</button>
                 {% endif %}
             </div>
         </div>

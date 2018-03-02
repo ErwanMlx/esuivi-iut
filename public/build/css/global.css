@@ -72,6 +72,10 @@ a:hover {
     cursor: pointer;
 }
 
+.etape-valide.annulable {
+    cursor: pointer;
+}
+
 .etape-valide {
     color: #66B32D;
 }

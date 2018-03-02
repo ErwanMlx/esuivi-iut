@@ -1,5 +1,4 @@
 $(document).ready(function() {
-    /*Code json qui teste les droits*/
 
     function Confirm(title, msg, $true, $false, $elem, n) { /*change*/
         $('#pop').find('.modal-title').text(title);
@@ -67,16 +66,38 @@ $(document).ready(function() {
                     }
                 });
             }
+            if(n == 3)
+            {
+                $.ajax({
+                    type: "POST",
+                    datatype : "application/json",
+                    url: "abandon",
+                    data: { id:$("#id_dossier").text() },
+                    success: function(data){
+                        if(data.error != "ok") {
+                            alert(data.error);
+                        }
+                        else {
+                            location.reload(true);
+                        }
+                    }
+                });
+            }
         });
     };
 
-    $(document).on("click",".etape-actuelle",function(){
+    $(document).on("click",".etape-actuelle.validable",function(){
             Confirm("Confirmation","Etes vous sûr de vouloir valider cette étape ?",
                 "Oui","Non",$(this),1);
     });
 
-    $(document).on("click",".etape-valide",function(){
+    $(document).on("click",".etape-valide.annulable",function(){
             Confirm("Confirmation","Etes vous sûr de vouloir annuler cette étape et les étapes suivantes ?",
                 "Oui","Non",$(this),2);
+    });
+    
+    $(document).on("click","#abandon",function(){
+            Confirm("Confirmation d'abandon","Etes vous sûr de vouloir abandonner le dossier ?",
+                "Oui","Non",$(this),3);
     });
 });

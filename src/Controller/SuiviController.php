@@ -280,7 +280,36 @@ class SuiviController extends Controller
 
     }
 
+    /**
+     * Abandon de dossier
+     *
+     * @Route("/suivi/abandon", name="abandon")
+     */
+    public function abandon_dossier(AuthorizationCheckerInterface $authChecker, Request $req)
+    {
+        if($req->isXmlHttpRequest()) { //On vérifie que c'est bien une requête AJAX pour empêcher un accès direct a cette fonction
 
+            $id = $req->get('id');
+
+            $em = $this->getDoctrine()->getManager();
+            $apprenti = $em->getRepository(Apprenti::class)->findOneByDossier($id);
+
+            if (!$apprenti) {
+                return new JsonResponse(array('error' => "Pas d'apprenti trouvé"));
+            }
+
+            if(!($authChecker->isGranted('ROLE_IUT') || $this->getUser()->getId()==$apprenti->getCompte()->getId())) {
+                return new JsonResponse(array('error' => "Vous n'êtes pas autorisé a réaliser cette action"));
+            }
+
+            $apprenti->getDossierApprenti()->setetat('Abandonné');
+
+            $em->flush();
+
+            return new JsonResponse(array('error' => "ok"));
+        }
+        throw new AccessDeniedException();
+    }
 
 
 

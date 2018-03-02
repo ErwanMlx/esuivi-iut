@@ -25,7 +25,7 @@
                 {% endif %}
                 <div class="text-center">
                     {% if edit %}
-                        <a class="btn btn-default" href="{{ path('edition_compte', {'id':user.id}) }}">Editer compte</a>
+                        <a class="btn btn-default" href="{{ path('edition_compte', {'id':user.id}) }}">Editer informations</a>
                     {% endif %}
                     {% if app.user.id == user.id %}
                         <a class="btn btn-default" href="{{ path('fos_user_security_logout') }}">Déconnexion</a>
