@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Infos Entreprise{% endblock %}
+
+{% block page_title %}Infos Entreprise{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-offset-4 col-sm-4 contenu">
+                <div class="form-group">
+                    <p>Entrer le nom de votre entreprise :<p>
+                        <select class="form-control">
+                            <option>Entreprise 1</option>
+                            <option>Entreprise 2</option>
+                            <option>Entreprise 3</option>
+                            <option>Entreprise 4</option>
+                            <option>Autre</option>
+                        </select>
+                </div>
+                <div class="form-group">
+                    <p>Chercher le nom de votre entreprise :<p>
+                        <input name="autre" type="text" class="form-control" placeholder="Autre entreprise">
+                </div>
+                <div class="form-group">
+                    <p>Chercher le nom de votre maître de stage :<p>
+                        <select class="form-control">
+                            <option>Maitre de stage 1</option>
+                            <option>Maitre de stage 2</option>
+                            <option>Maitre de stage 3</option>
+                            <option>Maitre de stage 4</option>
+                            <option>Autre</option>
+                        </select>
+                </div>
+                <div class="form-group">
+                    <p>Entrer le nom de votre maître de stage :<p>
+                        <input name="autre" type="text" class="form-control" placeholder="Autre maître de stage">
+                </div>
+                <div class="form-group">
+                    <p>Entrer l'email de votre maître de stage :<p>
+                        <input name="autre" type="email" class="form-control" placeholder="Email du maître de stage">
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-default">Ajouter un autre maître de stage</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
