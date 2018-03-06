@@ -28,12 +28,16 @@ class SuiviController extends Controller
             throw new AccessDeniedException();
         }
 
-
+        //On récupère la recherche d'apprenti
         $search = $req->get('search');
+
+        //Si il en a une on cherche les apprentis correspondant
         if($search != null) {
             $liste = $this->getDoctrine()
                 ->getRepository(Apprenti::class)->search($search);
-        } else {
+        }
+        //Sinon on affiche tous les apprentis
+        else {
             $liste = $this->getDoctrine()
                 ->getRepository(Apprenti::class)
                 ->findAll();
@@ -45,22 +49,22 @@ class SuiviController extends Controller
     }
 
 
-    /**
-     * Recherche des apprentis
-     *
-     * @Route("/liste/recherche/", name="recherche_liste")
-     */
-    public function recherche(AuthorizationCheckerInterface $authChecker, Request $req) {
-        if($req->isXmlHttpRequest()) {
-            if ($authChecker->isGranted('ROLE_APPRENTI')) {
-                throw new AccessDeniedException();
-            }
-            $search = $req->get('search');
-        }
-        return $this->render('message.html.twig', array(
-            'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
-        ));
-    }
+//    /**
+//     * Recherche des apprentis
+//     *
+//     * @Route("/liste/recherche/", name="recherche_liste")
+//     */
+//    public function recherche(AuthorizationCheckerInterface $authChecker, Request $req) {
+//        if($req->isXmlHttpRequest()) {
+//            if ($authChecker->isGranted('ROLE_APPRENTI')) {
+//                throw new AccessDeniedException();
+//            }
+//            $search = $req->get('search');
+//        }
+//        return $this->render('message.html.twig', array(
+//            'typeMessage' => "Erreur", 'message' => "Vous n'êtes pas autorisé à accéder à cette page."
+//        ));
+//    }
 
     /**
      * Si l'utilisateur est un apprenti, on récupère son ID pour afficher son dossier
@@ -311,84 +315,108 @@ class SuiviController extends Controller
         throw new AccessDeniedException();
     }
 
-
-
-
-
-
-
-
-
-    /* !!!!                TESTS                 !!!!*/
     /**
-     * Suivi de apprenti corrspondant à l'id
+     * Page de statistiques
      *
-     * @Route("/test/{id}", name="test_suivi", requirements={"id"="\d+"}) //requirements permet d'autoriser uniquement les nombres dans l'URL
+     * @Route("/statistiques/", name="statistiques")
      */
-    public function testsuivi(AuthorizationCheckerInterface $authChecker, $id)
-    {
-        //Un apprenti ne peux pas voir le suivi d'un autre apprenti
-        if ($authChecker->isGranted('ROLE_APPRENTI') && $this->getUser()->getId()!=$id) {
-            throw new AccessDeniedException();
-        }
-
-        //On récupère l'apprenti pour lequel on veux afficher le suivi
-        $apprenti = $this->getDoctrine()
-            ->getRepository(Apprenti::class)
-            ->find($id);
-
-        if(!$apprenti) {
-            return $this->render('message.html.twig', array(
-                'typeMessage' => "Apprenti non trouvé", 'message' => 'Pas d\'apprenti trouvé pour l\'ID ' . $id
-            ));
-        }
-
-        $iddossier = $apprenti->getDossierApprenti()->getId();
-
-        //Un maitre d'apprentissage ne peux voir le suivi que de ses apprenti
-        if ($authChecker->isGranted('ROLE_MAITRE_APP')) {
-            $ma = $apprenti->getDossierApprenti()->getMaitreApprentissage()->getId;
-            if ($ma != $this->getUser()->getId) {
-                throw new AccessDeniedException();
-            }
-        }
-
-
-//        select * from type_etape te LEFT JOIN etape_dossier ed ON (ed.id_type_etape = te.id) WHERE id_dossier=2 OR id_dossier IS NULL ORDER BY te.position_etape
-//        select * from type_etape te LEFT JOIN etape_dossier ed ON (ed.id_type_etape = te.id) WHERE
-//    (id_dossier=2 OR id_dossier IS NULL) AND (ed.date_debut = (SELECT MAX(ed2.date_debut) FROM etape_dossier ed2 WHERE ed2.id_type_etape=te.id AND ed2.id_dossier=2) OR ed.date_debut IS NULL) ORDER BY te.position_etape
-        //On recupère toutes les étapes déjà complétée/en cours du dossier pour les afficher
-        $etapes_dossier = $this->getDoctrine()
-            ->getRepository(EtapeDossier::class)->findAllCurrent($iddossier);
-
+    public function statistiques() {
+        //Exemple d'utilisation de Doctrine :
+//        $em = $this->getDoctrine()->getManager();
+//        $etape_dossier = $em->getRepository(EtapeDossier::class)->find($id_etape);
+//        $etape_dossier = $em->getRepository(EtapeDossier::class)->findByDossier($id_dossier);
 //        $etapes_dossier = $this->getDoctrine()
 //            ->getRepository(EtapeDossier::class)
 //            ->findBy(
-//                ['dossier' => $dossier], // Critere
-//                ['typeEtape' => 'ASC'] // Tri
+//                ['dossier' => 1], // Critere
+//                ['dateDebut' => 'ASC'] // Tri
 //            );
 
-        //On récupère l'ID type étape de l'étape actuelle du dossier
-//        $id_type_etape_actuelle = $apprenti->getDossierApprenti()->getEtapeActuelle()->getTypeEtape()->getId();
-//
-//        //On récupère toutes les étapes pour un dossier
-//        $liste_etapes = $this->getDoctrine()
-//            ->getRepository(TypeEtape::class)
-//            ->findAll();
-//
-//        //On récupère le nombre de type étape
-//        $nb_type_etapes = $this->getDoctrine()
-//            ->getRepository(TypeEtape::class)->getNbTypeEtape();
-//
-//        return $this->render('suivi/suivi.html.twig', array(
-//            'apprenti' => $apprenti,
-//            'id' => $id,
-//            'liste_etapes' => $liste_etapes,
-//            'etapes_dossier' => $etapes_dossier,
-//            'id_type_etape_actuelle' => $id_type_etape_actuelle,
-//            'nb_type_etapes' => $nb_type_etapes,
-//        ));
-        return new Response(dump($etapes_dossier));
+        //Pour faire des requetes custom il faut utiliser le QueryBuilder de Doctrine : http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/query-builder.html
+        //Le code est à mettre dans le Repository de l'entity (=classe correspondante), pour faire une requête custom sur l'entity EtapeDossier, il faut ajout le code dans une nouvelle fonction dans la classe EtapeDossierRepository dans le dossier Repository
+        //Exemple de QueryBuilder dans ApprentiRepository avec utilisation dans la fontion liste
+        $text1 = "En cours de ";
+        $text2 = "développement";
+        return new Response($text1 . "" . $text2);
     }
 }
+
+
+
+
+
+
+
+//    /* !!!!                TESTS                 !!!!*/
+//    /**
+//     * Suivi de apprenti corrspondant à l'id
+//     *
+//     * @Route("/test/{id}", name="test_suivi", requirements={"id"="\d+"}) //requirements permet d'autoriser uniquement les nombres dans l'URL
+//     */
+//    public function testsuivi(AuthorizationCheckerInterface $authChecker, $id)
+//    {
+//        //Un apprenti ne peux pas voir le suivi d'un autre apprenti
+//        if ($authChecker->isGranted('ROLE_APPRENTI') && $this->getUser()->getId()!=$id) {
+//            throw new AccessDeniedException();
+//        }
+//
+//        //On récupère l'apprenti pour lequel on veux afficher le suivi
+//        $apprenti = $this->getDoctrine()
+//            ->getRepository(Apprenti::class)
+//            ->find($id);
+//
+//        if(!$apprenti) {
+//            return $this->render('message.html.twig', array(
+//                'typeMessage' => "Apprenti non trouvé", 'message' => 'Pas d\'apprenti trouvé pour l\'ID ' . $id
+//            ));
+//        }
+//
+//        $iddossier = $apprenti->getDossierApprenti()->getId();
+//
+//        //Un maitre d'apprentissage ne peux voir le suivi que de ses apprenti
+//        if ($authChecker->isGranted('ROLE_MAITRE_APP')) {
+//            $ma = $apprenti->getDossierApprenti()->getMaitreApprentissage()->getId;
+//            if ($ma != $this->getUser()->getId) {
+//                throw new AccessDeniedException();
+//            }
+//        }
+//
+//
+////        select * from type_etape te LEFT JOIN etape_dossier ed ON (ed.id_type_etape = te.id) WHERE id_dossier=2 OR id_dossier IS NULL ORDER BY te.position_etape
+////        select * from type_etape te LEFT JOIN etape_dossier ed ON (ed.id_type_etape = te.id) WHERE
+////    (id_dossier=2 OR id_dossier IS NULL) AND (ed.date_debut = (SELECT MAX(ed2.date_debut) FROM etape_dossier ed2 WHERE ed2.id_type_etape=te.id AND ed2.id_dossier=2) OR ed.date_debut IS NULL) ORDER BY te.position_etape
+//        //On recupère toutes les étapes déjà complétée/en cours du dossier pour les afficher
+//        $etapes_dossier = $this->getDoctrine()
+//            ->getRepository(EtapeDossier::class)->findAllCurrent($iddossier);
+//
+////        $etapes_dossier = $this->getDoctrine()
+////            ->getRepository(EtapeDossier::class)
+////            ->findBy(
+////                ['dossier' => $dossier], // Critere
+////                ['typeEtape' => 'ASC'] // Tri
+////            );
+//
+//        //On récupère l'ID type étape de l'étape actuelle du dossier
+////        $id_type_etape_actuelle = $apprenti->getDossierApprenti()->getEtapeActuelle()->getTypeEtape()->getId();
+////
+////        //On récupère toutes les étapes pour un dossier
+////        $liste_etapes = $this->getDoctrine()
+////            ->getRepository(TypeEtape::class)
+////            ->findAll();
+////
+////        //On récupère le nombre de type étape
+////        $nb_type_etapes = $this->getDoctrine()
+////            ->getRepository(TypeEtape::class)->getNbTypeEtape();
+////
+////        return $this->render('suivi/suivi.html.twig', array(
+////            'apprenti' => $apprenti,
+////            'id' => $id,
+////            'liste_etapes' => $liste_etapes,
+////            'etapes_dossier' => $etapes_dossier,
+////            'id_type_etape_actuelle' => $id_type_etape_actuelle,
+////            'nb_type_etapes' => $nb_type_etapes,
+////        ));
+//        return new Response(dump($etapes_dossier));
+//    }
+//}
 ?>

@@ -36,7 +36,7 @@ class CompteController extends Controller
     /**
      * Affichage de la page de choix d'ajout de compte
      *
-     * @Route("/ajout_compte/", name="choix_ajout")
+     * @Route("/compte/ajout/", name="choix_ajout")
      * @IsGranted("ROLE_IUT")
      */
     public function choix_ajout() {
@@ -126,7 +126,6 @@ class CompteController extends Controller
 
                     $role = new Apprenti();
                     $role->setCompte($user);
-                    $role->setResponsableIut($this->getUser());
                     $role->setDossierApprenti($dossier);
                     $em->persist($role);
 

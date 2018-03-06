@@ -79,16 +79,6 @@ class Apprenti
     /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="id_responsable_iut", referencedColumnName="id")
-     * })
-     */
-    private $responsableIut;
-
-    /**
-     * @var User
-     *
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\OneToOne(targetEntity="User")
@@ -177,22 +167,6 @@ class Apprenti
     public function setDossierApprenti(DossierApprenti $dossierApprenti): void
     {
         $this->dossier = $dossierApprenti;
-    }
-
-    /**
-     * @return User
-     */
-    public function getResponsableIut(): User
-    {
-        return $this->responsableIut;
-    }
-
-    /**
-     * @param User $responsableIut
-     */
-    public function setResponsableIut(User $responsableIut): void
-    {
-        $this->responsableIut = $responsableIut;
     }
 
     /**

@@ -17,10 +17,10 @@ class ApprentiRepository extends ServiceEntityRepository
     public function search($search) {
         $qb = $this->createQueryBuilder('a')
             ->join('a.compte', 'c')
-            ->where('c.nom LIKE :search')
-            ->orWhere('c.prenom LIKE :search')
-            ->orWhere('CONCAT(c.nom, \' \', c.prenom) LIKE :search')
-            ->orWhere('CONCAT(c.prenom, \' \', c.nom) LIKE :search')
+            ->where('LOWER(c.nom) LIKE LOWER(:search)')
+            ->orWhere('LOWER(c.prenom) LIKE LOWER(:search)')
+            ->orWhere('LOWER(CONCAT(c.nom, \' \', c.prenom)) LIKE LOWER(:search)')
+            ->orWhere('LOWER(CONCAT(c.prenom, \' \', c.nom)) LIKE LOWER(:search)')
             ->setParameter('search', '%'.$search.'%')
             ->orderBy('c.nom', 'ASC')
             ->getQuery();
