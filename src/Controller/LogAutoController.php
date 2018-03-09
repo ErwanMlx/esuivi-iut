@@ -27,16 +27,7 @@ class LogAutoController extends Controller
      * @Route("/logauto/", name="page_logauto")
      */
     public function page_logauto() {
-        return new Response(
-            '
-            <a href="' . $this->generateUrl('logauto', array('type' => 'IUT')) .'">Connexion en tant que IUT</a><br>
-            <a href="' . $this->generateUrl('logauto', array('type' => 'ADMIN')) .'">Connexion en tant que IUT ADMIN</a><br>
-            <a href="' . $this->generateUrl('logauto', array('type' => 'APPRENTI')) .'">Connexion en tant que APPRENTI</a><br>
-            <a href="' . $this->generateUrl('logauto', array('type' => 'CFA')) .'">Connexion en tant que CFA</a><br>
-            <a href="' . $this->generateUrl('fos_user_security_login') .'">Page de login normale</a>
-            '
-        );
-
+        return $this->render('accueil/logauto.html.twig');
     }
 
     /**

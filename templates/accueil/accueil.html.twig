@@ -14,13 +14,7 @@
         <center>
             <img class="img-responsive" src="https://iutv.univ-paris13.fr/wp-content/uploads/2015/11/IUT-villetaneuse.png">
             <h1>Plateforme de suivi IUT Paris 13</h1>
-            {% if is_granted('ROLE_IUT') or is_granted('ROLE_CFA')%}
-                <a class="btn btn-primary" href="{{ path('liste') }}">Liste Apprentis</a>
-            {% elseif is_granted('ROLE_APPRENTI') %}
-                <a class="btn btn-primary" href="{{ path('suivi_perso') }}">Suivi dossier</a>
-            {% else %}
-                <a class="btn btn-primary" href="{{ path('page_logauto') }}">Connexion</a>
-            {%- endif %}
+            <a class="btn btn-primary" href="{{ path('page_logauto') }}">Connexion</a>
         </center>
     </div>
 

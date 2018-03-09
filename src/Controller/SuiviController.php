@@ -31,7 +31,7 @@ class SuiviController extends Controller
         //On récupère la recherche d'apprenti
         $search = $req->get('search');
 
-        //Si il en a une on cherche les apprentis correspondant
+        //Si il y en a une on cherche les apprentis correspondant
         if($search != null) {
             $liste = $this->getDoctrine()
                 ->getRepository(Apprenti::class)->search($search);
@@ -92,7 +92,7 @@ class SuiviController extends Controller
             throw new AccessDeniedException();
         }
 
-        //On récupère l'apprenti pour lequel on veux afficher le suivi
+        //On récupère l'apprenti pour lequel on veut afficher le suivi
         $apprenti = $this->getDoctrine()
             ->getRepository(Apprenti::class)
             ->find($id);
@@ -105,7 +105,7 @@ class SuiviController extends Controller
 
         $dossier = $apprenti->getDossierApprenti()->getId();
 
-        //Un maitre d'apprentissage ne peux voir le suivi que de ses apprenti
+        //Un maitre d'apprentissage ne peut voir le suivi que de ses apprenti
         if ($authChecker->isGranted('ROLE_MAITRE_APP')) {
             $ma = $dossier->getMaitreApprentissage()->getId;
             if ($ma != $this->getUser()->getId) {
@@ -261,7 +261,7 @@ class SuiviController extends Controller
     }
 
     /**
-     * Annulation d'une etape d'un dossier
+     * Historique 
      *
      * @Route("/suivi/{id}/historique", name="historique")
      */
@@ -319,8 +319,14 @@ class SuiviController extends Controller
      * Page de statistiques
      *
      * @Route("/statistiques/", name="statistiques")
+     * @IsGranted("ROLE_IUT")
      */
-    public function statistiques() {
+    public function statistiques(AuthorizationCheckerInterface $authChecker, Request $req) {
+
+        $search = $req->query->get('search');
+        
+        
+        
         //Exemple d'utilisation de Doctrine :
 //        $em = $this->getDoctrine()->getManager();
 //        $etape_dossier = $em->getRepository(EtapeDossier::class)->find($id_etape);
