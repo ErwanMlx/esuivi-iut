@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Infos Entreprise</title>
+  <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+  <link href="css/custom.css" rel="stylesheet" type="text/css">
+  <link href="css/custom_liste_apprenti.css" rel="stylesheet" type="text/css">
+    <link href="css/custom_entreprise.css" rel="stylesheet" type="text/css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="js/entreprise.js"></script>
+</head>
+
+<body>
+  <div id="menu">
+    <div class="row">
+      <div class="col-xs-8 col-sm-10 iut">
+        <div class="col-sm-offset-2 logo">
+          <img src="https://iutv.univ-paris13.fr/wp-content/uploads/2015/11/IUT-villetaneuse.png" width="160" height="136" alt=""/>
+        </div>
+
+      </div>
+      <div class="avatar col-xs-4 col-sm-2 text-center">
+        <span class="glyphicon glyphicon-user" aria-hidden="true" style="font-size: 70px;"></span>
+        <h5>NOM Prénom</h5>
+      </div>
+    </div>
+    <div class="row">
+      <ul class="navigation">
+        <li class="active"><a href="#">Liste Apprenti</a></li>
+        <li><a href="#">Page Suivi Apprenti</a></li>
+        <li><a href="#">Historique</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class = "container">
+    <div class="col-xs-4 col-sm-4">
+    </div>
+    <div class="form-group col-xs-4 col-sm-4">
+      <p>Chercher le nom de votre entreprise :<p>
+      <select class="form-control select_entreprise">
+        <option>Entreprise 1</option>
+        <option>Entreprise 2</option>
+        <option>Entreprise 3</option>
+        <option>Entreprise 4</option>
+        <option>Autre</option>
+      </select>
+    </div>
+  </div>
+  <div class="container form_entreprise">
+    <div class="col-xs-4 col-sm-4">
+    </div>
+	  <div class="form-group row col-xs-4 col-sm-4">
+      <p>Entrer le nom de votre entreprise :<p>
+      <input name="autre" type="text" class="form-control" placeholder="Autre entreprise">
+    </div>
+  </div>
+  <div class = "container">
+    <div class="col-xs-4 col-sm-4">
+    </div>
+    <div class="form-group col-xs-4 col-sm-4">
+      <p>Chercher le nom de votre maître de stage :<p>
+      <select class="form-control select_maitre">
+        <option>Maitre de stage 1</option>
+        <option>Maitre de stage 2</option>
+        <option>Maitre de stage 3</option>
+        <option>Maitre de stage 4</option>
+        <option>Autre</option>
+      </select>
+    </div>
+  </div>
+  <div class = "maitre_stage">
+    <div class = "form_maitre">
+      <div class="container">
+        <div class="col-xs-4 col-sm-4">
+        </div>
+    	  <div class="form-group row col-xs-4 col-sm-4">
+          <p>Entrer le nom de votre maître de stage :<p>
+          <input name="autre" type="text" class="form-control" placeholder="Autre maître de stage">
+        </div>
+      </div>
+      <div class="container">
+        <div class="col-xs-4 col-sm-4">
+        </div>
+    	  <div class="form-group row col-xs-4 col-sm-4">
+          <p>Entrer l'email de votre maître de stage :<p>
+          <input name="autre" type="email" class="form-control" placeholder="Email du maître de stage">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="col-xs-4 col-sm-4">
+    </div>
+    <div class="form-group row col-xs-4 col-sm-4">
+      <button type="button" class="btn btn-default ajout">Ajouter un autre maître de stage</button>
+    </div>
+  </div>
+  <div class="container">
+    <div class="col-xs-4 col-sm-4">
+    </div>
+    <div class="form-group row col-xs-4 col-sm-4">
+      <button type="button" class="btn btn-default retirer">Retirer un maître de stage</button>
+    </div>
+  </div>
+  <div class="container">
+    <div class="col-xs-4 col-sm-4">
+    </div>
+    <div class="form-group row col-xs-4 col-sm-4">
+      <button type="button" class="btn btn-default">Confirmer</button>
+    </div>
+  </div>
+</div>
