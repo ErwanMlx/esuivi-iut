@@ -2,7 +2,7 @@
 
 {% block title %}Page de suivi{% endblock %}
 
-{% block page_title %}Suivi du dossier de {{ apprenti.compte.prenom ~ ' '~ apprenti.compte.nom }}{% endblock %}
+{% block page_title %}Suivi du dossier de {{ apprenti.compte.prenom ~ ' '~ apprenti.compte.nom }}{% if apprenti.DossierApprenti.etat == 'Abandonné' %} (abandonné){% endif %}{% endblock %}
 
 {% block body %}
 
@@ -75,6 +75,9 @@
                 {% if apprenti.DossierApprenti.etat != "Abandonné" and (is_granted('ROLE_IUT')) %}
                     <button id="abandon" class="btn btn-default">Abandonner dossier</button>
                 {% endif %}
+                {#{% if apprenti.DossierApprenti.etat == "Abandonné" and (is_granted('ROLE_IUT')) %}#}
+                    {#<button id="reactivation" class="btn btn-default">Réactiver dossier</button>#}
+                {#{% endif %}#}
             </div>
         </div>
     </div>

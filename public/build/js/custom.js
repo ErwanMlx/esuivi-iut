@@ -14,7 +14,7 @@ $(document).ready(function() {
                 $.ajax({
                     type: "POST",
                     datatype : "application/json",
-                    url: "valider_etape",
+                    url: "valider_etape/",
                     data: { id:$("#id_dossier").text(), id_etape:$elem.attr('id') },
                     success: function(data){
                         if(data.error != "ok") {
@@ -37,7 +37,7 @@ $(document).ready(function() {
                 $.ajax({
                     type: "POST",
                     datatype : "application/json",
-                    url: "annuler_etape",
+                    url: "annuler_etape/",
                     data: { id:$("#id_dossier").text(), id_etape:$elem.attr('id') },
                     success: function(data){
                         if(data.error != "ok") {
@@ -71,7 +71,7 @@ $(document).ready(function() {
                 $.ajax({
                     type: "POST",
                     datatype : "application/json",
-                    url: "abandon",
+                    url: "abandon/",
                     data: { id:$("#id_dossier").text() },
                     success: function(data){
                         if(data.error != "ok") {

@@ -162,7 +162,7 @@ class SuiviController extends Controller
     /**
      * Validation d'une etape d'un dossier
      *
-     * @Route("/suivi/valider_etape", name="valider_etape")
+     * @Route("/suivi/valider_etape/", name="valider_etape")
      */
     public function valider_etape(AuthorizationCheckerInterface $authChecker, Request $req)
     {
@@ -223,7 +223,7 @@ class SuiviController extends Controller
     /**
      * Annulation d'une etape d'un dossier
      *
-     * @Route("/suivi/annuler_etape", name="annuler_etape")
+     * @Route("/suivi/annuler_etape/", name="annuler_etape")
      */
     public function annuler_etape(AuthorizationCheckerInterface $authChecker, Request $req)
     {
@@ -261,9 +261,9 @@ class SuiviController extends Controller
     }
 
     /**
-     * Historique 
+     * Historique
      *
-     * @Route("/suivi/{id}/historique", name="historique")
+     * @Route("/suivi/{id}/historique/", name="historique")
      */
     public function historique(AuthorizationCheckerInterface $authChecker, $id) {
         $res = $this->recup_dossier($authChecker, $id);
@@ -287,7 +287,7 @@ class SuiviController extends Controller
     /**
      * Abandon de dossier
      *
-     * @Route("/suivi/abandon", name="abandon")
+     * @Route("/suivi/abandon/", name="abandon")
      */
     public function abandon_dossier(AuthorizationCheckerInterface $authChecker, Request $req)
     {
@@ -315,6 +315,32 @@ class SuiviController extends Controller
         throw new AccessDeniedException();
     }
 
+//    /**
+//     * Abandon de dossier
+//     *
+//     * @Route("/suivi/reactivation/{id}", name="reactivation")
+//     */
+//    public function reactivation_dossier(AuthorizationCheckerInterface $authChecker, Request $req, $id)
+//    {
+//
+//        $em = $this->getDoctrine()->getManager();
+//        $apprenti = $em->getRepository(Apprenti::class)->findOneByDossier($id);
+//
+//        if (!$apprenti) {
+//            return new JsonResponse(array('error' => "Pas d'apprenti trouvé"));
+//        }
+//
+//        if(!($authChecker->isGranted('ROLE_IUT') || $this->getUser()->getId()==$apprenti->getCompte()->getId())) {
+//            return new JsonResponse(array('error' => "Vous n'êtes pas autorisé a réaliser cette action"));
+//        }
+//
+//        $apprenti->getDossierApprenti()->setetat('En cours');
+//
+//        $em->flush();
+//
+//        return new JsonResponse(array('error' => "ok"));
+//    }
+
     /**
      * Page de statistiques
      *
@@ -324,9 +350,9 @@ class SuiviController extends Controller
     public function statistiques(AuthorizationCheckerInterface $authChecker, Request $req) {
 
         $search = $req->query->get('search');
-        
-        
-        
+
+
+
         //Exemple d'utilisation de Doctrine :
 //        $em = $this->getDoctrine()->getManager();
 //        $etape_dossier = $em->getRepository(EtapeDossier::class)->find($id_etape);
