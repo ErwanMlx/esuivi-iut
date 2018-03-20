@@ -349,7 +349,7 @@ class SuiviController extends Controller
      */
     public function statistiques(AuthorizationCheckerInterface $authChecker, Request $req) {
 
-        $search = $req->query->get('search');
+        $tezste = $this->getDoctrine()->getManager()->getRepository(EtapeDossier::class)->tempsMoyenDossier();
 
 
 

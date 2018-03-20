@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Erwan
- * Date: 24/02/2018
- * Time: 19:00
- */
-
 namespace App\Repository;
 
 use App\Entity\User;

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Entreprise
@@ -26,27 +27,28 @@ class Entreprise
      * @var string
      *
      * @ORM\Column(name="nom", type="string", length=64, nullable=false)
+     * @Assert\NotBlank(message="Le nom de l'entreprise ne peut pas être vide.")
      */
     private $nom;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="raison_sociale", type="string", length=128, nullable=false)
+     * @ORM\Column(name="raison_sociale", type="string", length=128, nullable=true)
      */
     private $raisonSociale;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="siret", type="string", length=14, nullable=false)
+     * @ORM\Column(name="siret", type="string", length=14, nullable=true)
      */
     private $siret;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="nombre_salaries", type="integer", nullable=false)
+     * @ORM\Column(name="nombre_salaries", type="integer", nullable=true)
      */
     private $nombreSalaries;
 
@@ -54,6 +56,9 @@ class Entreprise
      * @var string
      *
      * @ORM\Column(name="adresse", type="string", length=256, nullable=false)
+     * @Assert\Length(max = 256,
+     *     maxMessage = "L'adresse doit faire moins de {{ limit }} caractères.")
+     * @Assert\NotBlank(message="L'adresse ne peut pas être vide.")
      */
     private $adresse;
 
@@ -61,6 +66,13 @@ class Entreprise
      * @var string
      *
      * @ORM\Column(name="code_postal", type="string", length=5, nullable=false)
+     * @Assert\Length(max = 5,
+     *     maxMessage = "Le code postal doit faire moins de {{ limit }} caractères.")
+     * @Assert\NotBlank(message="Le code postal ne peut pas être vide.")
+     * @Assert\Type(
+     *     type="numeric",
+     *     message="Le code postal ne doit contenir que des chiffres."
+     * )
      */
     private $codePostal;
 
@@ -68,34 +80,34 @@ class Entreprise
      * @var string
      *
      * @ORM\Column(name="ville", type="string", length=64, nullable=false)
+     * @Assert\Length(max = 64,
+     *     maxMessage = "La ville doit faire moins de {{ limit }} caractères.")
+     * @Assert\NotBlank(message="La ville ne peut pas être vide.")
+     * @Assert\Type(
+     *     type="string",
+     *     message="La ville ne doit contenir que des lettres."
+     * )
      */
     private $ville;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="telephone", type="string", length=10, nullable=false)
-     */
-    private $telephone;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="fax", type="string", length=10, nullable=false)
+     * @ORM\Column(name="fax", type="string", length=10, nullable=true)
      */
     private $fax;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="email", type="string", length=128, nullable=false)
+     * @ORM\Column(name="email", type="string", length=128, nullable=true)
      */
     private $email;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="domaine_activite", type="string", length=256, nullable=false)
+     * @ORM\Column(name="domaine_activite", type="string", length=256, nullable=true)
      */
     private $domaineActivite;
 
@@ -106,6 +118,7 @@ class Entreprise
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_correspondant_entreprise", referencedColumnName="id")
      * })
+//     * @Assert\Valid()
      */
     private $correspondantEntreprise;
 
@@ -128,7 +141,7 @@ class Entreprise
     /**
      * @return string
      */
-    public function getNom(): string
+    public function getNom()
     {
         return $this->nom;
     }
@@ -144,7 +157,7 @@ class Entreprise
     /**
      * @return string
      */
-    public function getRaisonSociale(): string
+    public function getRaisonSociale()
     {
         return $this->raisonSociale;
     }
@@ -160,7 +173,7 @@ class Entreprise
     /**
      * @return string
      */
-    public function getSiret(): string
+    public function getSiret()
     {
         return $this->siret;
     }
@@ -176,7 +189,7 @@ class Entreprise
     /**
      * @return int
      */
-    public function getNombreSalaries(): int
+    public function getNombreSalaries()
     {
         return $this->nombreSalaries;
     }
@@ -192,7 +205,7 @@ class Entreprise
     /**
      * @return string
      */
-    public function getAdresse(): string
+    public function getAdresse()
     {
         return $this->adresse;
     }
@@ -208,7 +221,7 @@ class Entreprise
     /**
      * @return string
      */
-    public function getCodePostal(): string
+    public function getCodePostal()
     {
         return $this->codePostal;
     }
@@ -224,7 +237,7 @@ class Entreprise
     /**
      * @return string
      */
-    public function getVille(): string
+    public function getVille()
     {
         return $this->ville;
     }
@@ -240,7 +253,7 @@ class Entreprise
     /**
      * @return string
      */
-    public function getTelephone(): string
+    public function getTelephone()
     {
         return $this->telephone;
     }
@@ -256,7 +269,7 @@ class Entreprise
     /**
      * @return string
      */
-    public function getFax(): string
+    public function getFax()
     {
         return $this->fax;
     }
@@ -272,7 +285,7 @@ class Entreprise
     /**
      * @return string
      */
-    public function getEmail(): string
+    public function getEmail()
     {
         return $this->email;
     }
@@ -288,7 +301,7 @@ class Entreprise
     /**
      * @return string
      */
-    public function getDomaineActivite(): string
+    public function getDomaineActivite()
     {
         return $this->domaineActivite;
     }

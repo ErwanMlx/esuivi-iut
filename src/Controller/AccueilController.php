@@ -20,7 +20,8 @@ class AccueilController extends Controller
             return $this->redirectToRoute('suivi_perso');
         }
         else {
-            return $this->render('accueil/accueil.html.twig');
+//            return $this->render('accueil/accueil.html.twig');
+            return $this->render('accueil/logauto.html.twig');
         }
     }
 }

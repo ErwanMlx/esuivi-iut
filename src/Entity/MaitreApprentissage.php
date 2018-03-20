@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * MaitreApprentissage
@@ -15,14 +16,14 @@ class MaitreApprentissage
     /**
      * @var string
      *
-     * @ORM\Column(name="fonction", type="string", length=256, nullable=false)
+     * @ORM\Column(name="fonction", type="string", length=256, nullable=true)
      */
     private $fonction;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="telephone", type="string", length=10, nullable=false)
+     * @ORM\Column(name="telephone", type="string", length=10, nullable=true)
      */
     private $telephone;
 
@@ -40,6 +41,7 @@ class MaitreApprentissage
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_entreprise", referencedColumnName="id")
      * })
+     * @Assert\Valid()
      */
     private $entreprise;
 
@@ -52,8 +54,10 @@ class MaitreApprentissage
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_compte", referencedColumnName="id")
      * })
+     * @Assert\Valid(groups={"ajout"})
      */
     private $compte;
+
 
     /**
      * @return string

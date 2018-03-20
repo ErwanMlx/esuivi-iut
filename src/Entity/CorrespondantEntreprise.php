@@ -76,7 +76,7 @@ class CorrespondantEntreprise
     /**
      * @return string
      */
-    public function getNom(): string
+    public function getNom()
     {
         return $this->nom;
     }
@@ -92,7 +92,7 @@ class CorrespondantEntreprise
     /**
      * @return string
      */
-    public function getPrenom(): string
+    public function getPrenom()
     {
         return $this->prenom;
     }
@@ -108,7 +108,7 @@ class CorrespondantEntreprise
     /**
      * @return string
      */
-    public function getFonction(): string
+    public function getFonction()
     {
         return $this->fonction;
     }
@@ -124,7 +124,7 @@ class CorrespondantEntreprise
     /**
      * @return string
      */
-    public function getTelephone(): string
+    public function getTelephone()
     {
         return $this->telephone;
     }
@@ -140,7 +140,7 @@ class CorrespondantEntreprise
     /**
      * @return string
      */
-    public function getEmail(): string
+    public function getEmail()
     {
         return $this->email;
     }

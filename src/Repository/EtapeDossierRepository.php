@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\EtapeDossier;
+use App\Entity\DossierApprenti;
 use App\Entity\TypeEtape;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -71,4 +72,35 @@ class EtapeDossierRepository extends ServiceEntityRepository
 //        // returns an array of arrays (i.e. a raw data set)
 //        return $stmt->fetchAll();
     }
+    public function tempsMoyenDossier(){
+		
+	/*	select avg(extract(epoch from (date_fin_doss - date_debut_doss)))
+		from (
+			select max(a.date_validation) as date_fin_doss, min(a.date_debut) as date_debut_doss
+			from etape_dossier a join dossier_apprenti b on (b.id = a.id_dossier)
+			where b.etat <> 'abandonne'
+			group by a.id_dossier
+		); */
+		$qb2 = $this->getEntityManager()->createQueryBuilder(); 
+		$qb = $this->getEntityManager()->createQueryBuilder()
+			->select($qb2->expr()->avg('c.date_fin_doss - c.date_debut_doss'))
+			->from($qb2
+				->select(
+					array(
+						$qb2->expr()->max('a.date_validation').' as date_fin_doss', 
+						$qb2->expr()->min('a.date_debut').' as date_debut_doss'
+					)
+				)
+				->from(EtapeDossier::class, 'a')
+				->join(DossierApprenti::class, 'b','WITH','a.id_dossier = b.id')
+				->where('b.etat <> :etat')
+				->groupBy('a.id_dossier')
+				,
+				'c'
+			)
+			->setParameter(':etat','abandonné')
+			->getQuery();
+
+		return $qb->execute();
+	}
 }

@@ -35,6 +35,12 @@ class User extends BaseUser
      */
     protected $nom;
 
+
+    /**
+     * @var string
+     * @Assert\NotBlank(message="L'email ne peut pas être vide.", groups={"ajout"})
+     */
+    protected $email;
     /**
      * @return string
      */
