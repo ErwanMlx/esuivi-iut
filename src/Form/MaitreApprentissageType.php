@@ -24,6 +24,7 @@ class MaitreApprentissageType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => MaitreApprentissage::class,
+            'validation_groups' => false
         ));
     }
 

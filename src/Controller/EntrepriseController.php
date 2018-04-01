@@ -41,6 +41,7 @@ class EntrepriseController extends Controller
         $selectionMaitre = null;
         $maitres = null;
         $error = false;
+        $addMa = false;
 
         if ($request->isMethod('POST')) {
 
@@ -50,25 +51,33 @@ class EntrepriseController extends Controller
 
             $selectionEntreprise = $request->request->get('select_entreprise');
             $selectionMaitre = $request->request->get('select_maitre');
-            if (!empty($selectionEntreprise) && !empty($selectionMaitre)) {
+
+            if (!empty($selectionEntreprise && !empty($selectionMaitre)) /*&& !empty($selectionMaitre)*/) {
                 if ($form->isSubmitted()) {
-                    $this->addFlash('info', 'ICI');
+
                     //Choix autre entreprise
                     if ($selectionEntreprise == 'Autre') {
-                        $this->addFlash('info', 'ICI');
-//                        if ($form->isValid()) {
-//                            $em->persist($ma);
-//                        } else {
-//
-//                            $errors = $form->getErrors();
-//                            return new Response($errors);
-////                            $form->get('entreprise')->get('nom')->addError(new FormError('tamer'));
-////
-//////                            foreach ($errors as &$err) {
-//////                                $form->get('entreprise')->get('code_postal')->addError(new FormError($err->getMessage()));
-//////                            }
-//                            $error = true;
-//                        }
+//                        $this->addFlash('info', 'ICI');
+
+                        $errorsEn = $validator->validate($ma->getEntreprise());
+                        $errorsMa = $validator->validate($ma->getCompte(), null, array('ajout'));
+//                        return new Response(count($errors) );
+                        if (count($errorsEn) == 0 && count($errorsMa) == 0) {
+                            $addMa = true;
+                            $em->persist($ma->getEntreprise());
+                        } else {
+                            foreach ($errorsEn as &$err) {
+                                $input = $err->getPropertyPath();
+                                if($input == "codePostal") {
+                                    $input = "code_postal";
+                                }
+                                $form->get('entreprise')->get($input)->addError(new FormError($err->getMessage()));
+                            }
+                            foreach ($errorsMa as &$err) {
+                                $form->get('compte')->get($err->getPropertyPath())->addError(new FormError($err->getMessage()));
+                            }
+                            $error = true;
+                        }
                     }
                     //Entreprise existante choisie
                     if ($selectionEntreprise != 'Autre' && !empty($selectionEntreprise)) {
@@ -89,13 +98,7 @@ class EntrepriseController extends Controller
 
                                     //Si le mail n'est pas déjà utilisé
                                     if (!$email) {
-                                        $password = 'password';
-                                        $encoded = $encoder->encodePassword($user, $password);
-
-                                        $user->setPassword($encoded);
-                                        $ma->getCompte()->setPassword($password);
-                                        $em->persist($user);
-                                        $em->persist($ma);
+                                        $addMa = true;
                                     } else {
                                         $form->addError(new FormError('Adresse email déjà utilisée'));
                                         $error = true;
@@ -118,12 +121,23 @@ class EntrepriseController extends Controller
                             }
                         }
                     }
-//                return $this->redirectToRoute('infos_entreprise');
+//
                 }
-            }
-            if(!$error) {
-                $em->flush();
-//                return new Response('Nom ' . $ma->getCompte()->getNom());
+                if(!$error) {
+                    if($addMa) {
+                        $ma->getCompte()->addRole("ROLE_MAITRE_APP");
+                        $password = 'password';
+                        $encoded = $encoder->encodePassword($user, $password);
+
+                        $user->setPassword($encoded);
+
+                        $user->setEnabled(true);
+                        $em->persist($ma->getCompte());
+                        $em->persist($ma);
+                    }
+                    $em->flush();
+                    return $this->redirectToRoute('suivi_perso');
+                }
             }
         }
         return $this->render('entreprise/entreprise.html.twig', array('entreprises' => $entreprises, 'maitres' => $maitres, 'form' => $form->createView(), 'selectionEntreprise' => $selectionEntreprise, 'selectionMaitre' => $selectionMaitre));

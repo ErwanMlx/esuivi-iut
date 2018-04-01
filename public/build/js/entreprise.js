@@ -3,7 +3,8 @@ $(document).ready(function() {
     // $(".form_entreprise").addClass('hide');
     // $(".form_maitre").addClass('hide');
     // $(".infos_entreprise").addClass('hide');
-    $(".select_maitre").prop('disabled',true);
+    // $(".select_maitre").prop('readonly',true);
+    // $(".select_maitre").addClass("disable");
     $(document).on("click",".ajout",function(){
         console.log("test");
         i+=1;
@@ -41,7 +42,8 @@ $(document).ready(function() {
 
             $(".form_entreprise").removeClass('hide');
             $(".infos_entreprise").addClass('hide');
-            $(".select_maitre").prop('disabled',true);
+            $(".select_maitre").prop('readonly',true);
+            $(".select_maitre").addClass("disable");
             $(".select_maitre option[value=\"Autre\"]").prop("selected", true);
             $(".form_maitre").removeClass('hide');
         }
@@ -51,12 +53,14 @@ $(document).ready(function() {
             if($(this).val() != '')
             {
                 $(".infos_entreprise").removeClass('hide');
-                $(".select_maitre").prop('disabled',false);
+                $(".select_maitre").prop('readonly',false);
+                $(".select_maitre").removeClass("disable");
             }
             else
             {
                 $(".infos_entreprise").addClass('hide');
-                $(".select_maitre").prop('disabled',true);
+                $(".select_maitre").prop('readonly',true);
+                $(".select_maitre").addClass("disable");
             }
         }
 

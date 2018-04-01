@@ -33,7 +33,7 @@
 
                     <div class="form-group">
                         <p>Chercher le nom de votre maître de stage :<p>
-                            <select name="select_maitre" class="form-control select_maitre">
+                            <select name="select_maitre" class="form-control select_maitre {{ selectionEntreprise == "Autre" ? "disable" }}">
                                 <option value= "">-- Selectionner le maitre d'apprentissage --</option>
                                 {% for maitre in maitres %}
                                     <option value="{{ maitre.compte.id }}" {{ selectionMaitre == maitre.compte.id ? "selected" }}>{{ maitre.compte.prenom ~ ' ' ~ maitre.compte.nom}}</option>
@@ -54,7 +54,7 @@
                                 {{ form_row(form.entreprise) }}
                         </div>
                     </div>
-                    <div class = "form_maitre {{ selectionMaitre == null ? "hide" }}">
+                    <div class = "form_maitre {{ (selectionMaitre == null or selectionMaitre != "Autre") ? "hide" }}">
                         <p>Informations du maître de stage :<p>
                             {{ form_row(form.compte) }}
                     </div>
