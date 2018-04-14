@@ -123,6 +123,20 @@ class Entreprise
     private $correspondantEntreprise;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="telephone", type="string", length=10, nullable=true)
+     * @Assert\Length(min = 10, max = 10,
+     *     exactMessage = "Le numéro de téléphone doit faire {{ limit }} caractères.")
+     * @Assert\NotBlank(message="Le numéro de téléphone ne peut pas être vide.")
+     * @Assert\Type(
+     *     type="numeric",
+     *     message="Le téléphone ne doit contenir que des chiffres."
+     * )
+     */
+    private $telephone;
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -317,7 +331,7 @@ class Entreprise
     /**
      * @return CorrespondantEntreprise
      */
-    public function getCorrespondantEntreprise(): CorrespondantEntreprise
+    public function getCorrespondantEntreprise()
     {
         return $this->correspondantEntreprise;
     }

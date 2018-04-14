@@ -20,13 +20,19 @@ use App\Form\EntrepriseType;
 use App\Form\MaitreApprentissageType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class EntrepriseController extends Controller
 {
     /**
-     * @Route("/entreprise/informations/", name="infos_entreprise")
+     * @Route("/entreprise/choix/", name="choix_entreprise")
      */
-    public function infos_entreprise(Request $request, ValidatorInterface $validator, UserPasswordEncoderInterface $encoder)
+    public function choix_entreprise(Request $request, ValidatorInterface $validator, UserPasswordEncoderInterface $encoder)
     {
         $entreprises = $this->getDoctrine()->getRepository(Entreprise::class)->findAll();
 
@@ -143,7 +149,64 @@ class EntrepriseController extends Controller
         return $this->render('entreprise/entreprise.html.twig', array('entreprises' => $entreprises, 'maitres' => $maitres, 'form' => $form->createView(), 'selectionEntreprise' => $selectionEntreprise, 'selectionMaitre' => $selectionMaitre));
     }
 
+    /**
+     * Récupération des informations d'une entreprise et de la liste de ses maitres d'apprentissage
+     *
+     * @Route("/entreprise/choix/informations/", name="infos_entreprise")
+     */
+    public function infos_entreprise(AuthorizationCheckerInterface $authChecker, Request $req)
+    {
+        if($req->isXmlHttpRequest()) { //On vérifie que c'est bien une requête AJAX pour empêcher un accès direct a cette fonction
+            $id_entreprise = $req->get('id_entreprise');
+            $em = $this->getDoctrine()->getManager();
+            $entreprise = $em->getRepository(Entreprise::class)->find($id_entreprise);
 
+            $entreprise_json = array("id" => $entreprise->getId(),
+                "nom" => $entreprise->getNom(),
+                "siret" => $entreprise->getSiret(),
+                "adresse" => $entreprise->getAdresse(),
+                "ville" => $entreprise->getVille(),
+                "cp" => $entreprise->getCodePostal(),
+                "telephone" => $entreprise->getTelephone()
+            );
+
+
+            $liste_ma = $em->getRepository(MaitreApprentissage::class)->findByEntreprise($entreprise);
+            $liste_json = array();
+            foreach ($liste_ma as &$ma) {
+                $liste_json[] = array("id" => $ma->getCompte()->getId(), "nom" => $ma->getCompte()->getNom(), "prenom" => $ma->getCompte()->getPrenom());
+            }
+
+            return new JsonResponse(array('entreprise' => $entreprise_json, 'liste_ma' => $liste_json));
+        }
+        throw new AccessDeniedException();
+    }
+
+    /**
+     * Récupération des informations du maitre d'apprentissage selectionné
+     *
+     * @Route("/entreprise/choix/informations_ma/", name="infos_ma")
+     */
+    public function infos_maitre_app(AuthorizationCheckerInterface $authChecker, Request $req)
+    {
+        if($req->isXmlHttpRequest()) { //On vérifie que c'est bien une requête AJAX pour empêcher un accès direct a cette fonction
+            $id_ma = $req->get('id_ma');
+            $em = $this->getDoctrine()->getManager();
+
+            $ma = $em->getRepository(MaitreApprentissage::class)->find($id_ma);
+
+            $ma_json = array("id" => $ma->getCompte()->getId(),
+                "nom" => $ma->getCompte()->getNom(),
+                "prenom" => $ma->getCompte()->getPrenom(),
+                "email" => $ma->getCompte()->getEmail(),
+                "tel" => $ma->getTelephone(),
+                "fonction" => $ma->getFonction()
+                );
+            return new JsonResponse(array('maitre_app' => $ma_json));
+        }
+        throw new AccessDeniedException();
+    }
 }
+
 
 

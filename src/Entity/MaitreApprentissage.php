@@ -62,7 +62,7 @@ class MaitreApprentissage
     /**
      * @return string
      */
-    public function getFonction(): string
+    public function getFonction()
     {
         return $this->fonction;
     }
@@ -78,7 +78,7 @@ class MaitreApprentissage
     /**
      * @return string
      */
-    public function getTelephone(): string
+    public function getTelephone()
     {
         return $this->telephone;
     }
