@@ -27,7 +27,7 @@ class Entreprise
      * @var string
      *
      * @ORM\Column(name="nom", type="string", length=64, nullable=false)
-     * @Assert\NotBlank(message="Le nom de l'entreprise ne peut pas être vide.")
+     * @Assert\NotBlank(message="Le nom de l'entreprise ne peut pas être vide.", groups={"ajout_entreprise"})
      */
     private $nom;
 
@@ -35,6 +35,7 @@ class Entreprise
      * @var string
      *
      * @ORM\Column(name="raison_sociale", type="string", length=128, nullable=true)
+     * @Assert\NotBlank(message="La raison sociale ne peut pas être vide.")
      */
     private $raisonSociale;
 
@@ -42,6 +43,13 @@ class Entreprise
      * @var string
      *
      * @ORM\Column(name="siret", type="string", length=14, nullable=true)
+     * @Assert\NotBlank(message="La SIRET ne peut pas être vide.")
+     * @Assert\Length(min = 14, max = 14,
+     *     exactMessage = "Le SIRET doit faire {{ limit }} caractères.")
+     * @Assert\Type(
+     *     type="numeric",
+     *     message="Le SIRET ne peut contenir que des chiffres."
+     * )
      */
     private $siret;
 
@@ -49,6 +57,7 @@ class Entreprise
      * @var integer
      *
      * @ORM\Column(name="nombre_salaries", type="integer", nullable=true)
+     * @Assert\NotBlank(message="Le nombre de salariés ne peut pas être vide.")
      */
     private $nombreSalaries;
 
@@ -57,8 +66,8 @@ class Entreprise
      *
      * @ORM\Column(name="adresse", type="string", length=256, nullable=false)
      * @Assert\Length(max = 256,
-     *     maxMessage = "L'adresse doit faire moins de {{ limit }} caractères.")
-     * @Assert\NotBlank(message="L'adresse ne peut pas être vide.")
+     *     maxMessage = "L'adresse doit faire moins de {{ limit }} caractères.", groups={"ajout_entreprise"})
+     * @Assert\NotBlank(message="L'adresse ne peut pas être vide.", groups={"ajout_entreprise"})
      */
     private $adresse;
 
@@ -67,11 +76,11 @@ class Entreprise
      *
      * @ORM\Column(name="code_postal", type="string", length=5, nullable=true)
      * @Assert\Length(min = 5, max = 5,
-     *     exactMessage = "Le code postal doit faire moins de {{ limit }} caractères.")
-     * @Assert\NotBlank(message="Le code postal ne peut pas être vide.")
+     *     exactMessage = "Le code postal doit faire moins de {{ limit }} caractères.", groups={"ajout_entreprise"})
+     * @Assert\NotBlank(message="Le code postal ne peut pas être vide.", groups={"ajout_entreprise"})
      * @Assert\Type(
      *     type="numeric",
-     *     message="Le code postal ne doit contenir que des chiffres."
+     *     message="Le code postal ne doit contenir que des chiffres.", groups={"ajout_entreprise"}
      * )
      */
     private $codePostal;
@@ -81,11 +90,11 @@ class Entreprise
      *
      * @ORM\Column(name="ville", type="string", length=64, nullable=false)
      * @Assert\Length(max = 64,
-     *     maxMessage = "La ville doit faire moins de {{ limit }} caractères.")
-     * @Assert\NotBlank(message="La ville ne peut pas être vide.")
+     *     maxMessage = "La ville doit faire moins de {{ limit }} caractères.", groups={"ajout_entreprise"})
+     * @Assert\NotBlank(message="La ville ne peut pas être vide.", groups={"ajout_entreprise"})
      * @Assert\Type(
      *     type="string",
-     *     message="La ville ne doit contenir que des lettres."
+     *     message="La ville ne doit contenir que des lettres.", groups={"ajout_entreprise"}
      * )
      */
     private $ville;
@@ -101,6 +110,7 @@ class Entreprise
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=128, nullable=true)
+     * @Assert\NotBlank(message="L'email ne peut pas être vide.")
      */
     private $email;
 
@@ -108,6 +118,7 @@ class Entreprise
      * @var string
      *
      * @ORM\Column(name="domaine_activite", type="string", length=256, nullable=true)
+     * @Assert\NotBlank(message="Le domaine d'activité ne peut pas être vide.")
      */
     private $domaineActivite;
 
@@ -126,13 +137,7 @@ class Entreprise
      * @var string
      *
      * @ORM\Column(name="telephone", type="string", length=10, nullable=true)
-     * @Assert\Length(min = 10, max = 10,
-     *     exactMessage = "Le numéro de téléphone doit faire {{ limit }} caractères.")
-     * @Assert\NotBlank(message="Le numéro de téléphone ne peut pas être vide.")
-     * @Assert\Type(
-     *     type="numeric",
-     *     message="Le téléphone ne doit contenir que des chiffres."
-     * )
+     * @Assert\NotBlank(message="La numéro de téléphone ne peut pas être vide.")
      */
     private $telephone;
 
@@ -163,7 +168,7 @@ class Entreprise
     /**
      * @param string $nom
      */
-    public function setNom(string $nom): void
+    public function setNom(string $nom = null): void
     {
         $this->nom = $nom;
     }

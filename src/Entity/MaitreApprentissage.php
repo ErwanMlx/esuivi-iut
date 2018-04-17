@@ -94,7 +94,7 @@ class MaitreApprentissage
     /**
      * @return string
      */
-    public function getFax(): string
+    public function getFax()
     {
         return $this->fax;
     }

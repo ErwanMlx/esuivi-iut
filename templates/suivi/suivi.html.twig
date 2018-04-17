@@ -2,7 +2,7 @@
 
 {% block title %}Page de suivi{% endblock %}
 
-{% block page_title %}Suivi du dossier de {{ apprenti.compte.prenom ~ ' '~ apprenti.compte.nom }}{% if apprenti.DossierApprenti.etat == 'Abandonné' %} (abandonné){% endif %}{% endblock %}
+{% block page_title %}Suivi du dossier de {{ apprenti.compte.prenom ~ ' '~ apprenti.compte.nom }}{% if apprenti.Dossier.etat == 'Abandonné' %} (abandonné){% endif %}{% endblock %}
 
 {% block body %}
 
@@ -26,7 +26,15 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12 contenu">
-                <p id="id_dossier" hidden>{{ apprenti.DossierApprenti.id }}</p>
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }} alert-dismissable">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                <p id="id_dossier" hidden>{{ apprenti.Dossier.id }}</p>
                 {% set index_etape = 0 %}
                 {% set nb_colonnes = 3 %}
 
@@ -49,7 +57,7 @@
                             {% else %}
                                 {% set class_type = class_type ~ ' etape-actuelle' %}
                             {% endif %}
-                            {% if apprenti.DossierApprenti.etat == 'En cours' %}
+                            {% if apprenti.Dossier.etat == 'En cours' %}
                                 {% if is_granted(etape.typeValidateur) or is_granted('ROLE_IUT') %}
                                     {% set class_type = class_type ~ ' validable' %}
                                 {% endif %}
@@ -72,10 +80,13 @@
             <div class="col-xs-12 text-center contenu">
                 <a class="btn btn-default" href="{{ path('profil', {"id":apprenti.compte.id}) }}">Profil</a>
                 <a class="btn btn-default" href="{{ path('historique', {"id":apprenti.compte.id}) }}">Historique</a>
-                {% if apprenti.DossierApprenti.etat != "Abandonné" and (is_granted('ROLE_IUT')) %}
+                {% if apprenti.Dossier.etat != "Abandonné" and (is_granted('ROLE_IUT')) %}
                     <button id="abandon" class="btn btn-default">Abandonner dossier</button>
                 {% endif %}
-                {#{% if apprenti.DossierApprenti.etat == "Abandonné" and (is_granted('ROLE_IUT')) %}#}
+                {% if (apprenti.dossier.sujetpropose is not empty or is_granted('ROLE_MAITRE_APP')) %}
+                    <a class="btn btn-default" href="{{ path('consulter_bordereau', {"id":apprenti.compte.id}) }}">Bordereau</a>
+                {% endif %}
+                {#{% if apprenti.Dossier.etat == "Abandonné" and (is_granted('ROLE_IUT')) %}#}
                     {#<button id="reactivation" class="btn btn-default">Réactiver dossier</button>#}
                 {#{% endif %}#}
             </div>

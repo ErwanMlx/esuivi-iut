@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\CorrespondantEntreprise;
 use App\Entity\MaitreApprentissage;
 use App\Form\CompteType;
+use App\Form\EntrepriseSupType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Routing\Annotation\Route; //To define the route to access it
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -65,7 +66,7 @@ class EntrepriseController extends Controller
                     if ($selectionEntreprise == 'Autre') {
 //                        $this->addFlash('info', 'ICI');
 
-                        $errorsEn = $validator->validate($ma->getEntreprise());
+                        $errorsEn = $validator->validate($ma->getEntreprise(), null, array('ajout_entreprise'));
                         $errorsMa = $validator->validate($ma->getCompte(), null, array('ajout'));
 //                        return new Response(count($errors) );
                         if (count($errorsEn) == 0 && count($errorsMa) == 0) {
@@ -206,6 +207,50 @@ class EntrepriseController extends Controller
         }
         throw new AccessDeniedException();
     }
+
+    /**
+     * Récupération des informations du maitre d'apprentissage selectionné
+     *
+     * @Route("/entreprise/saisie/{id}", name="remplissage_entreprise", requirements={"id"="\d+"}, defaults={"id"=null})
+     */
+    public function remplissage_entreprise(AuthorizationCheckerInterface $authChecker, Request $request, $id) {
+        if($authChecker->isGranted('ROLE_MAITRE_APP') || (!empty($id) && $authChecker->isGranted('ROLE_IUT'))) {
+            $em = $this->getDoctrine()->getManager();
+            if($authChecker->isGranted('ROLE_IUT')) {
+                $entreprise = $em->getRepository(Entreprise::class)->find($id);
+            }
+            else {
+                $ma = $em->getRepository(MaitreApprentissage::class)->find($this->getUser()->getId());
+                $entreprise = $ma->getEntreprise();
+            }
+
+            $form = $this->createForm(EntrepriseSupType::class, $entreprise);
+
+            if ($request->isMethod('POST')) {
+
+                $form->handleRequest($request);
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $this->addFlash('success', 'Informations bien enregistrées.');
+
+                    $em = $this->getDoctrine()->getManager();
+
+                    $em->persist($entreprise->getCorrespondantEntreprise());
+                    $em->persist($entreprise);
+
+                    $em->flush();
+
+                    return $this->redirectToRoute('liste');
+                }
+            }
+
+            return $this->render('entreprise/infos_entreprise.html.twig', array('form' => $form->createView(),
+            ));
+        }
+        else {
+            throw new AccessDeniedException();
+        }
+    }
+
 }
 
 

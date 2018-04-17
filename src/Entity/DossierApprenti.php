@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * DossierApprenti
@@ -32,6 +33,7 @@ class DossierApprenti
     /**
      * @var \DateTime
      *
+     * @Assert\NotBlank(message="La date d'embauche ne peut pas être vide.")
      * @ORM\Column(name="date_embauche", type="date", nullable=true)
      */
     private $dateEmbauche;
@@ -39,13 +41,14 @@ class DossierApprenti
     /**
      * @var string
      *
+     * @Assert\NotBlank(message="Le sujet ne peut pas être vide.")
      * @ORM\Column(name="sujet_propose", type="string", length=128, nullable=true)
      */
     private $sujetPropose;
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank(message="La description du sujet ne peut pas être vide.")
      * @ORM\Column(name="description_du_sujet", type="string", length=512, nullable=true)
      */
     private $descriptionDuSujet;
@@ -54,6 +57,11 @@ class DossierApprenti
      * @var integer
      *
      * @ORM\Column(name="participation_financiere", type="integer", nullable=true)
+     * @Assert\Type(
+     *     type="numeric",
+     *     message="La participation financière ne doit contenir que des caractères numériques."
+     * )
+     * @Assert\NotBlank(message="La participation financière ne peut pas être vide.")
      */
     private $participationFinanciere;
 
@@ -122,7 +130,7 @@ class DossierApprenti
     /**
      * @return \DateTime
      */
-    public function getDateEmbauche(): \DateTime
+    public function getDateEmbauche()
     {
         return $this->dateEmbauche;
     }
@@ -146,7 +154,7 @@ class DossierApprenti
     /**
      * @param string $sujetPropose
      */
-    public function setSujetPropose(string $sujetPropose): void
+    public function setSujetPropose(string $sujetPropose = null)
     {
         $this->sujetPropose = $sujetPropose;
     }
@@ -154,7 +162,7 @@ class DossierApprenti
     /**
      * @return string
      */
-    public function getDescriptionDuSujet(): string
+    public function getDescriptionDuSujet()
     {
         return $this->descriptionDuSujet;
     }
@@ -162,7 +170,7 @@ class DossierApprenti
     /**
      * @param string $descriptionDuSujet
      */
-    public function setDescriptionDuSujet(string $descriptionDuSujet): void
+    public function setDescriptionDuSujet(string $descriptionDuSujet = null): void
     {
         $this->descriptionDuSujet = $descriptionDuSujet;
     }
@@ -170,7 +178,7 @@ class DossierApprenti
     /**
      * @return int
      */
-    public function getParticipationFinanciere(): int
+    public function getParticipationFinanciere()
     {
         return $this->participationFinanciere;
     }
@@ -178,7 +186,7 @@ class DossierApprenti
     /**
      * @param int $participationFinanciere
      */
-    public function setParticipationFinanciere(int $participationFinanciere): void
+    public function setParticipationFinanciere(int $participationFinanciere = null): void
     {
         $this->participationFinanciere = $participationFinanciere;
     }
@@ -218,7 +226,7 @@ class DossierApprenti
     /**
      * @return User
      */
-    public function getMaitreApprentissage(): User
+    public function getMaitreApprentissage()
     {
         return $this->maitreApprentissage;
     }

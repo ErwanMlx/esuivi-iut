@@ -9,7 +9,7 @@
     <div class = "container">
         <div class="row">
             <div class="contenu col-xs-12">
-                {{ form_start(form, {'action': path('infos_entreprise')}) }}
+                {{ form_start(form, {'action': path('choix_entreprise')}) }}
                 {{ form_errors(form) }}
                 {% for label, messages in app.flashes %}
                     {% for message in messages %}

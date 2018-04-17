@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * CorrespondantEntreprise
@@ -26,6 +27,7 @@ class CorrespondantEntreprise
      * @var string
      *
      * @ORM\Column(name="nom", type="string", length=32, nullable=false)
+     * @Assert\NotBlank(message="Le nom du correspondant ne peut pas être vide.")
      */
     private $nom;
 
@@ -33,6 +35,7 @@ class CorrespondantEntreprise
      * @var string
      *
      * @ORM\Column(name="prenom", type="string", length=32, nullable=false)
+     * @Assert\NotBlank(message="Le prénom du correspondant ne peut pas être vide.")
      */
     private $prenom;
 
@@ -40,6 +43,7 @@ class CorrespondantEntreprise
      * @var string
      *
      * @ORM\Column(name="fonction", type="string", length=256, nullable=false)
+     * @Assert\NotBlank(message="La fonction du correspondant ne peut pas être vide.")
      */
     private $fonction;
 
@@ -47,6 +51,13 @@ class CorrespondantEntreprise
      * @var string
      *
      * @ORM\Column(name="telephone", type="string", length=10, nullable=false)
+     * @Assert\Length(min = 10, max = 10,
+     *     exactMessage = "Le numéro de téléphone du correspondant doit faire {{ limit }} caractères.")
+     * @Assert\NotBlank(message="Le numéro de téléphone du correspondant ne peut pas être vide.")
+     * @Assert\Type(
+     *     type="numeric",
+     *     message="Le téléphone du correspondant ne doit contenir que des chiffres."
+     * )
      */
     private $telephone;
 
@@ -54,6 +65,7 @@ class CorrespondantEntreprise
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=256, nullable=false)
+     * @Assert\NotBlank(message="L'email du correspondant ne peut pas être vide.")
      */
     private $email;
 

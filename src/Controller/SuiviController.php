@@ -5,6 +5,7 @@ use App\Entity\DossierApprenti;
 use App\Entity\EtapeDossier;
 use App\Entity\TypeEtape;
 use App\Entity\Apprenti;
+use App\Form\BordereauType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route; //To define the route to access it
@@ -38,9 +39,15 @@ class SuiviController extends Controller
         }
         //Sinon on affiche tous les apprentis
         else {
-            $liste = $this->getDoctrine()
-                ->getRepository(Apprenti::class)
-                ->findAll();
+            if($authChecker->isGranted('ROLE_MAITRE_APP')) {
+                $liste = $this->getDoctrine()
+                    ->getRepository(Apprenti::class)
+                    ->findByMaitreApp($this->getUser()->getId());
+            } else {
+                $liste = $this->getDoctrine()
+                    ->getRepository(Apprenti::class)
+                    ->findAll();
+            }
         }
 
         return $this->render('suivi/liste.html.twig', array(
@@ -98,17 +105,18 @@ class SuiviController extends Controller
             ->find($id);
 
         if(!$apprenti) {
-            return $this->render('message.html.twig', array(
-                'typeMessage' => "Apprenti non trouvé", 'message' => 'Pas d\'apprenti trouvé pour l\'ID ' . $id
-            ));
+            throw new NotFoundHttpException();
         }
 
-        $dossier = $apprenti->getDossierApprenti()->getId();
+        $dossier = $apprenti->getDossier()->getId();
 
-        //Un maitre d'apprentissage ne peut voir le suivi que de ses apprenti
+        //Un maitre d'apprentissage ne peut voir le suivi que de ses apprenti (on bloque également l'accès au suivi des apprentis qui n'ont pas encore un maitre d'apprentissage
         if ($authChecker->isGranted('ROLE_MAITRE_APP')) {
-            $ma = $dossier->getMaitreApprentissage()->getId;
-            if ($ma != $this->getUser()->getId) {
+            $ma_exist = !empty($apprenti->getDossier()->getMaitreApprentissage());
+            if($ma_exist) {
+                $ma = $apprenti->getDossier()->getMaitreApprentissage()->getId();
+            }
+            if (!$ma_exist || $ma != $this->getUser()->getId()) {
                 throw new AccessDeniedException();
             }
         }
@@ -139,7 +147,7 @@ class SuiviController extends Controller
             );
 
         //On récupère l'ID type étape de l'étape actuelle du dossier
-        $position_etape_actuelle = $apprenti->getDossierApprenti()->getEtapeActuelle()->getTypeEtape()->getpositionEtape();
+        $position_etape_actuelle = $apprenti->getDossier()->getEtapeActuelle()->getTypeEtape()->getpositionEtape();
 
         //On récupère toutes les étapes pour un dossier
         $liste_etapes = $this->getDoctrine()
@@ -157,6 +165,75 @@ class SuiviController extends Controller
             'position_etape_actuelle' => $position_etape_actuelle,
             'nb_type_etapes' => $nb_type_etapes,
         ));
+    }
+
+    /**
+     * Remplissage du bordereau
+     *
+     * @Route("/suivi/{id}/remplir_bordereau/", name="remplir_bordereau", requirements={"id"="\d+"})
+     */
+    public function remplissage_bordereau(AuthorizationCheckerInterface $authChecker, $id, Request $request)
+    {
+        if($authChecker->isGranted('ROLE_MAITRE_APP') || $authChecker->isGranted('ROLE_IUT')) {
+            $res = $this->recup_dossier($authChecker, $id);
+            $apprenti = $res[0];
+            $dossier_id = $res[1];
+
+            $dossier = $apprenti->getDossier();
+
+            //Si le bordereau à déjà été remplis
+            if(!empty($dossier->getSujetPropose())) {
+                return $this->redirectToRoute('suivi', array('id' => $id));
+            }
+            else {
+                $form = $this->createForm(BordereauType::class, $dossier);
+
+                if ($request->isMethod('POST')) {
+
+                    $form->handleRequest($request);
+                    if ($form->isSubmitted() && $form->isValid()) {
+                        $this->addFlash('success', 'Bordereau bien enregistré.');
+
+                        $em = $this->getDoctrine()->getManager();
+
+                        $em->persist($dossier);
+
+                        $em->flush();
+
+                        return $this->redirectToRoute('suivi', array('id' => $id));
+                    }
+                }
+            }
+            //Soit on viens d'arriver sur la page, soit le formulaire contient des données incorrectes
+            return $this->render('suivi/bordereau.html.twig', array('form' => $form->createView(),
+            ));
+        }
+        else {
+            throw new AccessDeniedException();
+        }
+
+    }
+
+    /**
+     * Consultation du bordereau
+     *
+     * @Route("/suivi/{id}/bordereau/", name="consulter_bordereau", requirements={"id"="\d+"})
+     */
+    public function consulter_bordereau(AuthorizationCheckerInterface $authChecker, $id, Request $request)
+    {
+        $res = $this->recup_dossier($authChecker, $id);
+        $apprenti = $res[0];
+        $dossier_id = $res[1];
+
+        $dossier = $apprenti->getDossier();
+
+        //Si le bordereau n'a pas encore été remplis
+        if(empty($dossier->getSujetPropose())) {
+            return $this->redirectToRoute('remplir_bordereau', array('id' => $id));
+        }
+        else {
+            return new Response("Generation bordereau");
+        }
     }
 
     /**
@@ -306,7 +383,7 @@ class SuiviController extends Controller
                 return new JsonResponse(array('error' => "Vous n'êtes pas autorisé a réaliser cette action"));
             }
 
-            $apprenti->getDossierApprenti()->setetat('Abandonné');
+            $apprenti->getDossier()->setetat('Abandonné');
 
             $em->flush();
 
@@ -334,7 +411,7 @@ class SuiviController extends Controller
 //            return new JsonResponse(array('error' => "Vous n'êtes pas autorisé a réaliser cette action"));
 //        }
 //
-//        $apprenti->getDossierApprenti()->setetat('En cours');
+//        $apprenti->getDossier()->setetat('En cours');
 //
 //        $em->flush();
 //
@@ -349,7 +426,7 @@ class SuiviController extends Controller
      */
     public function statistiques(AuthorizationCheckerInterface $authChecker, Request $req) {
 
-        $tezste = $this->getDoctrine()->getManager()->getRepository(EtapeDossier::class)->tempsMoyenDossier();
+        $search = $req->query->get('search');
 
 
 
@@ -403,11 +480,11 @@ class SuiviController extends Controller
 //            ));
 //        }
 //
-//        $iddossier = $apprenti->getDossierApprenti()->getId();
+//        $iddossier = $apprenti->getDossier()->getId();
 //
 //        //Un maitre d'apprentissage ne peux voir le suivi que de ses apprenti
 //        if ($authChecker->isGranted('ROLE_MAITRE_APP')) {
-//            $ma = $apprenti->getDossierApprenti()->getMaitreApprentissage()->getId;
+//            $ma = $apprenti->getDossier()->getMaitreApprentissage()->getId;
 //            if ($ma != $this->getUser()->getId) {
 //                throw new AccessDeniedException();
 //            }
@@ -429,7 +506,7 @@ class SuiviController extends Controller
 ////            );
 //
 //        //On récupère l'ID type étape de l'étape actuelle du dossier
-////        $id_type_etape_actuelle = $apprenti->getDossierApprenti()->getEtapeActuelle()->getTypeEtape()->getId();
+////        $id_type_etape_actuelle = $apprenti->getDossier()->getEtapeActuelle()->getTypeEtape()->getId();
 ////
 ////        //On récupère toutes les étapes pour un dossier
 ////        $liste_etapes = $this->getDoctrine()

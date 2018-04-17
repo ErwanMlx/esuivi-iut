@@ -280,8 +280,11 @@ class CompteController extends Controller
             }
             $apprenti = $this->getDoctrine()->getRepository(Apprenti::class)->find($id);
             if ($authChecker->isGranted('ROLE_MAITRE_APP')) {
-                $ma = $apprenti->getDossierApprenti()->getMaitreApprentissage()->getId;
-                if ($ma != $this->getUser()->getId) {
+                $ma_exist = !empty($apprenti->getDossier()->getMaitreApprentissage());
+                if($ma_exist) {
+                    $ma = $apprenti->getDossier()->getMaitreApprentissage()->getId();
+                }
+                if (!$ma_exist || $ma != $this->getUser()->getId()) {
                     throw new AccessDeniedException();
                 }
             }

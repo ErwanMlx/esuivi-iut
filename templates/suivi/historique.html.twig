@@ -24,7 +24,7 @@
                             <td>{{ etape.typeEtape.positionEtape }}</td>
                             <td>{{ etape.typeEtape.nomEtape }}</td>
                             <td>{{ etape.dateDebut|date('d/m/Y H:i') }}</td>
-                                <td>{{ etape.dateValidation ? etape.dateValidation|date('d/m/Y H:i') : (apprenti.dossierApprenti.etapeActuelle == etape ? "En cours" : "Abandonnée")}}</td>
+                                <td>{{ etape.dateValidation ? etape.dateValidation|date('d/m/Y H:i') : (apprenti.Dossier.etapeActuelle == etape ? "En cours" : "Abandonnée")}}</td>
 
                         </tr>
                     {% endfor %}

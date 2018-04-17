@@ -156,7 +156,7 @@ class Apprenti
     /**
      * @return DossierApprenti
      */
-    public function getDossierApprenti(): DossierApprenti
+    public function getDossier(): DossierApprenti
     {
         return $this->dossier;
     }

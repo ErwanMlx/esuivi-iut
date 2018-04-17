@@ -31,9 +31,9 @@
                         <div class="bordure col-sm-8 col-sm-offset-2">
                             <p>{{ apprenti.compte.prenom ~ ' ' ~ apprenti.compte.nom }}</p>
                             <ul>
-                                <li>Nom entreprise : {{ apprenti.DossierApprenti.Entreprise.nom|default('Pas encore saisi')}}</li>
-                                <li>Mission : {{ apprenti.DossierApprenti.sujetPropose|default('Pas encore saisi') }}</li>
-                                <li>Etat d'avancement : {{ apprenti.DossierApprenti.EtapeActuelle.TypeEtape.nomEtape }}</li>
+                                <li>Nom entreprise : {{ apprenti.Dossier.Entreprise.nom|default('Pas encore saisi')}}</li>
+                                <li>Mission : {{ apprenti.Dossier.sujetPropose|default('Pas encore saisi') }}</li>
+                                <li>Etat d'avancement : {{ apprenti.Dossier.EtapeActuelle.TypeEtape.nomEtape }}</li>
                             </ul>
                         </div>
                     </a>
