@@ -9,6 +9,7 @@ use App\Entity\MaitreApprentissage;
 use App\Entity\User;
 use App\Entity\TypeEtape;
 use App\Form\CompteType;
+use App\Form\MaitreApprentissageProfilType;
 use App\Form\UtilisateurType;
 use App\Form\ApprentiType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -160,10 +161,10 @@ class CompteController extends Controller
      * Edition du compte de l'apprenti
      *
      * @Route("/compte/edition/", name="edition_compte_perso")
-     * @IsGranted("ROLE_APPRENTI")
      */
     public function edition_compte_perso(AuthorizationCheckerInterface $authChecker, Request $request)
     {
+        if($authChecker->isGranted('ROLE_APPRENTI') || $authChecker->isGranted('ROLE_MAITRE_APP'))
         $id = $this->getUser()->getId();
         return $this->edition_compte($authChecker, $request, $id);
     }
@@ -193,7 +194,12 @@ class CompteController extends Controller
         if($user->hasRole('ROLE_APPRENTI')) {
             $apprenti = $this->getDoctrine()->getRepository(Apprenti::class)->find($id);
             $form = $this->createForm(ApprentiType::class, $apprenti);
-        } else {
+        }
+        else if($user->hasRole('ROLE_MAITRE_APP')) {
+            $ma = $this->getDoctrine()->getRepository(MaitreApprentissage::class)->find($id);
+            $form = $this->createForm(MaitreApprentissageProfilType::class, $ma);
+        }
+        else {
             $form = $this->createForm(CompteType::class, $user)
                 ->add('Enregistrer', SubmitType::class);
 
@@ -282,7 +288,7 @@ class CompteController extends Controller
             if ($authChecker->isGranted('ROLE_MAITRE_APP')) {
                 $ma_exist = !empty($apprenti->getDossier()->getMaitreApprentissage());
                 if($ma_exist) {
-                    $ma = $apprenti->getDossier()->getMaitreApprentissage()->getId();
+                    $ma = $apprenti->getDossier()->getMaitreApprentissage()->getCompte()->getId();
                 }
                 if (!$ma_exist || $ma != $this->getUser()->getId()) {
                     throw new AccessDeniedException();

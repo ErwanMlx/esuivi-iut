@@ -1,0 +1,10 @@
+knp_snappy:
+    pdf:
+        enabled:    true
+        binary:     '%kernel.root_dir%/../vendor/wkhtmltox/bin/wkhtmltopdf'
+        options:
+                    - { name: 'page-size', value: 'A4' }
+    image:
+        enabled:    true
+        binary:     '%env(WKHTMLTOIMAGE_PATH)%'
+        options:    []

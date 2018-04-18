@@ -114,7 +114,7 @@ class SuiviController extends Controller
         if ($authChecker->isGranted('ROLE_MAITRE_APP')) {
             $ma_exist = !empty($apprenti->getDossier()->getMaitreApprentissage());
             if($ma_exist) {
-                $ma = $apprenti->getDossier()->getMaitreApprentissage()->getId();
+                $ma = $apprenti->getDossier()->getMaitreApprentissage()->getCompte()->getId();
             }
             if (!$ma_exist || $ma != $this->getUser()->getId()) {
                 throw new AccessDeniedException();
@@ -181,28 +181,34 @@ class SuiviController extends Controller
 
             $dossier = $apprenti->getDossier();
 
-            //Si le bordereau à déjà été remplis
-            if(!empty($dossier->getSujetPropose())) {
-                return $this->redirectToRoute('suivi', array('id' => $id));
-            }
-            else {
-                $form = $this->createForm(BordereauType::class, $dossier);
+            //Si les infos de l'entreprise ont déjà été remplies
+            if(!empty($dossier->getEntreprise()->getRaisonSociale())) {
+                //Si le bordereau à déjà été remplis
+                if(!empty($dossier->getSujetPropose())) {
+                    return $this->redirectToRoute('suivi', array('id' => $id));
+                }
+                else {
 
-                if ($request->isMethod('POST')) {
+                    $form = $this->createForm(BordereauType::class, $dossier);
 
-                    $form->handleRequest($request);
-                    if ($form->isSubmitted() && $form->isValid()) {
-                        $this->addFlash('success', 'Bordereau bien enregistré.');
+                    if ($request->isMethod('POST')) {
 
-                        $em = $this->getDoctrine()->getManager();
+                        $form->handleRequest($request);
+                        if ($form->isSubmitted() && $form->isValid()) {
+                            $this->addFlash('success', 'Bordereau bien enregistré.');
 
-                        $em->persist($dossier);
+                            $em = $this->getDoctrine()->getManager();
 
-                        $em->flush();
+                            $em->persist($dossier);
 
-                        return $this->redirectToRoute('suivi', array('id' => $id));
+                            $em->flush();
+
+                            return $this->redirectToRoute('suivi', array('id' => $id));
+                        }
                     }
                 }
+            } else {
+                return $this->redirectToRoute('remplissage_entreprise', array('id' => $dossier->getEntreprise()->getId(), 'bordereau' => $id));
             }
             //Soit on viens d'arriver sur la page, soit le formulaire contient des données incorrectes
             return $this->render('suivi/bordereau.html.twig', array('form' => $form->createView(),
@@ -228,11 +234,24 @@ class SuiviController extends Controller
         $dossier = $apprenti->getDossier();
 
         //Si le bordereau n'a pas encore été remplis
-        if(empty($dossier->getSujetPropose())) {
+        if(empty($dossier->getSujetPropose()) || empty($dossier->getEntreprise()->getRaisonSociale())) {
             return $this->redirectToRoute('remplir_bordereau', array('id' => $id));
         }
         else {
-            return new Response("Generation bordereau");
+            $entreprise = $dossier->getEntreprise();
+            $html = $this->renderView('bordereau/template_bordereau.html.twig', array(
+                'entreprise' => $entreprise, 'dossier' => $dossier, 'apprenti' => $apprenti
+            ));
+            $filename = sprintf('Bordereau-%s.pdf', date('Y-m-d'));
+
+            return new Response(
+                $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+                200,
+                [
+                    'Content-Type'        => 'application/pdf',
+                    'Content-Disposition' => sprintf('inline; filename="%s"', $filename),
+                ]
+            );
         }
     }
 
@@ -391,6 +410,7 @@ class SuiviController extends Controller
         }
         throw new AccessDeniedException();
     }
+
 
 //    /**
 //     * Abandon de dossier

@@ -55,6 +55,22 @@ $(document).ready(function() {
                 $(".infos_entreprise").removeClass('hide');
                 $(".select_maitre").prop('readonly',false);
                 $(".select_maitre").removeClass("disable");
+                
+                $.ajax({
+                    url: 'informations/',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: 'id_entreprise=' + $(this).val(),
+                    
+                    success: function(resultat, statut)
+                    {
+                        console.log(resultat);
+                    },
+                    error: function(resultat, statut, erreur)
+                    {
+                        console.log('erreur');
+                    }
+                });
             }
             else
             {

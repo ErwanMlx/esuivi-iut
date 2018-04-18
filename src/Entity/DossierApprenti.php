@@ -88,9 +88,9 @@ class DossierApprenti
     /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="MaitreApprentissage")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="id_maitre_apprentissage", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="id_maitre_apprentissage", referencedColumnName="id_compte")
      * })
      */
     private $maitreApprentissage;

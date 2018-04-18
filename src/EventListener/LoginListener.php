@@ -1,7 +1,9 @@
 <?php
 namespace App\EventListener;
 
+use App\Entity\MaitreApprentissage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -17,6 +19,11 @@ use Doctrine\ORM\EntityManager;
  */
 class LoginListener
 {
+
+    /**
+     * @var Session
+     */
+    protected $session;
 
     /**
      * @var EntityManager
@@ -40,12 +47,14 @@ class LoginListener
 
     /**
      * LoginListener constructor.
+     * @param Session $session
      * @param AuthorizationCheckerInterface $authChecker
      * @param TokenStorage $tokenStorage
      * @param Router $router
      * @param EntityManager $em
      */
-    public function __construct(AuthorizationCheckerInterface $authChecker, TokenStorage $tokenStorage, Router $router, EntityManager $em) {
+    public function __construct(Session $session, AuthorizationCheckerInterface $authChecker, TokenStorage $tokenStorage, Router $router, EntityManager $em) {
+        $this->session = $session;
         $this->authChecker = $authChecker;
         $this->tokenStorage = $tokenStorage;
         $this->router = $router;
@@ -67,14 +76,24 @@ class LoginListener
             return;
         }
 
+        //L'apprenti et le maitre d'apprentissage ne peuvent rien faire tant qu'il n'ont pas complétés leurs informations
         if ($this->authChecker->isGranted ( 'IS_AUTHENTICATED_FULLY' )) {
-            if($this->authChecker->isGranted('ROLE_APPRENTI')) {
+            if($this->authChecker->isGranted('ROLE_APPRENTI') || $this->authChecker->isGranted('ROLE_MAITRE_APP')) {
                 $id = $this->tokenStorage->getToken()->getUser()->getId();
-                $apprenti = $this->em
-                    ->getRepository(Apprenti::class)
-                    ->find($id);
+                if($this->authChecker->isGranted('ROLE_APPRENTI')) {
+                    $compte = $this->em
+                        ->getRepository(Apprenti::class)
+                        ->find($id);
+                }
+                if($this->authChecker->isGranted('ROLE_MAITRE_APP')) {
+                    $compte = $this->em
+                        ->getRepository(MaitreApprentissage::class)
+                        ->find($id);
+                }
 
-                if ($apprenti->getTelephone() === null) {
+
+                if ($compte->getTelephone() === null) {
+                    $this->session->getFlashBag()->add('warning', 'Vous devez compléter vos informations avant de pouvoir accéder au site.');
                     $event->setResponse(new RedirectResponse($this->router->generate('edition_compte_perso')));
                 }
             }

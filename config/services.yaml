@@ -36,6 +36,12 @@ services:
 
     login_listener:
             class: 'App\EventListener\LoginListener'
-            arguments: ['@security.authorization_checker', '@security.token_storage', '@router', '@doctrine.orm.entity_manager']
+            arguments: ['@session', '@security.authorization_checker', '@security.token_storage', '@router', '@doctrine.orm.entity_manager']
             tags:
                 - { name: 'kernel.event_listener', event: 'kernel.request', method: onKernelRequest }
+
+    app.twig_runtime:
+            class: App\Twig\AppRuntime
+            public: false
+            tags:
+                - { name: twig.runtime }

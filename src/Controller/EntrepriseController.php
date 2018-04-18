@@ -230,7 +230,7 @@ class EntrepriseController extends Controller
 
                 $form->handleRequest($request);
                 if ($form->isSubmitted() && $form->isValid()) {
-                    $this->addFlash('success', 'Informations bien enregistrées.');
+                    $this->addFlash('success', 'Informations entreprise bien enregistrées.');
 
                     $em = $this->getDoctrine()->getManager();
 
@@ -239,7 +239,12 @@ class EntrepriseController extends Controller
 
                     $em->flush();
 
-                    return $this->redirectToRoute('liste');
+                    $id_dossier = $request->query->get('bordereau');
+                    if(!empty($id_dossier)) {
+                        return $this->redirectToRoute('remplir_bordereau', array('id' => $id_dossier));
+                    } else {
+                        return $this->redirectToRoute('liste');
+                    }
                 }
             }
 
