@@ -43,13 +43,17 @@ class DossierApprenti
      *
      * @Assert\NotBlank(message="Le sujet ne peut pas être vide.")
      * @ORM\Column(name="sujet_propose", type="string", length=128, nullable=true)
+     * @Assert\Length(max = 128,
+     *     maxMessage = "Le sujet ne peut pas dépasser {{ limit }} caractères.")
      */
     private $sujetPropose;
 
     /**
      * @var string
      * @Assert\NotBlank(message="La description du sujet ne peut pas être vide.")
-     * @ORM\Column(name="description_du_sujet", type="string", length=512, nullable=true)
+     * @ORM\Column(name="description_du_sujet", type="string", length=5000, nullable=true)
+     * @Assert\Length(max = 5000,
+     *     maxMessage = "La description ne peut pas dépasser {{ limit }} caractères.")
      */
     private $descriptionDuSujet;
 
@@ -86,7 +90,7 @@ class DossierApprenti
     private $etapeActuelle;
 
     /**
-     * @var User
+     * @var MaitreApprentissage
      *
      * @ORM\ManyToOne(targetEntity="MaitreApprentissage")
      * @ORM\JoinColumns({
@@ -224,7 +228,7 @@ class DossierApprenti
     }
 
     /**
-     * @return User
+     * @return MaitreApprentissage
      */
     public function getMaitreApprentissage()
     {
@@ -232,11 +236,22 @@ class DossierApprenti
     }
 
     /**
-     * @param User $maitreApprentissage
+     * @param MaitreApprentissage $maitreApprentissage
      */
-    public function setMaitreApprentissage(User $maitreApprentissage): void
+    public function setMaitreApprentissage(MaitreApprentissage $maitreApprentissage): void
     {
         $this->maitreApprentissage = $maitreApprentissage;
+    }
+
+
+    public function reset()
+    {
+        $this->entreprise = null;
+        $this->maitreApprentissage = null;
+        $this->participationFinanciere = null;
+        $this->descriptionDuSujet = null;
+        $this->sujetPropose = null;
+        $this->dateEmbauche = null;
     }
 }
 

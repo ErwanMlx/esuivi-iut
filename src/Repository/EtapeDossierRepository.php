@@ -73,15 +73,26 @@ class EtapeDossierRepository extends ServiceEntityRepository
 //        return $stmt->fetchAll();
     }
     public function tempsMoyenDossier(){
-		
-	/*	select avg(extract(epoch from (date_fin_doss - date_debut_doss)))
+
+		$conect = $this->getEntityManager()->getConnection();
+
+		$sql = "
+		select avg(extract(epoch from (z.date_fin_doss - z.date_debut_doss))) as tempsMoyen
 		from (
 			select max(a.date_validation) as date_fin_doss, min(a.date_debut) as date_debut_doss
 			from etape_dossier a join dossier_apprenti b on (b.id = a.id_dossier)
 			where b.etat <> 'abandonne'
 			group by a.id_dossier
-		); */
-		$qb2 = $this->getEntityManager()->createQueryBuilder(); 
+		) as z
+		";
+
+		$statement = $conect->prepare($sql);
+		$statement->execute();
+
+		return $statement->fetchAll();
+
+	/* Requête propre */	
+	/*	$qb2 = $this->getEntityManager()->createQueryBuilder(); 
 		$qb = $this->getEntityManager()->createQueryBuilder()
 			->select($qb2->expr()->avg('c.date_fin_doss - c.date_debut_doss'))
 			->from($qb2
@@ -99,8 +110,8 @@ class EtapeDossierRepository extends ServiceEntityRepository
 				'c'
 			)
 			->setParameter(':etat','abandonné')
-			->getQuery();
+			->getQuery();*/
 
-		return $qb->execute();
+		/*return $qb->execute();*/
 	}
 }

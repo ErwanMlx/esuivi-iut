@@ -48,7 +48,7 @@
                     {% endif %}
                     {% if is_granted('ROLE_APPRENTI') %}
                         <li><a href="{{ path('suivi_perso') }}">Suivi Dossier</a></li>
-                        <li><a href="{{ path('choix_entreprise') }}">Infos entreprise</a></li>
+                        {#<li><a href="{{ path('choix_entreprise') }}">Infos entreprise</a></li>#}
                     {% endif %}
                     {% if is_granted('ROLE_IUT') %}
                         <li><a href="{{ path('statistiques') }}">Statistiques</a></li>

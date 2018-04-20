@@ -17,7 +17,7 @@ class MaitreApprentissage
      * @var string
      *
      * @ORM\Column(name="fonction", type="string", length=256, nullable=true)
-     * @Assert\NotBlank(message="La fonction ne peut pas être vide.")
+     * @Assert\NotBlank(message="La fonction ne peut pas être vide.", groups={"profil"})
      */
     private $fonction;
 
@@ -26,11 +26,11 @@ class MaitreApprentissage
      *
      * @ORM\Column(name="telephone", type="string", length=10, nullable=true)
      * @Assert\Length(min = 10, max = 10,
-     *     exactMessage = "Le numéro de téléphone doit faire {{ limit }} caractères.")
-     * @Assert\NotBlank(message="Le numéro de téléphone ne peut pas être vide.")
+     *     exactMessage = "Le numéro de téléphone doit faire {{ limit }} caractères.", groups={"profil"})
+     * @Assert\NotBlank(message="Le numéro de téléphone ne peut pas être vide.", groups={"profil"})
      * @Assert\Type(
      *     type="numeric",
-     *     message="Le téléphone ne doit contenir que des chiffres."
+     *     message="Le téléphone ne doit contenir que des chiffres.", groups={"profil"}
      * )
      */
     private $telephone;

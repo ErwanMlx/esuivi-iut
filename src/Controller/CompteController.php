@@ -232,8 +232,13 @@ class CompteController extends Controller
 
                 $this->addFlash('success', 'Modifications bien enregistrées.');
 
-                // On redirige vers le profil
-                return $this->redirectToRoute('profil', array('id' => $id));
+                if($request->get('src') == "bordereau") {
+                    return $this->redirectToRoute('consulter_bordereau', array('id' => $request->get('app')));
+                }
+                else {
+                    // On redirige vers le profil
+                    return $this->redirectToRoute('profil', array('id' => $id));
+                }
             }
             if(!$email_ok) {
                 $form->get('compte')->get('email')->addError(new FormError('Un compte lié à cet email existe déjà.'));

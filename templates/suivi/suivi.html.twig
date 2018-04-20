@@ -65,10 +65,18 @@
                                     {% set class_type = class_type ~ ' annulable' %}
                                 {% endif %}
                             {% endif %}
+                            {% if etape.positionEtape == 1 and (is_granted('ROLE_ADMIN') or is_granted('ROLE_APPRENTI'))%}
+                                <a href="{{ path('choix_entreprise', {'id': apprenti.compte.id}) }}">
+                            {% endif %}
                             <div class="{{ class_type }}" id="{{ etape.id }}">
                                 <div class="cercle center-block col-lg-4"><img class="img-responsive" src="/build/img/Icone_{{ etape.typeIcone }}.png" alt=""/></div>
                                 <p class="col-lg-8">{{ etape.NomEtape }}</p>
                             </div>
+                            {% if etape.positionEtape == 1 %}
+                                </a>
+                            {% endif %}
+
+
                             {% set index_etape = index_etape + 1 %}
                         {% endfor %}
                     </div>
@@ -83,11 +91,11 @@
                 {% if apprenti.Dossier.etat != "Abandonné" and (is_granted('ROLE_IUT')) %}
                     <button id="abandon" class="btn btn-default">Abandonner dossier</button>
                 {% endif %}
-                {% if (apprenti.dossier.sujetpropose is not empty or is_granted('ROLE_MAITRE_APP')) %}
+                {% if (apprenti.dossier.entreprise is not empty and (apprenti.dossier.sujetpropose is not empty or is_granted('ROLE_MAITRE_APP'))) %}
                     <a class="btn btn-default" href="{{ path('consulter_bordereau', {"id":apprenti.compte.id}) }}">Bordereau</a>
                 {% endif %}
                 {#{% if apprenti.Dossier.etat == "Abandonné" and (is_granted('ROLE_IUT')) %}#}
-                    {#<button id="reactivation" class="btn btn-default">Réactiver dossier</button>#}
+                {#<button id="reactivation" class="btn btn-default">Réactiver dossier</button>#}
                 {#{% endif %}#}
             </div>
         </div>

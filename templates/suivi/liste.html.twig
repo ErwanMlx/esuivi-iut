@@ -23,9 +23,7 @@
                         </div>
                     </form>
                 </div>
-                {% if liste is empty %}
-                    <h3 class="text-center">Aucun apprenti trouvé.</h3>
-                {% endif %}
+                <h3 id="noapp" class="text-center {{ liste is not empty ? "hide" }}">Aucun apprenti trouvé.</h3>
                 {% for apprenti in liste %}
                     <a href="{{ path('suivi', {'id': apprenti.compte.id}) }}">
                         <div class="bordure col-sm-8 col-sm-offset-2">
@@ -41,4 +39,9 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="/build/js/recherche_liste.js"></script>
 {% endblock %}

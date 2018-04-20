@@ -3,6 +3,7 @@ namespace App\EventListener;
 
 use App\Entity\MaitreApprentissage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernel;
@@ -80,17 +81,17 @@ class LoginListener
         if ($this->authChecker->isGranted ( 'IS_AUTHENTICATED_FULLY' )) {
             if($this->authChecker->isGranted('ROLE_APPRENTI') || $this->authChecker->isGranted('ROLE_MAITRE_APP')) {
                 $id = $this->tokenStorage->getToken()->getUser()->getId();
+                $compte = null;
                 if($this->authChecker->isGranted('ROLE_APPRENTI')) {
                     $compte = $this->em
                         ->getRepository(Apprenti::class)
                         ->find($id);
                 }
-                if($this->authChecker->isGranted('ROLE_MAITRE_APP')) {
+                else if($this->authChecker->isGranted('ROLE_MAITRE_APP')) {
                     $compte = $this->em
                         ->getRepository(MaitreApprentissage::class)
                         ->find($id);
                 }
-
 
                 if ($compte->getTelephone() === null) {
                     $this->session->getFlashBag()->add('warning', 'Vous devez compléter vos informations avant de pouvoir accéder au site.');

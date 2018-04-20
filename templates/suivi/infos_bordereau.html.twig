@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Informations du bordereau{% endblock %}
+
+{% block page_title %}Informations du bordereau{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-offset-3 col-sm-6 col-md-offset-3 col-md-6 contenu">
+                <h3>Entreprise</h3>
+                <p>Nom : {{ entreprise.nom }}</p>
+                <p>Raison sociale : {{ entreprise.raisonsociale }}</p>
+                <p>SIRET : {{ entreprise.siret }}</p>
+                <p>Nombre de salariés : {{ entreprise.nombresalaries }}</p>
+                <p>Adresse : {{ entreprise.adresse }}</p>
+                <p>Code Postal : {{ entreprise.codepostal }}</p>
+                <p>Ville : {{ entreprise.ville }}</p>
+                <p>Téléphone : {{ entreprise.telephone }}</p>
+                {% if entreprise.fax is not empty %}
+                    <p>Fax : {{ entreprise.fax }}</p>
+                {% endif %}
+                <p>Email : {{ entreprise.email }}</p>
+                <p>Domaine d'activité : {{ entreprise.domaineactivite }}</p>
+                <h3>Correspondant</h3>
+                <p>Nom : {{ entreprise.correspondantentreprise.nom }}</p>
+                <p>Prénom : {{ entreprise.correspondantentreprise.prenom }}</p>
+                <p>Fonction : {{ entreprise.correspondantentreprise.fonction }}</p>
+                <p>Téléphone : {{ entreprise.correspondantentreprise.telephone }}</p>
+                <p>Email : {{ entreprise.correspondantentreprise.email }}</p>
+                <h3>Maître d'apprentissage</h3>
+                <p>Nom : {{ maitre.compte.nom }}</p>
+                <p>Prénom : {{ maitre.compte.prenom }}</p>
+                <p>Email : {{ maitre.compte.email }}</p>
+                <p>Fonction : {{ maitre.fonction }}</p>
+                <p>Téléphone : {{ maitre.telephone }}</p>
+                {% if maitre.fax is not empty %}
+                    <p>Fax : {{ maitre.fax }}</p>
+                {% endif %}
+                <h3>Offre de contrat d'apprentissage</h3>
+                <p>Date d'embauche : {{ dossier.dateembauche|date('d/m/y') }}</p>
+                <p>Sujet proposé : {{ dossier.sujetpropose }}</p>
+                <div>
+                <p>Description : {{ dossier.descriptiondusujet }}</p>
+                </div>
+                <p>Participation financière : {{ dossier.participationfinanciere }} EUR</p>
+                <center>
+                    {% if is_granted('ROLE_IUT') %}
+                        <a class="btn btn-default" href="{{ path('choix_entreprise', {'id': id, 'src':"bordereau"}) }}">Changer entreprise et maitre d'apprentissage</a>
+                        <a class="btn btn-default" href="{{ path('remplissage_entreprise', {'id':entreprise.id, 'src':"bordereau", 'app':id}) }}">Editer entreprise</a>
+                        <a class="btn btn-default" href="{{ path('edition_compte', {'id':maitre.compte.id, 'src':"bordereau", 'app':id}) }}">Editer maitre apprentissage</a>
+                        <a class="btn btn-default" href="{{ path('remplir_bordereau', {'id':id}) }}">Editer bordereau</a>
+                    {% endif %}
+                    <a href="{{ path('consulter_bordereau', {"id":id, "option":true}) }}" class="btn btn-default" target="_blank">Générer bordereau</a>
+                    <a href="{{ path('suivi', {"id":id}) }}" class="btn btn-default" >Retour suivi</a>
+                </center>
+            </div>
+        </div>
+    </div>
+{% endblock %}

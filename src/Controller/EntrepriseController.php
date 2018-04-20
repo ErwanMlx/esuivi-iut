@@ -2,11 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\Apprenti;
 use App\Entity\CorrespondantEntreprise;
+use App\Entity\EtapeDossier;
 use App\Entity\MaitreApprentissage;
+use App\Entity\TypeEtape;
 use App\Form\CompteType;
 use App\Form\EntrepriseSupType;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route; //To define the route to access it
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -23,32 +27,68 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class EntrepriseController extends Controller
 {
     /**
-     * @Route("/entreprise/choix/", name="choix_entreprise")
+     * @Route("/entreprise/choix/{id}", name="choix_entreprise", requirements={"id"="\d+"}, defaults={"id"=null})
      */
-    public function choix_entreprise(Request $request, ValidatorInterface $validator, UserPasswordEncoderInterface $encoder)
+    public function choix_entreprise(AuthorizationCheckerInterface $authChecker, Request $request, ValidatorInterface $validator, UserPasswordEncoderInterface $encoder, $id)
     {
+
+        //Si ce n'est pas un apprenti qui accède à la page
+        if (!$authChecker->isGranted('ROLE_APPRENTI') && !$authChecker->isGranted('ROLE_IUT')) {
+            throw new AccessDeniedException();
+        }
+
+        //On récupère l'apprenti pour lequel on veut afficher le suivi
+        if($authChecker->isGranted('ROLE_APPRENTI')) {
+            $apprenti = $this->getDoctrine()
+                ->getRepository(Apprenti::class)
+                ->find($this->getUser()->getId());
+        }
+        elseif ($authChecker->isGranted('ROLE_IUT')) {
+            $apprenti = $this->getDoctrine()
+                ->getRepository(Apprenti::class)
+                ->find($id);
+        }
+
+
+        if(!$apprenti) {
+            throw new NotFoundHttpException();
+        }
+        //Si l'apprenti a déjà saisi les informations de son entreprise
+//        if($authChecker->isGranted('ROLE_APPRENTI') && !empty($apprenti->getDossier()->getEntreprise())) {
+//            throw new AccessDeniedException();
+//        }
+
+        $selectionEntreprise = null;
+        $selectionMaitre = null;
+        $maitres = null;
+        $entreprise_old = null;
+        $ma_old = null;
+        $error = false;
+        $addMa = false;
+        $src = $request->get('src');
+
+
         $entreprises = $this->getDoctrine()->getRepository(Entreprise::class)->findAll();
 
+        if(!empty($apprenti->getDossier()->getEntreprise())) {
+            $ma_old = $apprenti->getDossier()->getMaitreApprentissage();
+            $user = $apprenti->getDossier()->getMaitreApprentissage()->getCompte();
+            $entreprise_old = $apprenti->getDossier()->getEntreprise();
+            $selectionEntreprise = $entreprise_old->getId();
+            $selectionMaitre = $user->getId();
+            $maitres = $this->getDoctrine()->getRepository(MaitreApprentissage::class)->findByEntreprise($entreprise_old);
+        }
         $ma = new MaitreApprentissage();
         $user = new User();
         $ma->setCompte($user);
         $entreprise = new Entreprise();
         $ma->setEntreprise($entreprise);
-        $form = $this->createForm(MaitreApprentissageType::class, $ma);
 
-        $selectionEntreprise = null;
-        $selectionMaitre = null;
-        $maitres = null;
-        $error = false;
-        $addMa = false;
+        $form = $this->createForm(MaitreApprentissageType::class, $ma);
 
         if ($request->isMethod('POST')) {
 
@@ -59,95 +99,141 @@ class EntrepriseController extends Controller
             $selectionEntreprise = $request->request->get('select_entreprise');
             $selectionMaitre = $request->request->get('select_maitre');
 
-            if (!empty($selectionEntreprise && !empty($selectionMaitre)) /*&& !empty($selectionMaitre)*/) {
-                if ($form->isSubmitted()) {
+//            if (!empty($selectionEntreprise) && !empty($selectionMaitre)) {
+            if ($form->isSubmitted()) {
 
-                    //Choix autre entreprise
-                    if ($selectionEntreprise == 'Autre') {
-//                        $this->addFlash('info', 'ICI');
+                //Choix autre entreprise
+                if ($selectionEntreprise == 'Autre') {
 
-                        $errorsEn = $validator->validate($ma->getEntreprise(), null, array('ajout_entreprise'));
-                        $errorsMa = $validator->validate($ma->getCompte(), null, array('ajout'));
-//                        return new Response(count($errors) );
-                        if (count($errorsEn) == 0 && count($errorsMa) == 0) {
-                            $addMa = true;
-                            $em->persist($ma->getEntreprise());
-                        } else {
-                            foreach ($errorsEn as &$err) {
-                                $input = $err->getPropertyPath();
-                                if($input == "codePostal") {
-                                    $input = "code_postal";
-                                }
-                                $form->get('entreprise')->get($input)->addError(new FormError($err->getMessage()));
+                    $errorsEn = $validator->validate($ma->getEntreprise(), null, array('ajout_entreprise'));
+                    $errorsMa = $validator->validate($ma->getCompte(), null, array('ajout'));
+                    if (count($errorsEn) == 0 && count($errorsMa) == 0) {
+                        $addMa = true;
+                        $em->persist($ma->getEntreprise());
+                    } else {
+                        foreach ($errorsEn as &$err) {
+                            $input = $err->getPropertyPath();
+                            if($input == "codePostal") {
+                                $input = "code_postal";
                             }
-                            foreach ($errorsMa as &$err) {
-                                $form->get('compte')->get($err->getPropertyPath())->addError(new FormError($err->getMessage()));
-                            }
-                            $error = true;
+                            $form->get('entreprise')->get($input)->addError(new FormError($err->getMessage()));
                         }
+                        foreach ($errorsMa as &$err) {
+                            $form->get('compte')->get($err->getPropertyPath())->addError(new FormError($err->getMessage()));
+                        }
+                        $error = true;
                     }
-                    //Entreprise existante choisie
-                    if ($selectionEntreprise != 'Autre' && !empty($selectionEntreprise)) {
-                        $entreprise = $this->getDoctrine()->getRepository(Entreprise::class)->find($selectionEntreprise);
-                        if (!$entreprise) {
-                            $this->addFlash('warning', 'Entreprise inexistante');
-                            $error = true;
-                        } else {
-                            $maitres = $this->getDoctrine()->getRepository(MaitreApprentissage::class)->findByEntreprise($entreprise);
-                            //Choix autre maitre d'apprentissage
-                            if ($selectionMaitre == 'Autre') {
-                                $ma->setEntreprise($entreprise);
-                                $errors = $validator->validate($ma->getCompte(), null, array('ajout'));
+                }
+                //Entreprise existante choisie
+                if ($selectionEntreprise != 'Autre' && !empty($selectionEntreprise)) {
+                    $entreprise = $this->getDoctrine()->getRepository(Entreprise::class)->find($selectionEntreprise);
+                    $entreprise_old = $entreprise;
+                    if (!$entreprise) {
+                        $this->addFlash('warning', 'Entreprise inexistante');
+                        $error = true;
+                    } else {
+                        $maitres = $this->getDoctrine()->getRepository(MaitreApprentissage::class)->findByEntreprise($entreprise);
+                        //Choix autre maitre d'apprentissage
+                        if ($selectionMaitre == 'Autre') {
+                            $ma->setEntreprise($entreprise);
+                            $errors = $validator->validate($ma->getCompte(), null, array('ajout'));
 
-                                if (count($errors) == 0) {
+                            if (count($errors) == 0) {
 
-                                    $email = $this->getDoctrine()->getRepository(User::class)->findByEmail($ma->getCompte()->getEmail());
+                                $email = $this->getDoctrine()->getRepository(User::class)->findByEmail($ma->getCompte()->getEmail());
 
-                                    //Si le mail n'est pas déjà utilisé
-                                    if (!$email) {
-                                        $addMa = true;
-                                    } else {
-                                        $form->addError(new FormError('Adresse email déjà utilisée'));
-                                        $error = true;
-                                    }
-                                }
-                                else {
-                                    foreach ($errors as &$err) {
-                                        $form->get('compte')->get($err->getPropertyPath())->addError(new FormError($err->getMessage()));
-                                    }
-
-                                }
-                            }
-                            //Maitre d'apprentissage existant choisi
-                            if ($selectionMaitre != 'Autre' && !empty($selectionMaitre)) {
-                                $ma = $this->getDoctrine()->getRepository(MaitreApprentissage::class)->find($selectionMaitre);
-                                if (!$ma) {
-                                    $form->addError(new FormError('Maitre d\'apprentissage inexistant'));
+                                //Si le mail n'est pas déjà utilisé
+                                if (!$email) {
+                                    $addMa = true;
+                                } else {
+                                    $form->addError(new FormError('Adresse email déjà utilisée'));
                                     $error = true;
                                 }
                             }
+                            else {
+                                foreach ($errors as &$err) {
+                                    $form->get('compte')->get($err->getPropertyPath())->addError(new FormError($err->getMessage()));
+                                }
+                                $error = true;
+                            }
                         }
-                    }
-//
-                }
-                if(!$error) {
-                    if($addMa) {
-                        $ma->getCompte()->addRole("ROLE_MAITRE_APP");
-                        $password = 'password';
-                        $encoded = $encoder->encodePassword($user, $password);
+                        //Maitre d'apprentissage existant choisi
+                        if ($selectionMaitre != 'Autre' && !empty($selectionMaitre)) {
+                            $ma = $this->getDoctrine()->getRepository(MaitreApprentissage::class)->find($selectionMaitre);
+                            if (!$ma) {
+                                $form->addError(new FormError('Maitre d\'apprentissage inexistant'));
+                                $error = true;
+                            }
+                            $ma_old = &$ma;
+                        }
+                        if(empty($selectionEntreprise)) {
+                            $this->addFlash('danger', "Veuillez sélectionner une entreprise.");
+                            $error = true;
+                        } else if(empty($selectionMaitre)) {
+                            $this->addFlash('danger', "Veuillez sélectionner un maitre d'apprentissage.");
+                            $error = true;
+                        }
 
-                        $user->setPassword($encoded);
-
-                        $user->setEnabled(true);
-                        $em->persist($ma->getCompte());
-                        $em->persist($ma);
                     }
-                    $em->flush();
-                    return $this->redirectToRoute('suivi_perso');
                 }
             }
+            if(!$error) {
+                if($addMa) {
+                    $ma->getCompte()->addRole("ROLE_MAITRE_APP");
+                    $password = 'password';
+                    $encoded = $encoder->encodePassword($user, $password);
+
+                    $user->setPassword($encoded);
+
+                    $user->setEnabled(true);
+                    $em->persist($ma->getCompte());
+                    $em->persist($ma);
+                }
+                $apprenti->getDossier()->setEntreprise($entreprise);
+                $apprenti->getDossier()->setMaitreApprentissage($ma);
+
+                if($apprenti->getDossier()->getEtapeActuelle()->getTypeEtape()->getPositionEtape() == 1) {
+                    $etape_actuelle = $apprenti->getDossier()->getEtapeActuelle();
+                    $etape_actuelle->setdateValidation(new \DateTime());
+                    $etape_suivante = $this->getDoctrine()->getRepository(TypeEtape::class)->findOneByPositionEtape(2);
+//                        $etape_suivante = $this->getDoctrine()->getRepository(TypeEtape::class)->findOneByPositionEtape($etape_actuelle->getTypeEtape()->getId()+1);
+
+                    $new_etape_dossier = new EtapeDossier();
+                    $new_etape_dossier->setTypeEtape($etape_suivante);
+                    $new_etape_dossier->setdateDebut(new \DateTime());
+                    $new_etape_dossier->setDossier($apprenti->getDossier());
+
+                    $em->persist($new_etape_dossier);
+
+                    //On met a jour l'étape actuelle du dossier
+                    $apprenti->getDossier()->setEtapeActuelle($new_etape_dossier);
+                }
+                $em->flush();
+
+                if(empty($id)) {
+                    return $this->redirectToRoute('suivi_perso');
+                } else {
+                    if($src == "bordereau") {
+                        return $this->redirectToRoute('consulter_bordereau', array('id' => $id));
+                    }
+                    else {
+                        return $this->redirectToRoute('suivi', array('id' => $id));
+                    }
+                }
+
+            }
+//            }
         }
-        return $this->render('entreprise/entreprise.html.twig', array('entreprises' => $entreprises, 'maitres' => $maitres, 'form' => $form->createView(), 'selectionEntreprise' => $selectionEntreprise, 'selectionMaitre' => $selectionMaitre));
+        return $this->render('entreprise/choix_entreprise.html.twig',
+            array('id' => $id,
+                'entreprises' => $entreprises,
+                'maitres' => $maitres,
+                'ma_old' => $ma_old,
+                'entreprise_old' => $entreprise_old,
+                'form' => $form->createView(),
+                'selectionEntreprise' => $selectionEntreprise,
+                'selectionMaitre' => $selectionMaitre,
+                'src' => $src));
     }
 
     /**
@@ -202,7 +288,7 @@ class EntrepriseController extends Controller
                 "email" => $ma->getCompte()->getEmail(),
                 "tel" => $ma->getTelephone(),
                 "fonction" => $ma->getFonction()
-                );
+            );
             return new JsonResponse(array('maitre_app' => $ma_json));
         }
         throw new AccessDeniedException();
@@ -242,6 +328,8 @@ class EntrepriseController extends Controller
                     $id_dossier = $request->query->get('bordereau');
                     if(!empty($id_dossier)) {
                         return $this->redirectToRoute('remplir_bordereau', array('id' => $id_dossier));
+                    } else if($request->get('src') == "bordereau") {
+                        return $this->redirectToRoute('consulter_bordereau', array('id' => $request->get('app')));
                     } else {
                         return $this->redirectToRoute('liste');
                     }

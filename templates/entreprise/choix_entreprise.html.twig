@@ -1,21 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Infos Entreprise{% endblock %}
+{% block title %}Choix de l'entreprise{% endblock %}
 
-{% block page_title %}Infos Entreprise{% endblock %}
+{% block page_title %}Choix de l'entreprise{% endblock %}
 
 {% block body %}
-
     <div class = "container">
         <div class="row">
             <div class="contenu col-xs-12">
-                {{ form_start(form, {'action': path('choix_entreprise')}) }}
+                {{ form_start(form, {'action': path('choix_entreprise', {"id":id, "src":src}) }) }}
                 {{ form_errors(form) }}
                 {% for label, messages in app.flashes %}
                     {% for message in messages %}
                         <div class="alert alert-{{ label }} alert-dismissable">
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                        {{ message }}
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            {{ message }}
                         </div>
                     {% endfor %}
                 {% endfor %}
@@ -44,9 +43,34 @@
                 </div>
                 <div class="col-xs-12 col-md-offset-2 col-md-4">
                     <div class = "form-group infos_entreprise {{ (selectionEntreprise == null or selectionEntreprise == "Autre") ? "hide" }}">
-                        <p>Adresse de l'entreprise :</p> <p>12 rue des marmottes</p>
-                        <p>Code postal de l'entreprise :</p> <p>77720</p>
-                        <p>Ville de l'entreprise :</p> <p>Bob</p>
+                        {#{% if app.request.method == "POST" %}#}
+                        {#entreprise_old = #}
+                        {#{% endif %}#}
+
+                        {% if entreprise_old is not empty and selectionEntreprise matches '/^\\d+$/' %}
+                            <p>Adresse de l'entreprise :</p>
+                            <p>{{ entreprise_old.adresse }}</p>
+                            <p>Code postal de l'entreprise :</p>
+                            <p>{{ entreprise_old.codepostal }}</p>
+                            <p>Ville de l'entreprise :</p>
+                            <p>{{ entreprise_old.ville }}</p>
+                            {% if ma_old is not empty and selectionMaitre matches '/^\\d+$/' %}
+                                <div class="infos_ma">
+                                    <p>Nom et prénom du maître d'apprentissage :</p>
+                                    <p>{{ ma_old.compte.nom ~ ' ' ~ ma_old.compte.prenom }}</p>
+                                    <p>Adresse email du maître d'apprentissage :</p>
+                                    <p>{{ ma_old.compte.email }}</p>
+                                    {% if ma_old.telephone is not empty %}
+                                        <p>Telephone du maître d'appentissage :</p>
+                                        <p>{{ ma_old.telephone }}</p>
+                                    {% endif %}
+                                    {% if ma_old.fonction is not empty %}
+                                        <p>Fonction du maître d'apprentissage :</p>
+                                        <p>{{ ma_old.fonction }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
                     </div>
                     <div class="form_entreprise {{ selectionEntreprise != "Autre" ? "hide" }}">
                         <div class="form-group">

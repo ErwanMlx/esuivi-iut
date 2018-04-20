@@ -204,7 +204,9 @@ textarea {
     resize: vertical;
 }
 
-
+div {
+    word-wrap: break-word;
+}
 
 
 

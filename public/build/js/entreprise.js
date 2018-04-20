@@ -45,13 +45,16 @@ $(document).ready(function() {
             $(".select_maitre").prop('readonly',true);
             $(".select_maitre").addClass("disable");
             $(".select_maitre option[value=\"Autre\"]").prop("selected", true);
+            $(".form_maitre").hide();
             $(".form_maitre").removeClass('hide');
+            $(".form_maitre").fadeIn("slow");
         }
         else
         {
             $(".form_entreprise").addClass('hide');
             if($(this).val() != '')
             {
+                $(".infos_entreprise").hide();
                 $(".infos_entreprise").removeClass('hide');
                 $(".select_maitre").prop('readonly',false);
                 $(".select_maitre").removeClass("disable");
@@ -65,6 +68,24 @@ $(document).ready(function() {
                     success: function(resultat, statut)
                     {
                         console.log(resultat);
+                        $(".infos_entreprise").hide();
+                        $(".infos_entreprise").html("<p>Adresse de l'entreprise :</p>\
+                        <p>"+resultat.entreprise.adresse+"</p>\
+                        <p>Code postal de l'entreprise :</p>\
+                        <p>"+resultat.entreprise.cp+"</p>\
+                        <p>Ville de l'entreprise :</p>\
+                        <p>"+resultat.entreprise.ville+"</p>\
+                        <div class='infos_ma'></div>");
+                        $(".infos_entreprise").fadeIn("slow");
+                        
+                        $(".select_maitre").html("<option value=''>-- Selectionner le maitre d'apprentissage --</option>");
+                        $.each(resultat.liste_ma,function(index,element)
+                        {
+                            $(".select_maitre").append("<option value='"+element.id+"'>"+element.nom + " " + element.prenom+"</option>");
+                        });
+                        $(".select_maitre").append("<option value='Autre'>Autre</option>");
+                        $(".select_maitre").append("<div class ='infos_ma'></div>");
+                        
                     },
                     error: function(resultat, statut, erreur)
                     {
@@ -84,12 +105,48 @@ $(document).ready(function() {
     $(".select_maitre").change(function(){
         if($(this).val() == 'Autre')
         {
+            $(".form_maitre").hide();
             $(".form_maitre").removeClass('hide');
-
+            $(".form_maitre").fadeIn();
+            $(".infos_ma").html("");
         }
         else
         {
-            $(".form_maitre").addClass('hide');
+            if($(this).val() != '')
+            {
+                $.ajax({
+                        url: 'informations_ma/',
+                        type: 'GET',
+                        dataType: 'json',
+                        data: 'id_ma=' + $(this).val(),
+                        
+                        success: function(resultat, statut)
+                        {
+                            console.log(resultat);
+                            $(".infos_ma").hide();
+                            $(".infos_ma").html("<p>Nom et prénom du maître d'apprentissage :</p>\
+                            <p>"+resultat.maitre_app.nom+" "+resultat.maitre_app.prenom+"</p>\
+                            <p>Adresse email du maître d'apprentissage :</p>\
+                            <p>"+resultat.maitre_app.email+"</p>\
+                            <p>Telephone du maître d'appentissage :</p>\
+                            <p>"+resultat.maitre_app.tel+"</p>\
+                            <p>Fonction du maître d'apprentissage :</p>\
+                            <p>"+resultat.maitre_app.fonction+"</p>");
+                            $(".infos_ma").fadeIn("slow");
+    
+                        },
+                        error: function(resultat, statut, erreur)
+                        {
+                            console.log('erreur');
+                        }
+                    });
+                $(".form_maitre").addClass('hide');
+            }
+            else
+            {
+                $(".form_maitre").addClass('hide');
+                $(".infos_ma").html("");
+            }
         }
     });
 });

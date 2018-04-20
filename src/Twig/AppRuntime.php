@@ -16,14 +16,13 @@ class AppRuntime
     public function addChar($string, $nbChar = 0, $char = '.')
     {
         $string_size = strlen($string);
-        if($string_size < $nbChar) {
-            for ($i = 1; $i <= $nbChar - $string_size; $i++) {
-                $string = $string . $char;
-                if($i%210 == 0) {
-                    $string = $string . '<br>';
+//        if($string_size == 0) {
+            if ($string_size < $nbChar) {
+                for ($i = 1; $i <= $nbChar - $string_size; $i++) {
+                    $string = $string . $char;
                 }
             }
-        }
+//        }
 
         return $string;
     }

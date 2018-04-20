@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="/build/css/custom_statistique.css">
+{% endblock %}
+
+{% block page_title %}Statistiques{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="row">
+            <div class="contenu col-xs-12">
+                <h1>{{ tmpMoyen }}</h1>
+                <h1>{{ arr[0].tempsmoyen }}</h1>
+                <div class = "col-xs-12 col-sm-6">
+                    <canvas id="BarChart"></canvas>
+                </div>
+                <div class = "col-xs-12 col-sm-6">
+                    <canvas id="PieChart1"></canvas>
+                </div>
+                <div class = "col-xs-12 col-sm-6">
+                    <canvas id="PieChart2"></canvas>
+                </div>
+                <div class = "col-xs-12 col-sm-6">
+                    <h3> Nombre d'abandon </h3>
+                </div>
+                <div class = "col-xs-12 col-sm-6">
+                    <h3> Temps moyen d’un dossier complété </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="/build/js/Chart.js"></script>
+    <script src="/build/js/statistique.js"></script>
+{% endblock %}
