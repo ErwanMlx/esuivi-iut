@@ -31,7 +31,6 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 
-
 class CompteController extends Controller
 {
 
@@ -93,15 +92,9 @@ class CompteController extends Controller
 
             // On vérifie que les valeurs entrées sont correctes
             if ($form->isSubmitted() && $form->isValid() && !$email_exist) {
-                //On génère le mot de passe
-//                $tokenGenerator = $this->getContainer()->get('fos_user.util.token_generator');
-//                $password = substr($tokenGenerator->generateToken(), 0, 8);
 
-                //PROVISOIRE
-                $password = 'password';
-                $encoded = $encoder->encodePassword($user, $password);
-
-                $user->setPassword($encoded);
+                //On génére le mot de passe et on envoi un mails avec les identifiants
+                $this->get('app.emailservice')->nouveau_compte($user);
 
                 $user->setEnabled(true);
 

@@ -180,10 +180,9 @@ class EntrepriseController extends Controller
             if(!$error) {
                 if($addMa) {
                     $ma->getCompte()->addRole("ROLE_MAITRE_APP");
-                    $password = 'password';
-                    $encoded = $encoder->encodePassword($user, $password);
 
-                    $user->setPassword($encoded);
+                    //On génére le mot de passe et on envoi un mails avec les identifiants
+                    $this->get('app.emailservice')->nouveau_compte($user);
 
                     $user->setEnabled(true);
                     $em->persist($ma->getCompte());

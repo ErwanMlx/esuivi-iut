@@ -43,7 +43,7 @@ class Apprenti
      *
      * @ORM\Column(name="code_postal", type="string", length=5, nullable=true)
      * @Assert\Length(min = 5, max = 5,
-     *     exactMessage = "Le code postal doit faire moins de {{ limit }} caractères.")
+     *     exactMessage = "Le code postal doit faire {{ limit }} chiffres.")
      * @Assert\NotBlank(message="Le code postal ne peut pas être vide.")
      * @Assert\Type(
      *     type="numeric",

@@ -2,7 +2,11 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'fr'
-    mailer_user: esuivi-iut@alwaysdata.net
+    mailer_email: esuivi-iut@alwaysdata.net
+    mailer_name: Esuivi-IUT
+    router.request_context.host: esuivi-iut.alwaysdata.net
+    router.request_context.scheme: https
+
 
 services:
     # default configuration for services in *this* file
@@ -45,3 +49,8 @@ services:
             public: false
             tags:
                 - { name: twig.runtime }
+
+    app.emailservice:
+        class: 'App\Services\EmailService'
+        public: true
+        arguments: ['@mailer', '@twig', '%mailer_email%', '%mailer_name%', '@service_container', '@fos_user.util.token_generator']

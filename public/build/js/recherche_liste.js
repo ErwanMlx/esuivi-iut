@@ -13,6 +13,14 @@ $(document).ready(function()
                         {
                             console.log(resultat);
                             $(".contenu a").remove();
+                            if(resultat.liste.length === 0)
+                            {
+                                $("#noapp").removeClass('hide');
+                            }
+                            else
+                            {
+                                $("#noapp").addClass('hide');
+                            }
                             $.each(resultat.liste,function(index,element)
                             {
                                 $(".contenu").append("<a href='/suivi/"+element.id+"'>\

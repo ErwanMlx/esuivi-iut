@@ -76,7 +76,7 @@ class Entreprise
      *
      * @ORM\Column(name="code_postal", type="string", length=5, nullable=true)
      * @Assert\Length(min = 5, max = 5,
-     *     exactMessage = "Le code postal doit faire moins de {{ limit }} caractères.", groups={"ajout_entreprise"})
+     *     exactMessage = "Le code postal doit faire {{ limit }} chiffres.", groups={"ajout_entreprise"})
      * @Assert\NotBlank(message="Le code postal ne peut pas être vide.", groups={"ajout_entreprise"})
      * @Assert\Type(
      *     type="numeric",

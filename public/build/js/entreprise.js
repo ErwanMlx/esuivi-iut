@@ -47,11 +47,12 @@ $(document).ready(function() {
             $(".select_maitre option[value=\"Autre\"]").prop("selected", true);
             $(".form_maitre").hide();
             $(".form_maitre").removeClass('hide');
-            $(".form_maitre").fadeIn("slow");
+            $(".form_maitre").fadeIn("fast");
         }
         else
         {
             $(".form_entreprise").addClass('hide');
+            $(".form_maitre").addClass('hide');
             if($(this).val() != '')
             {
                 $(".infos_entreprise").hide();
@@ -76,7 +77,7 @@ $(document).ready(function() {
                         <p>Ville de l'entreprise :</p>\
                         <p>"+resultat.entreprise.ville+"</p>\
                         <div class='infos_ma'></div>");
-                        $(".infos_entreprise").fadeIn("slow");
+                        $(".infos_entreprise").fadeIn("fast");
                         
                         $(".select_maitre").html("<option value=''>-- Selectionner le maitre d'apprentissage --</option>");
                         $.each(resultat.liste_ma,function(index,element)
@@ -107,7 +108,7 @@ $(document).ready(function() {
         {
             $(".form_maitre").hide();
             $(".form_maitre").removeClass('hide');
-            $(".form_maitre").fadeIn();
+            $(".form_maitre").fadeIn("fast");
             $(".infos_ma").html("");
         }
         else
@@ -124,15 +125,34 @@ $(document).ready(function() {
                         {
                             console.log(resultat);
                             $(".infos_ma").hide();
-                            $(".infos_ma").html("<p>Nom et prénom du maître d'apprentissage :</p>\
+                            
+                            var html_ma = "<p>Nom et prénom du maître d'apprentissage :</p>\
+                            <p>"+resultat.maitre_app.nom+" "+resultat.maitre_app.prenom+"</p>";
+                            if(resultat.maitre_app.email != null)
+                            {
+                                html_ma += "<p>Adresse email du maître d'apprentissage :</p>\
+                                <p>"+resultat.maitre_app.email+"</p>";
+                            }
+                            if(resultat.maitre_app.tel != null)
+                            {
+                                html_ma += "<p>Telephone du maître d'appentissage :</p>\
+                                <p>"+resultat.maitre_app.tel+"</p>";
+                            }
+                            if(resultat.maitre_app.fonction != null)
+                            {
+                                html_ma += "<p>Fonction du maître d'apprentissage :</p>\
+                                <p>"+resultat.maitre_app.fonction+"</p>";
+                            }
+                            $(".infos_ma").html(html_ma);
+                            /*$(".infos_ma").html("<p>Nom et prénom du maître d'apprentissage :</p>\
                             <p>"+resultat.maitre_app.nom+" "+resultat.maitre_app.prenom+"</p>\
                             <p>Adresse email du maître d'apprentissage :</p>\
                             <p>"+resultat.maitre_app.email+"</p>\
                             <p>Telephone du maître d'appentissage :</p>\
                             <p>"+resultat.maitre_app.tel+"</p>\
                             <p>Fonction du maître d'apprentissage :</p>\
-                            <p>"+resultat.maitre_app.fonction+"</p>");
-                            $(".infos_ma").fadeIn("slow");
+                            <p>"+resultat.maitre_app.fonction+"</p>");*/
+                            $(".infos_ma").fadeIn("fast");
     
                         },
                         error: function(resultat, statut, erreur)
