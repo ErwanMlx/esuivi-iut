@@ -1,0 +1,9 @@
+<h3>Rattachement apprenti</h3>
+
+<p>Bonjour {{ ma.prenom }},</p>
+
+<p>Un apprenti, {{ apprenti.prenom ~ ' ' ~ apprenti.nom}}, a été rattaché à votre compte sur le site de suivi des apprentis de l'IUT Paris 13. Ce site vous permet de remplir le bordereau d'offre de contrat d'apprentissage et de suivre l'état d'avancement du dossier de votre apprenti.</p>
+
+<p>Pour accéder à son dossier, suivez ce <a href="{{ absolute_url(path('suivi', {"id":apprenti.id})) }}">lien</a>.</p>
+
+<p>Si vous n'êtes pas responsable de cet apprenti, merci de prévenir l'IUT.</p>

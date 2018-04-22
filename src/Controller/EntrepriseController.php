@@ -58,9 +58,9 @@ class EntrepriseController extends Controller
             throw new NotFoundHttpException();
         }
         //Si l'apprenti a déjà saisi les informations de son entreprise
-//        if($authChecker->isGranted('ROLE_APPRENTI') && !empty($apprenti->getDossier()->getEntreprise())) {
-//            throw new AccessDeniedException();
-//        }
+        if($authChecker->isGranted('ROLE_APPRENTI') && !empty($apprenti->getDossier()->getEntreprise())) {
+            throw new AccessDeniedException();
+        }
 
         $selectionEntreprise = null;
         $selectionMaitre = null;
@@ -208,6 +208,8 @@ class EntrepriseController extends Controller
                     $apprenti->getDossier()->setEtapeActuelle($new_etape_dossier);
                 }
                 $em->flush();
+
+                $this->get('app.emailservice')->ajout_apprenti_ma($apprenti);
 
                 if(empty($id)) {
                     return $this->redirectToRoute('suivi_perso');

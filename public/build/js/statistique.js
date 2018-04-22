@@ -1,36 +1,67 @@
 $(document).ready(function(){
     var ctx = document.getElementById("BarChart");
+    // var labels = ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"];
+    var labels = JSON.parse($('#labels').text());
+    var dataTmpMoyen = [12, 19, 3, 5, 2, 5, 2, 3, 4];
+    var dataTauxAbandon = [12, 19, 3, 5, 2, 5, 2, 3, 4];
+    var dataTauxRetour = [12, 19, 3, 5, 2, 5, 2, 3, 4];
+
+    // var poolColors = function (a) {
+    //     var pool = [];
+    //     for(i=0;i<a;i++){
+    //         pool.push(dynamicColors());
+    //     }
+    //     return pool;
+    // };
+    //
+    // var dynamicColors = function() {
+    //     var r = Math.floor(Math.random() * 255);
+    //     var g = Math.floor(Math.random() * 255);
+    //     var b = Math.floor(Math.random() * 255);
+    //     return "rgb(" + r + "," + g + "," + b + ")";
+    // };
+
+    // var backgroundColor = poolColors(9);
+    // var borderColor = backgroundColor;
+
+    var backgroundColor = ['#3366CC','#DC3912','#FF9900','#109618','#990099','#3B3EAC','#0099C6','#DD4477','#66AA00','#B82E2E','#316395','#994499','#22AA99','#AAAA11','#6633CC','#E67300','#8B0707','#329262','#5574A6','#3B3EAC'];
+    borderColor = backgroundColor;
+
+    var datasets = [];
+
+    for (var i = 0; i < labels.length; i++) {
+        datasets[i] =
+            {
+                label: labels[i],
+                data: [dataTmpMoyen[i]],
+                backgroundColor: backgroundColor[i],
+                borderColor: borderColor[i],
+                borderWidth: 1
+            }
+    };
+
+
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-            datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
+            datasets: datasets
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 yAxes: [{
                     ticks: {
                         beginAtZero:true
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        autoSkip: false,
+                        display: false
+                        // lineHeight: 20
+                        // maxRotation: 90,
+                        // minRotation: 90
                     }
                 }]
             },
@@ -41,7 +72,10 @@ $(document).ready(function(){
               fontSize: 23,
               fontColor: "#22519C",
               fontWeight: "normal"
-            }
+            },
+            // legend: {
+            //     display: false,
+            // }
         }
     });
 
@@ -49,29 +83,17 @@ $(document).ready(function(){
     var myChart = new Chart(ctx, {
         type: 'pie',
         data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+            labels: labels,
             datasets: [{
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
+                data: dataTauxAbandon,
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
                 borderWidth: 1
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 yAxes: [{
                     ticks: {
@@ -93,30 +115,18 @@ $(document).ready(function(){
     var myChart = new Chart(ctx, {
         type: 'pie',
         data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+            labels: labels,
             datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
+                label: 'Etapes',
+                data: dataTauxRetour,
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
                 borderWidth: 1
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 yAxes: [{
                     ticks: {

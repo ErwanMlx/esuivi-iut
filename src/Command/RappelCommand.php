@@ -27,12 +27,22 @@ class RappelCommand extends ContainerAwareCommand {
 
     public function execute (InputInterface $input, OutputInterface $output) {
 
-        $liste_apprentis = $this->getContainer()->get('doctrine')->getRepository(Apprenti::class)->searchApprentiRetard(15);
+        $nbJours = 15;
 
-//        $output->writeln((String) var_dump($liste_apprentis));
-        foreach ($liste_apprentis as &$apprenti) {
+        $liste_apprentis_retard = $this->getContainer()->get('doctrine')->getRepository(Apprenti::class)->searchApprentiRetard($nbJours, 'ROLE_APPRENTI');
+
+        foreach ($liste_apprentis_retard as &$apprenti) {
             $this->getContainer()->get('app.emailservice')->relance_apprenti($apprenti->getCompte());
             $output->writeln("Relance envoyée à " . $apprenti->getCompte()->getEmail());
         }
+
+        $liste_apprentis_ma_retard = $this->getContainer()->get('doctrine')->getRepository(Apprenti::class)->searchApprentiRetard($nbJours, 'ROLE_MAITRE_APP');
+
+        foreach ($liste_apprentis_ma_retard as &$apprenti) {
+            $this->getContainer()->get('app.emailservice')->relance_ma($apprenti);
+            $output->writeln("Relance envoyée à " . $apprenti->getDossier()->getMaitreApprentissage()->getCompte()->getEmail());
+        }
+
+
     }
 }

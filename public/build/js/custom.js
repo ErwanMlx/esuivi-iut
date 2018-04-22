@@ -83,6 +83,24 @@ $(document).ready(function() {
                     }
                 });
             }
+
+            if(n == 4)
+            {
+                $.ajax({
+                    type: "POST",
+                    datatype : "application/json",
+                    url: "reactivation/",
+                    data: { id:$("#id_dossier").text() },
+                    success: function(data){
+                        if(data.error != "ok") {
+                            alert(data.error);
+                        }
+                        else {
+                            location.reload(true);
+                        }
+                    }
+                });
+            }
         });
     };
 
@@ -112,6 +130,11 @@ $(document).ready(function() {
     $(document).on("click","#abandon",function(){
             Confirm("Confirmation d'abandon","Etes vous sûr de vouloir abandonner le dossier ?",
                 "Oui","Non",$(this),3);
+    });
+
+    $(document).on("click","#reactivation",function(){
+        Confirm("Confirmation de réactivation","Etes vous sûr de vouloir réactiver le dossier ?",
+            "Oui","Non",$(this),4);
     });
     
     $(document).on("click",".etape-valide",function(e){

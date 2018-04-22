@@ -50,5 +50,15 @@ class TypeEtapeRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    public function getListNomTypeEtape()
+    {
+        $qb = $this->createQueryBuilder('te')
+            ->select('te.nomEtape')
+            ->orderBy('te.positionEtape', 'ASC')
+            ->getQuery();
+
+        return $qb->execute();
+    }
+
 
 }

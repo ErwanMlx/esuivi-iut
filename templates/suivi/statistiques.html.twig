@@ -16,19 +16,23 @@
             <div class="contenu col-xs-12">
                 <h1>{{ tmpMoyen }}</h1>
                 <h1>{{ arr[0].tempsmoyen }}</h1>
-                <div class = "col-xs-12 col-sm-6">
+                <div id="labels" class="hide">{{ liste_nom_etape }}</div>
+                {#{% for nom_etape in liste_nom_etape %}#}
+                    {#<h4>{{ nom_etape.nomEtape }}</h4>#}
+                {#{% endfor %}#}
+                <div class = "col-xs-12 chart">
                     <canvas id="BarChart"></canvas>
                 </div>
-                <div class = "col-xs-12 col-sm-6">
+                <div class = "col-xs-12 chart">
                     <canvas id="PieChart1"></canvas>
                 </div>
-                <div class = "col-xs-12 col-sm-6">
+                <div class = "col-xs-12 chart">
                     <canvas id="PieChart2"></canvas>
                 </div>
-                <div class = "col-xs-12 col-sm-6">
+                <div class = "col-xs-12">
                     <h3> Nombre d'abandon </h3>
                 </div>
-                <div class = "col-xs-12 col-sm-6">
+                <div class = "col-xs-12">
                     <h3> Temps moyen d’un dossier complété </h3>
                 </div>
             </div>

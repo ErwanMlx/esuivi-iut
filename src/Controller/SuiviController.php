@@ -164,10 +164,6 @@ public function suivi(AuthorizationCheckerInterface $authChecker, $id)
     $apprenti = $res[0];
     $dossier = $res[1];
 
-
-//        select * from type_etape te LEFT JOIN etape_dossier ed ON (ed.id_type_etape = te.id) WHERE
-//    (id_dossier=2 OR id_dossier IS NULL) AND (ed.date_debut = (SELECT MAX(ed2.date_debut) FROM etape_dossier ed2 WHERE ed2.id_type_etape=te.id AND ed2.id_dossier=2) OR ed.date_debut IS NULL) ORDER BY te.position_etape
-
     //On recupère toutes les étapes déjà complétée/en cours du dossier pour les afficher
     $etapes_dossier = $this->getDoctrine()
         ->getRepository(EtapeDossier::class)
@@ -177,7 +173,12 @@ public function suivi(AuthorizationCheckerInterface $authChecker, $id)
         );
 
     //On récupère l'ID type étape de l'étape actuelle du dossier
-    $position_etape_actuelle = $apprenti->getDossier()->getEtapeActuelle()->getTypeEtape()->getpositionEtape();
+    $etape_actuelle = $apprenti->getDossier()->getEtapeActuelle()->getTypeEtape();
+    $position_etape_actuelle = $etape_actuelle->getpositionEtape();
+
+    if($position_etape_actuelle == 2 && $authChecker->isGranted('ROLE_MAITRE_APP')) {
+        $this->addFlash('warning', "Une fois le bordereau envoyé, veuillez valider l'étape \"" . $etape_actuelle->getNomEtape() . "\" en cliquant dessus.");
+    }
 
     //On récupère toutes les étapes pour un dossier
     $liste_etapes = $this->getDoctrine()
@@ -434,6 +435,7 @@ public function historique(AuthorizationCheckerInterface $authChecker, $id) {
  * Abandon de dossier
  *
  * @Route("/suivi/abandon/", name="abandon")
+ * @IsGranted("ROLE_IUT")
  */
 public function abandon_dossier(AuthorizationCheckerInterface $authChecker, Request $req)
 {
@@ -448,9 +450,9 @@ public function abandon_dossier(AuthorizationCheckerInterface $authChecker, Requ
             return new JsonResponse(array('error' => "Pas d'apprenti trouvé"));
         }
 
-        if(!($authChecker->isGranted('ROLE_IUT') || $this->getUser()->getId()==$apprenti->getCompte()->getId())) {
-            return new JsonResponse(array('error' => "Vous n'êtes pas autorisé a réaliser cette action"));
-        }
+//        if(!($authChecker->isGranted('ROLE_IUT') || $this->getUser()->getId()==$apprenti->getCompte()->getId())) {
+//            return new JsonResponse(array('error' => "Vous n'êtes pas autorisé a réaliser cette action"));
+//        }
 
         $apprenti->getDossier()->setetat('Abandonné');
 
@@ -462,31 +464,33 @@ public function abandon_dossier(AuthorizationCheckerInterface $authChecker, Requ
 }
 
 
-//    /**
-//     * Abandon de dossier
-//     *
-//     * @Route("/suivi/reactivation/{id}", name="reactivation")
-//     */
-//    public function reactivation_dossier(AuthorizationCheckerInterface $authChecker, Request $req, $id)
-//    {
-//
-//        $em = $this->getDoctrine()->getManager();
-//        $apprenti = $em->getRepository(Apprenti::class)->findOneByDossier($id);
-//
-//        if (!$apprenti) {
-//            return new JsonResponse(array('error' => "Pas d'apprenti trouvé"));
-//        }
-//
-//        if(!($authChecker->isGranted('ROLE_IUT') || $this->getUser()->getId()==$apprenti->getCompte()->getId())) {
-//            return new JsonResponse(array('error' => "Vous n'êtes pas autorisé a réaliser cette action"));
-//        }
-//
-//        $apprenti->getDossier()->setetat('En cours');
-//
-//        $em->flush();
-//
-//        return new JsonResponse(array('error' => "ok"));
-//    }
+    /**
+     * Réactivation du dossier
+     *
+     * @Route("/suivi/reactivation/", name="reactivation")
+     * @IsGranted("ROLE_IUT")
+     */
+    public function reactivation_dossier(AuthorizationCheckerInterface $authChecker, Request $req)
+    {
+        if($req->isXmlHttpRequest()) { //On vérifie que c'est bien une requête AJAX pour empêcher un accès direct a cette fonction
+
+            $id = $req->get('id');
+
+            $em = $this->getDoctrine()->getManager();
+            $apprenti = $em->getRepository(Apprenti::class)->findOneByDossier($id);
+
+            if (!$apprenti) {
+                return new JsonResponse(array('error' => "Pas d'apprenti trouvé"));
+            }
+
+            $apprenti->getDossier()->setetat('En cours');
+
+            $em->flush();
+
+            return new JsonResponse(array('error' => "ok"));
+        }
+        throw new AccessDeniedException();
+    }
 
 /**
  * Page de statistiques
@@ -501,7 +505,12 @@ public function statistiques(AuthorizationCheckerInterface $authChecker, Request
     $em = $this->getDoctrine()->getManager();
     $tempsMoyen = $em->getRepository(EtapeDossier::class)->tempsMoyenDossier();
 
-    return $this->render('suivi/statistiques.html.twig', array('tmpMoyen' => $tempsMoyen[0]["tempsmoyen"], 'arr' => $tempsMoyen));
+    $liste_nom_etape = $em->getRepository(TypeEtape::class)->getListNomTypeEtape();
+
+    $liste_nom_etape = array_column($liste_nom_etape, 'nomEtape');
+
+//    var_dump($liste_nom_etape);
+    return $this->render('suivi/statistiques.html.twig', array('tmpMoyen' => $tempsMoyen[0]["tempsmoyen"], 'arr' => $tempsMoyen, 'liste_nom_etape' => json_encode($liste_nom_etape)));
 
     return new Response($tempsMoyen[0]["tempsmoyen"]);
 

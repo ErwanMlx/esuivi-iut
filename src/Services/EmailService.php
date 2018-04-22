@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Entity\Apprenti;
 use FOS\UserBundle\Util\TokenGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -63,9 +64,39 @@ class EmailService
                     array('user' => $user)
                 ),
                 'text/html'
+            );
+        $this->mailer->send($message);
+    }
+
+    public function relance_ma(Apprenti $apprenti) {
+        $ma = $apprenti->getDossier()->getMaitreApprentissage()->getCompte();
+        $message = (new \Swift_Message('Esuivi-IUT - Rappel validation étape'))
+            ->setFrom([$this->email => $this->name])
+            ->setTo($ma->getEmail())
+            ->setBody(
+                $this->twig->render(
+                    'email/relance_ma.html.twig',
+                    array('ma' => $ma, 'apprenti' => $apprenti->getCompte())
+                ),
+                'text/html'
             )
         ;
+        $this->mailer->send($message);
+    }
 
+    public function ajout_apprenti_ma(Apprenti $apprenti) {
+        $ma = $apprenti->getDossier()->getMaitreApprentissage()->getCompte();
+        $message = (new \Swift_Message('Esuivi-IUT - Rattachement apprenti'))
+            ->setFrom([$this->email => $this->name])
+            ->setTo($ma->getEmail())
+            ->setBody(
+                $this->twig->render(
+                    'email/ajout_apprenti_ma.html.twig',
+                    array('ma' => $ma, 'apprenti' => $apprenti->getCompte())
+                ),
+                'text/html'
+            )
+        ;
         $this->mailer->send($message);
     }
 
