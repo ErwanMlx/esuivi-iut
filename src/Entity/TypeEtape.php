@@ -46,7 +46,7 @@ class TypeEtape
     /**
      * @var integer
      *
-     * @ORM\Column(name="position_etape", type="integer", nullable=true)
+     * @ORM\Column(name="position_etape", type="integer", nullable=true, unique=true)
      */
     private $positionEtape;
 

@@ -50,7 +50,7 @@
                         {% for i in 1..count %}
                             {% set etape = liste_etapes[index_etape] %}
                             {% set class_type = 'col-lg-12 etape' %}
-                            {% if etape.positionEtape < position_etape_actuelle %}
+                            {% if (etape.positionEtape < position_etape_actuelle) or (position_etape_actuelle == nb_type_etapes and apprenti.dossier.etat == "Terminé") %}
                                 {% set class_type = class_type ~ ' etape-valide' %}
                             {% elseif etape.positionEtape > position_etape_actuelle %}
                                 {% set class_type = class_type ~ ' etape-future' %}
@@ -91,7 +91,7 @@
                 {% if apprenti.Dossier.etat != "Abandonné" and (is_granted('ROLE_IUT')) %}
                     <button id="abandon" class="btn btn-default">Abandonner dossier</button>
                 {% endif %}
-                {% if (apprenti.dossier.entreprise is not empty and (apprenti.dossier.sujetpropose is not empty or is_granted('ROLE_MAITRE_APP'))) %}
+                {% if (apprenti.dossier.entreprise is not empty and (apprenti.dossier.sujetpropose is not empty or (is_granted('ROLE_MAITRE_APP') or is_granted('ROLE_IUT')))) %}
                     <a class="btn btn-default" href="{{ path('consulter_bordereau', {"id":apprenti.compte.id}) }}">Bordereau</a>
                 {% endif %}
                 {% if apprenti.Dossier.etat == "Abandonné" and (is_granted('ROLE_IUT')) %}

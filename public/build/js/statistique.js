@@ -2,9 +2,9 @@ $(document).ready(function(){
     var ctx = document.getElementById("BarChart");
     // var labels = ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"];
     var labels = JSON.parse($('#labels').text());
-    var dataTmpMoyen = [12, 19, 3, 5, 2, 5, 2, 3, 4];
-    var dataTauxAbandon = [12, 19, 3, 5, 2, 5, 2, 3, 4];
-    var dataTauxRetour = [12, 19, 3, 5, 2, 5, 2, 3, 4];
+    var dataTmpMoyen = JSON.parse($('#tmpMoyenEtapes').text());
+    var dataTauxAbandon = JSON.parse($('#tauxAbandonEtape').text());
+    // var dataTauxRetour = [12, 19, 3, 5, 2, 5, 2, 3, 4];
 
     // var poolColors = function (a) {
     //     var pool = [];
@@ -52,7 +52,8 @@ $(document).ready(function(){
             scales: {
                 yAxes: [{
                     ticks: {
-                        beginAtZero:true
+                        beginAtZero:true,
+                        stepSize: 1
                     }
                 }],
                 xAxes: [{
@@ -67,7 +68,7 @@ $(document).ready(function(){
             },
             title:{
               display: true,
-              text: "Temps moyen passé à chaque étape",
+              text: "Temps moyen (en jours) passé à chaque étape",
               position: "top",
               fontSize: 23,
               fontColor: "#22519C",
@@ -111,37 +112,37 @@ $(document).ready(function(){
             }
         }
     });
-    var ctx = document.getElementById("PieChart2");
-    var myChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Etapes',
-                data: dataTauxRetour,
-                backgroundColor: backgroundColor,
-                borderColor: borderColor,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }]
-            },
-            title:{
-              display: true,
-              text: "Taux de retour en arrière par étape",
-              position: "top",
-              fontSize: 23,
-              fontColor: "#22519C",
-              fontWeight: "normal"
-            }
-        }
-    });
+    // var ctx = document.getElementById("PieChart2");
+    // var myChart = new Chart(ctx, {
+    //     type: 'pie',
+    //     data: {
+    //         labels: labels,
+    //         datasets: [{
+    //             label: 'Etapes',
+    //             data: dataTauxRetour,
+    //             backgroundColor: backgroundColor,
+    //             borderColor: borderColor,
+    //             borderWidth: 1
+    //         }]
+    //     },
+    //     options: {
+    //         responsive: true,
+    //         maintainAspectRatio: false,
+    //         scales: {
+    //             yAxes: [{
+    //                 ticks: {
+    //                     beginAtZero:true
+    //                 }
+    //             }]
+    //         },
+    //         title:{
+    //           display: true,
+    //           text: "Taux de retour en arrière par étape",
+    //           position: "top",
+    //           fontSize: 23,
+    //           fontColor: "#22519C",
+    //           fontWeight: "normal"
+    //         }
+    //     }
+    // });
 });
