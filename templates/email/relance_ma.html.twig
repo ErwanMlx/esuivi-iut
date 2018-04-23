@@ -1,7 +1,11 @@
-<h3>Relance validation étape</h3>
+{{ include('email/template.html.twig') }}
 
-<p>Bonjour {{ ma.prenom }},</p>
+{% block titre %}Relance validation étape{% endblock %}
 
-<p>Vous avez une étape en cours de votre apprenti, {{ apprenti.prenom ~ ' ' ~ apprenti.nom}}, à valider. Tant que vous ne la validez pas, le dossier de votre apprenti ne peut pas avancer.</p>
+{% block texte %}
+    <p>Bonjour {{ ma.prenom }},</p>
 
-<p>Pour accéder à son dossier et valider cette étape, suivez ce <a href="{{ absolute_url(path('suivi', {"id":apprenti.id})) }}">lien</a>.</p>
+    <p>Vous avez une étape en cours de votre apprenti, {{ apprenti.prenom ~ ' ' ~ apprenti.nom}}, à valider. Tant que vous ne la validez pas, le dossier de votre apprenti ne peut pas avancer.</p>
+
+    <p>Pour accéder à son dossier et valider cette étape, suivez ce <a href="{{ absolute_url(path('suivi', {"id":apprenti.id})) }}">lien</a>.</p>
+{% endblock %}

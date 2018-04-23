@@ -1,0 +1,57 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>{% block titre %}IUT Villetaneuse{% endblock %}</title>
+<body style="margin: 0px 0px 0px 0px; padding: 0px 0px 0px 0px; font-family: Trebuchet MS, Arial, Verdana, sans-serif;">
+
+<!-- Start Main Table -->
+<table width="100%" height="100%" cellpadding="0" style="padding: 20px 0px 20px 0px" background="{{ absolute_url(path('home')) }}build/img/email/img_home3.jpg" >
+    <tr align="center">
+        <td>
+            <!-- Start Header -->
+            <table style="width:580px; height:108px;" background="{{ absolute_url(path('home')) }}build/img/email/haut.jpg" border="0">
+                <tr>
+                    <td valign="top" style="width:456px;">
+                        <h1 style="font-size:22px; color:#22baba;margin-left:20px; margin-top:26px;">{{ block('titre') }}</h1>
+                    </td>
+                </tr>
+            </table>
+            <!-- fin header -->
+
+            <!-- start image -->
+            <table cellpadding="0" cellspacing="0" width="580" background="{{ absolute_url(path('home')) }}build/img/email/blanc.jpg" style="padding:0px 0px 0px 0px;">
+                <tr>
+                    <td>
+                        <a href="{{ absolute_url(path('home')) }}" target="_blank"><img src="{{ absolute_url(path('home')) }}build/img/email/exterieur-iut.jpg" width="450" height="200" style="border:none;margin-left:60px;" /></a>
+                    </td>
+                </tr>
+            </table>
+            <!-- end image -->
+
+            <!-- start texte -->
+            <table cellpadding="0" cellspacing="0" width="580" background="{{ absolute_url(path('home')) }}build/img/email/blanc.jpg" style="padding:30px 0px 0px 0px;">
+                <tr>
+                    <td valign="top" style="color:#808080; font-size:13px; padding:0px 39px 0px 47px; text-align:justify; line-height:25px;">
+                        {% block texte %}{% endblock %}
+                    </td>
+                </tr>
+            </table>
+            <!-- end texte -->
+
+
+            <!-- début footer -->
+            <table style="width:580px; height:148px;" width="580" cellpadding="0" cellspacing="0" background="{{ absolute_url(path('home')) }}build/img/email/bas.png" style="padding:0px 0px 0px 0px;">
+                <tr>
+                    <td>
+                        <a href="{{ absolute_url(path('home')) }}" target="_blank" style="margin-left: 107px;border:none;"><img src="{{ absolute_url(path('home')) }}build/img/email/rond.jpg" style="border:none" width="132" height="131" /></a>
+                    </td>
+                    <td>
+                        <a href="https://iutv.univ-paris13.fr/" target="_blank" style="margin-left: 40px;border:none;"><img src="{{ absolute_url(path('home')) }}build/img/email/iut.png" style="border:none" width="200" height="131" /></a>
+                    </td>
+                </tr>
+            </table>
+            <!-- fin du footer -->
+        </td>
+    </tr>
+</table>
+</body>
+</html>

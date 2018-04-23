@@ -1,9 +1,13 @@
-<h3>Compte créé avec succès</h3>
+{{ include('email/template.html.twig') }}
 
-<p>Bonjour {{ user.prenom }},</p>
+{% block titre %}Compte créé avec succès{% endblock %}
 
-<p>Un compte a été créé pour vous sur le site de suivi des dossiers apprenti de l'IUT Paris 13.</p>
+{% block texte %}
+    <p>Bonjour {{ user.prenom }},</p>
 
-<p>Votre identifiant :</p> <p>{{ user.email }}</p>
-<p>Votre mot de passe :</p> <p>{{ password }}</p>
-<p>Une fois connecté, vous pouvez changer votre mot de passe depuis votre <a href="{{ absolute_url(path('profil_perso')) }}">profil</a>.</p>
+    <p>Un compte a été créé pour vous sur le site de suivi des dossiers apprenti de l'IUT Paris 13.</p>
+
+    <p>Votre identifiant :</p> <p>{{ user.email }}</p>
+    <p>Votre mot de passe :</p> <p>{{ password }}</p>
+    <p>Une fois connecté, vous pouvez changer votre mot de passe depuis votre <a href="{{ absolute_url(path('profil_perso')) }}">profil</a>.</p>
+{% endblock %}

@@ -2,7 +2,7 @@
 
 {% block title %}Page de suivi{% endblock %}
 
-{% block page_title %}Suivi du dossier de {{ apprenti.compte.prenom ~ ' '~ apprenti.compte.nom }}{% if apprenti.Dossier.etat == 'Abandonné' %} (abandonné){% endif %}{% endblock %}
+{% block page_title %}Suivi du dossier de {{ apprenti.compte.prenom ~ ' '~ apprenti.compte.nom }}{{ apprenti.Dossier.etat == "Abandonné" ? " (Abandonné)" : (apprenti.Dossier.etat == "Terminé" ? " (Terminé)") }}{% endblock %}
 
 {% block body %}
 
