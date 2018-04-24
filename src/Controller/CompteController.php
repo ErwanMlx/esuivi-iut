@@ -158,7 +158,7 @@ class CompteController extends Controller
     public function edition_compte_perso(AuthorizationCheckerInterface $authChecker, Request $request)
     {
         if($authChecker->isGranted('ROLE_APPRENTI') || $authChecker->isGranted('ROLE_MAITRE_APP'))
-        $id = $this->getUser()->getId();
+            $id = $this->getUser()->getId();
         return $this->edition_compte($authChecker, $request, $id);
     }
 
@@ -184,6 +184,18 @@ class CompteController extends Controller
             ));
         }
 
+        if($authChecker->isGranted('ROLE_IUT')) {
+            $id_apprenti = $request->get('app');
+            if (!empty($id_apprenti)) {
+                $lien = $url = $this->generateUrl(
+                    'choix_entreprise',
+                    array('id' => $id_apprenti,
+                        'src' => 'bordereau')
+                );
+                $this->addFlash('warning', "Attention, les modifications apportées à ce maître d'apprentissage seront appliquées à tous les apprentis rattachés à cette personne. 
+                Si vous souhaitez changer le maître d'appentissage de l'apprenti, merci de passer par ce <a href=\"" . $lien . "\">lien</a>.");
+            }
+        }
         if($user->hasRole('ROLE_APPRENTI')) {
             $apprenti = $this->getDoctrine()->getRepository(Apprenti::class)->find($id);
             $form = $this->createForm(ApprentiType::class, $apprenti);

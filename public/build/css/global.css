@@ -209,6 +209,33 @@ div {
 }
 
 
+/* Sticky footer*/
+html {
+    position: relative;
+    min-height: 100%;
+}
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+}
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 61px;
+    background-color: white;
+    border-top: 1px solid #22519C;
+
+}
+
+.text-muted {
+    margin: 20px 0;
+    color: #22519C;
+}
+
+/* Fin sticky footer
+
 
 
 

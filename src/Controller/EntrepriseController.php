@@ -296,7 +296,7 @@ class EntrepriseController extends Controller
     }
 
     /**
-     * Récupération des informations du maitre d'apprentissage selectionné
+     * Saisie des informations de l'entreprise
      *
      * @Route("/entreprise/saisie/{id}", name="remplissage_entreprise", requirements={"id"="\d+"}, defaults={"id"=null})
      */
@@ -304,6 +304,14 @@ class EntrepriseController extends Controller
         if($authChecker->isGranted('ROLE_MAITRE_APP') || (!empty($id) && $authChecker->isGranted('ROLE_IUT'))) {
             $em = $this->getDoctrine()->getManager();
             if($authChecker->isGranted('ROLE_IUT')) {
+                $id_apprenti = $request->get('app');
+                $lien = $url = $this->generateUrl(
+                    'choix_entreprise',
+                    array('id' => $id_apprenti,
+                        'src' => 'bordereau')
+                );
+                $this->addFlash('warning', "Attention, les modifications apportées à cette entreprise seront appliquées à tous les apprentis rattachés à cette entreprise. 
+                Si vous souhaitez changer l'entreprise de l'apprenti, merci de passer par ce <a href=\"" . $lien . "\">lien</a>.");
                 $entreprise = $em->getRepository(Entreprise::class)->find($id);
             }
             else {
