@@ -26,4 +26,13 @@ class UserRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getSingleResult();
     }
+
+    public function findByRole($role) {
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('u')
+            ->from($this->_entityName, 'u')
+            ->where('u.roles LIKE :roles')
+            ->setParameter('roles', '%"' . $role . '"%');
+        return $qb->getQuery()->execute();
+    }
 }

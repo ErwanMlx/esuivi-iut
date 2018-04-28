@@ -41,10 +41,16 @@
                 <p>Date d'embauche : {{ dossier.dateembauche|date('d/m/y') }}</p>
                 <p>Sujet proposé : {{ dossier.sujetpropose }}</p>
                 <div>
-                <p>Description : {{ dossier.descriptiondusujet }}</p>
+                    <p>Description : {{ dossier.descriptiondusujet }}</p>
                 </div>
                 <p>Participation financière : {{ dossier.participationfinanciere }} EUR</p>
-                <center>
+                <div class="text-center margin-bottom20">
+                    {% if is_granted('ROLE_IUT') and dossier.etapeactuelle.typeetape.positionetape == 3 %}
+                        <a class="btn btn-info" href="{{ path('validation_bordereau', {'id':id}) }}">Validation bordereau</a>
+                    {% endif %}
+
+                </div>
+                <div class="text-center">
                     {% if is_granted('ROLE_IUT') %}
                         <a class="btn btn-default" href="{{ path('choix_entreprise', {'id': id, 'src':"bordereau"}) }}">Changer entreprise et maitre d'apprentissage</a>
                         <a class="btn btn-default" href="{{ path('remplissage_entreprise', {'id':entreprise.id, 'src':"bordereau", 'app':id}) }}">Editer entreprise</a>
@@ -53,7 +59,7 @@
                     {% endif %}
                     <a href="{{ path('consulter_bordereau', {"id":id, "option":true}) }}" class="btn btn-default" target="_blank">Générer bordereau</a>
                     <a href="{{ path('suivi', {"id":id}) }}" class="btn btn-default" >Retour suivi</a>
-                </center>
+                </div>
             </div>
         </div>
     </div>

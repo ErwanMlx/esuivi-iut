@@ -13,7 +13,7 @@ class AppRuntime
     /*
      * Permet d'ajouter un certain nombre de $char a la suite du $string (utile pour la génération du bordereau)
      */
-    public function addChar($string, $nbChar = 0, $char = '.')
+    public function addChar($string, $nbChar = 0, $char = '')
     {
         $string_size = strlen($string);
 //        if($string_size == 0) {

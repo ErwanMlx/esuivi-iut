@@ -1,0 +1,13 @@
+{% extends 'email/template.html.twig' %}
+
+{% block titre %}Invalidation bordereau{% endblock %}
+
+{% block texte %}
+    <p>Bonjour {{ ma.prenom }},</p>
+
+    <p>Le bordereau d'un apprenti, {{ apprenti.prenom ~ ' ' ~ apprenti.nom}}, a été invalidé, pour le motif suivant :</p>
+
+    <p>{{ message }}</p>
+
+    <p>Pour accéder à son dossier et apporter les modifications nécessaires, suivez ce lien <a href="{{ absolute_url(path('consulter_bordereau', {"id":apprenti.id})) }}">lien</a>.</p>
+{% endblock %}

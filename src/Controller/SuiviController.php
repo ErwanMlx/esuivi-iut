@@ -6,6 +6,8 @@ use App\Entity\EtapeDossier;
 use App\Entity\TypeEtape;
 use App\Entity\Apprenti;
 use App\Form\BordereauType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route; //To define the route to access it
@@ -16,6 +18,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException; //Erreur 404
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class SuiviController extends Controller
 {
@@ -35,8 +38,15 @@ class SuiviController extends Controller
 
         //Si il y en a une on cherche les apprentis correspondant
         if($search != null) {
-            $liste = $this->getDoctrine()
-                ->getRepository(Apprenti::class)->search($search);
+            if ($authChecker->isGranted('ROLE_MAITRE_APP')) {
+                $id_maitre_app = $this->getUser()->getId();
+                $liste = $this->getDoctrine()
+                    ->getRepository(Apprenti::class)->searchForMaitreApp($search, $id_maitre_app);
+            }
+            else {
+                $liste = $this->getDoctrine()
+                    ->getRepository(Apprenti::class)->search($search);
+            }
         }
         //Sinon on affiche tous les apprentis
         else {
@@ -68,8 +78,15 @@ class SuiviController extends Controller
                 throw new AccessDeniedException();
             }
             $search = $req->get('search');
-            $liste = $this->getDoctrine()
-                ->getRepository(Apprenti::class)->search($search);
+            if ($authChecker->isGranted('ROLE_MAITRE_APP')) {
+                $id_maitre_app = $this->getUser()->getId();
+                $liste = $this->getDoctrine()
+                    ->getRepository(Apprenti::class)->searchForMaitreApp($search, $id_maitre_app);
+            }
+            else {
+                $liste = $this->getDoctrine()
+                    ->getRepository(Apprenti::class)->search($search);
+            }
 
             $apprenti_json = array();
             foreach ($liste as &$apprenti) {
@@ -154,7 +171,7 @@ class SuiviController extends Controller
     }
 
     /**
-     * Suivi de apprenti corrspondant à l'id
+     * Suivi de apprenti correspondant à l'id
      *
      * @Route("/suivi/{id}", name="suivi", requirements={"id"="\d+"}) //requirements permet d'autoriser uniquement les nombres dans l'URL
      */
@@ -176,9 +193,9 @@ class SuiviController extends Controller
         $etape_actuelle = $apprenti->getDossier()->getEtapeActuelle()->getTypeEtape();
         $position_etape_actuelle = $etape_actuelle->getpositionEtape();
 
-        if($position_etape_actuelle == 2 && $authChecker->isGranted('ROLE_MAITRE_APP')) {
-            $this->addFlash('warning', "Une fois le bordereau envoyé, veuillez valider l'étape \"" . $etape_actuelle->getNomEtape() . "\" en cliquant dessus.");
-        }
+//        if($position_etape_actuelle == 2 && $authChecker->isGranted('ROLE_MAITRE_APP')) {
+//            $this->addFlash('warning', "Une fois le bordereau envoyé, veuillez valider l'étape \"" . $etape_actuelle->getNomEtape() . "\" en cliquant dessus.");
+//        }
 
         //On récupère toutes les étapes pour un dossier
         $liste_etapes = $this->getDoctrine()
@@ -219,16 +236,41 @@ class SuiviController extends Controller
                     return $this->redirectToRoute('suivi', array('id' => $id));
                 }
                 else {
-
                     $form = $this->createForm(BordereauType::class, $dossier);
 
                     if ($request->isMethod('POST')) {
 
                         $form->handleRequest($request);
                         if ($form->isSubmitted() && $form->isValid()) {
-                            $this->addFlash('success', 'Bordereau bien enregistré.');
+
+                            if($authChecker->isGranted('ROLE_MAITRE_APP')) {
+                                $this->get('app.emailservice')->notification_bordereau($apprenti);
+                            }
 
                             $em = $this->getDoctrine()->getManager();
+
+                            $etape_actuelle = $dossier->getEtapeActuelle();
+
+                            $position_etape_actuelle = $etape_actuelle->getTypeEtape()->getPositionEtape();
+
+                            if($position_etape_actuelle == 2) {
+                                $etape_actuelle->setdateValidation(new \DateTime());
+
+                                $type_etape_suivante = $em->getRepository(TypeEtape::class)->findOneByPositionEtape($position_etape_actuelle+1);
+                                //On créer la nouvelle étape actuelle du dossier
+                                $new_etape_dossier = new EtapeDossier();
+                                $new_etape_dossier->setTypeEtape($type_etape_suivante);
+                                $new_etape_dossier->setdateDebut(new \DateTime());
+                                $new_etape_dossier->setDossier($dossier);
+
+                                $em->persist($new_etape_dossier);
+
+                                //On met a jour l'étape actuelle du dossier
+                                $dossier->setEtapeActuelle($new_etape_dossier);
+                                $em->flush();
+                            }
+
+                            $this->addFlash('success', 'Bordereau bien enregistré.');
 
                             $em->persist($dossier);
 
@@ -267,7 +309,7 @@ class SuiviController extends Controller
         //Si l'entreprise n'a pas encore été choisie
         if(!empty($dossier->getEntreprise())) {
             //Si le bordereau n'a pas encore été remplis
-            if (empty($dossier->getSujetPropose()) || empty($dossier->getEntreprise()->getRaisonSociale())) {
+            if (empty($dossier->getSujetPropose()) || empty($dossier->getEntreprise()->getRaisonSociale()) || $dossier->getEtapeActuelle()->getTypeEtape()->getPositionEtape() == 2) {
                 return $this->redirectToRoute('remplir_bordereau', array('id' => $id));
             } else {
                 $entreprise = $dossier->getEntreprise();
@@ -287,6 +329,7 @@ class SuiviController extends Controller
                     ));
                     $filename = sprintf('Bordereau-%s.pdf', date('Y-m-d'));
 
+//                    return new Response($html);
                     return new Response(
                         $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
                         200,
@@ -302,6 +345,105 @@ class SuiviController extends Controller
             return $this->redirectToRoute('suivi', array('id' => $id));
         }
     }
+
+
+    /**
+     * Validation ou invalidation du bordereau
+     *
+     * @Route("/suivi/{id}/bordereau/validation/", name="validation_bordereau", requirements={"id"="\d+"})
+     */
+    public function validation_bordereau(AuthorizationCheckerInterface $authChecker, $id, Request $request) {
+        $res = $this->recup_dossier($authChecker, $id);
+        $apprenti = $res[0];
+        $dossier_id = $res[1];
+
+        $dossier = $apprenti->getDossier();
+
+        if($dossier->getEtapeActuelle()->getTypeEtape()->getPositionEtape() != 3) {
+            throw new AccessDeniedException();
+        }
+        $resp = $request->query->get('resp');
+
+        if ($resp == "false") {
+            $defaultData = array('message' => '');
+            $form = $this->createFormBuilder($defaultData)
+                ->add('raison', TextareaType::class, array(
+                    'attr' => array('rows' => '10'),
+                    'label' => "Raison de l'invalidation",
+                    'constraints' => array(
+                        new NotBlank())))
+                ->add('Envoyer', SubmitType::class)
+                ->getForm();
+
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $data = $form->getData();
+
+                $message = $data["raison"];
+
+                $this->get('app.emailservice')->invalidation_bordereau($apprenti, $message);
+                $this->addFlash('success', "Le maître d'apprentissage a été notifié de l'invalidation, il pourra apporter les modifications nécessaires au bordereau.");
+
+                //Annuler étape
+                $this->maj_etape_dossier($dossier, "invalider");
+
+                return $this->redirectToRoute('suivi', array('id' => $id));
+            }
+            return $this->render('suivi/invalider_bordereau.html.twig',
+                array('form' => $form->createView(),
+                ));
+        }
+        else if ($resp == "true") {
+            $this->maj_etape_dossier($dossier, "valider");
+
+            $this->addFlash('success', "Bordereau validé avec succès.");
+            return $this->redirectToRoute('suivi', array('id' => $id));
+        }
+        return $this->render('suivi/validation_bordereau.html.twig',
+            array('user' => $apprenti->getCompte()));
+    }
+
+
+    /**
+     * Mise à jour du dossier pour changer l'étape en cours
+     *
+     */
+    public function maj_etape_dossier(DossierApprenti $dossier, $type)
+    {
+        $etape_actuelle = $dossier->getEtapeActuelle();
+
+
+        $em = $this->getDoctrine()->getManager();
+
+        //On identifie l'étape suivante qu'il faudra valider dans le dossier
+        if ($type == "valider") {
+            $etape_actuelle->setdateValidation(new \DateTime());
+            $type_etape_new = $em->getRepository(TypeEtape::class)->findOneByPositionEtape(($etape_actuelle->getTypeEtape()->getPositionEtape()) + 1);
+        } elseif ($type == "invalider") {
+            $dossier->setetat('En cours');
+            $type_etape_new = $em->getRepository(TypeEtape::class)->findOneByPositionEtape(($etape_actuelle->getTypeEtape()->getPositionEtape()) - 1);
+        }
+        if ($type_etape_new) {
+            //On créer la nouvelle étape actuelle du dossier
+            $new_etape_dossier = new EtapeDossier();
+            $new_etape_dossier->setTypeEtape($type_etape_new);
+            $new_etape_dossier->setdateDebut(new \DateTime());
+            $new_etape_dossier->setDossier($dossier);
+
+            // tell Doctrine you want to (eventually) save the Product (no queries yet)
+            $em->persist($new_etape_dossier);
+
+            //On met a jour l'étape actuelle du dossier
+            $dossier->setEtapeActuelle($new_etape_dossier);
+        }
+        else {
+            $dossier->setetat('Terminé');
+        }
+
+        $em->flush();
+    }
+
 
     /**
      * Validation d'une etape d'un dossier
@@ -334,30 +476,7 @@ class SuiviController extends Controller
                     }
                 }
 
-                $etape_actuelle->setdateValidation(new \DateTime());
-                //On détermine le validateur qui est autorisé a valider cette étape
-                $typeValidateur = $dossier->getEtapeActuelle()->getTypeEtape()->gettypeValidateur();
-
-
-                //On identifie l'étape suivante qu'il faudra valider dans le dossier
-                $type_etape_suivante = $em->getRepository(TypeEtape::class)->findOneByPositionEtape(($dossier->getEtapeActuelle()->getTypeEtape()->getId())+1);
-                if ($type_etape_suivante) {
-                    //On créer la nouvelle étape actuelle du dossier
-                    $new_etape_dossier = new EtapeDossier();
-                    $new_etape_dossier->setTypeEtape($type_etape_suivante);
-                    $new_etape_dossier->setdateDebut(new \DateTime());
-                    $new_etape_dossier->setDossier($dossier);
-
-                    // tell Doctrine you want to (eventually) save the Product (no queries yet)
-                    $em->persist($new_etape_dossier);
-
-                    //On met a jour l'étape actuelle du dossier
-                    $dossier->setEtapeActuelle($new_etape_dossier);
-                } //Sinon il n'y a plus d'étape ensuite, donc le dossier est terminé
-                else {
-                    $dossier->setetat('Terminé');
-                }
-                $em->flush();
+                $this->maj_etape_dossier($dossier, "valider");
             }
             return new JsonResponse(array('error' => "ok"));
         }
@@ -450,9 +569,9 @@ class SuiviController extends Controller
                 return new JsonResponse(array('error' => "Pas d'apprenti trouvé"));
             }
 
-//        if(!($authChecker->isGranted('ROLE_IUT') || $this->getUser()->getId()==$apprenti->getCompte()->getId())) {
-//            return new JsonResponse(array('error' => "Vous n'êtes pas autorisé a réaliser cette action"));
-//        }
+            if(!($authChecker->isGranted('ROLE_IUT'))) {
+                return new AccessDeniedException();
+            }
 
             $apprenti->getDossier()->setetat('Abandonné');
 

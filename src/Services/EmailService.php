@@ -100,4 +100,39 @@ class EmailService
         $this->mailer->send($message);
     }
 
+    public function notification_bordereau(Apprenti $apprenti) {
+        $liste_admins = $this->container->get('doctrine')
+            ->getRepository(User::class)
+            ->findByRole('ROLE_ADMIN');
+
+        foreach ($liste_admins as &$admin) {
+            $message = (new \Swift_Message('Esuivi-IUT - Bordereau complété'))
+                ->setFrom([$this->email => $this->name])
+                ->setTo($admin->getEmail())
+                ->setBody(
+                    $this->twig->render(
+                        'email/notification_bordereau.html.twig',
+                        array('apprenti' => $apprenti)
+                    ),
+                    'text/html'
+                );
+            $this->mailer->send($message);
+        }
+    }
+
+    public function invalidation_bordereau(Apprenti $apprenti, $message) {
+        $ma = $apprenti->getDossier()->getMaitreApprentissage()->getCompte();
+        $message = (new \Swift_Message('Esuivi-IUT - Invalidation bordereau'))
+            ->setFrom([$this->email => $this->name])
+            ->setTo($ma->getEmail())
+            ->setBody(
+                $this->twig->render(
+                    'email/invalidation_bordereau.html.twig',
+                    array('ma' => $ma, 'apprenti' => $apprenti->getCompte(), 'message' => $message)
+                ),
+                'text/html'
+            )
+        ;
+        $this->mailer->send($message);
+    }
 }

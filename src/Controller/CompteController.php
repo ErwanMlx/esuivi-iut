@@ -16,6 +16,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route; //To define the route to access it
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted; //Pour vérifier si l'utilisateur est autorisé a accéder à la page
 use Symfony\Component\Security\Core\Exception\AccessDeniedException; //Erreur 403
@@ -276,6 +277,7 @@ class CompteController extends Controller
     public function profil(AuthorizationCheckerInterface $authChecker, $id) {
 
         $edit = false;
+        $delete = false;
         $apprenti = null;
         $maitreapp = null;
 
@@ -288,6 +290,9 @@ class CompteController extends Controller
         }
         if ($this->getUser()->getId()==$id || ($authChecker->isGranted('ROLE_IUT') && !$user->hasRole('ROLE_IUT'))) {
             $edit = true;
+            if($authChecker->isGranted('ROLE_ADMIN') && $user->hasRole('ROLE_APPRENTI')) {
+                $delete = true;
+            }
         }
 
         if($user->hasRole('ROLE_APPRENTI')) {
@@ -310,7 +315,50 @@ class CompteController extends Controller
         }
 
         return $this->render('compte/profil.html.twig', array(
-            'user' => $user, 'apprenti' => $apprenti, 'maitreapp' => $maitreapp, 'edit' => $edit
+            'user' => $user, 'apprenti' => $apprenti, 'maitreapp' => $maitreapp, 'edit' => $edit, 'delete' => $delete
         ));
     }
+    /**
+     * Suppression d'un compte
+     *
+     * @Route("/compte/suppression/{id}", name="suppression_compte", requirements={"id"="\d+"})
+     */
+    public function suppression_compte(Request $request, AuthorizationCheckerInterface $authChecker, $id) {
+        if(!$authChecker->isGranted('ROLE_ADMIN')) {
+            throw new AccessDeniedException();
+        }
+
+        $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+
+        if(!$user) {
+            throw new NotFoundHttpException();
+        }
+        if ($user->hasRole('ROLE_APPRENTI')) {
+            $resp = $request->query->get(
+                'resp');
+            if($resp == "true") {
+                $apprenti = $this->getDoctrine()->getRepository(Apprenti::class)->findOneByCompte($user->getId());
+                $em = $this->getDoctrine()->getEntityManager();
+                $liste_etapes = $this->getDoctrine()->getRepository(EtapeDossier::class)->findByDossier($apprenti->getDossier()->getId());
+                foreach ($liste_etapes as &$etape) {
+                    $em->remove($etape);
+                }
+                $em->remove($apprenti->getDossier());
+                $em->remove($apprenti);
+                $em->remove($user);
+                $em->flush();
+
+
+                $this->addFlash('success', "Compte supprimé avec succès.");
+                return $this->redirectToRoute('liste');
+            } elseif($resp == "false") {
+                return $this->redirectToRoute('profil', array('id' => $id));
+            }
+        }
+        return $this->render('compte/suppression.html.twig', array(
+            'user' => $user
+        ));
+    }
+
+
 }

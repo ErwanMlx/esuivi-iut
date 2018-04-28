@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Invalidation du bordereau{% endblock %}
+
+{% block page_title %}Invalidation du bordereau{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-offset-3 col-sm-6 contenu">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }} alert-dismissable">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                {{ form(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

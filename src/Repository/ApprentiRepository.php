@@ -32,6 +32,23 @@ class ApprentiRepository extends ServiceEntityRepository
         return $qb->execute();
     }
 
+    public function searchForMaitreApp($search, $id_maitre_app) {
+        $qb = $this->createQueryBuilder('a')
+            ->join('a.dossier', 'd')
+            ->where('d.maitreApprentissage = :id_maitre_app')
+            ->andWhere('LOWER(c.prenom) LIKE LOWER(:search) 
+            OR LOWER(CONCAT(c.nom, \' \', c.prenom)) LIKE LOWER(:search)
+            OR LOWER(CONCAT(c.prenom, \' \', c.nom)) LIKE LOWER(:search)')
+            ->setParameter('id_maitre_app', $id_maitre_app)
+            ->setParameter('search', '%'.$search.'%')
+            ->join('a.compte', 'c')
+            ->orderBy('c.nom', 'ASC')
+            ->addOrderBy('c.prenom', 'ASC')
+            ->getQuery();
+
+        return $qb->execute();
+    }
+
     public function findByMaitreApp($id_maitre_app) {
         $qb = $this->createQueryBuilder('a')
             ->join('a.dossier', 'd')
@@ -51,7 +68,7 @@ class ApprentiRepository extends ServiceEntityRepository
 //
 //    WHERE DA.ETAT='EN COURS'
 //
-//    AND ED.DATE_DEBUT<(NOW()-'15 DAYS'::INTERVAL)
+//    AND ED.DATE_DEBUT=(NOW()-'15 DAYS'::INTERVAL)
 //
 //    AND ED.ID_TYPE_ETAPE IN (SELECT ID FROM TYPE_ETAPE WHERE TYPE_VALIDATEUR = 'ROLE_APPRENTI')));
     public function searchApprentiRetard($nbJours, $typeValidateur) {
@@ -66,7 +83,7 @@ class ApprentiRepository extends ServiceEntityRepository
             ->from(DossierApprenti::class, 'da')
             ->innerJoin(EtapeDossier::class, 'ed', 'WITH', 'ed = da.etapeActuelle')
             ->where('da.etat = \'En cours\'')
-            ->andWhere('ed.dateDebut=(DATE_SUB(CURRENT_TIMESTAMP(), :nbJours, \'DAY\'))')
+            ->andWhere('ed.dateDebut<(DATE_SUB(CURRENT_TIMESTAMP(), :nbJours, \'DAY\'))')
             ->andWhere($liste_dossier->expr()->in('ed.typeEtape', $liste_type_etape->getDQL()));
 
         $liste_apprenti = $this->createQueryBuilder('a');

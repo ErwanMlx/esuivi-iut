@@ -13,6 +13,14 @@
     <div class="container">
         <div class="liste_apprenti">
             <div class="contenu col-xs-12">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }} alert-dismissable">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
                 <div class="chercher ">
                     <form class="navbar-form" method="get" action="{{ path('liste') }}" role="search">
                         <div class="input-group col-xs-12 col-md-12 col-lg-12">

@@ -31,6 +31,9 @@
                         <a class="btn btn-default" href="{{ path('fos_user_security_logout') }}">Déconnexion</a>
                         <a class="btn btn-default" href="{{ path('fos_user_change_password') }}">Modification mot de passe</a>
                     {% endif %}
+                    {% if delete %}
+                        <a class="btn btn-default" href="{{ path('suppression_compte', {'id':user.id}) }}">Supprimer apprenti</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

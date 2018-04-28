@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Invalidation du bordereau{% endblock %}
+
+{% block page_title %}Invalidation du bordereau{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-offset-3 col-sm-6 contenu text-center">
+                <h3>Souhaitez-vous valider le bordereau de {{ user.prenom ~ ' ' ~ user.nom }} ?</h3>
+                <a class="btn btn-success" href="{{ path('validation_bordereau', {'id':user.id, 'resp':"true"}) }}">Valider</a>
+                <a class="btn btn-danger" href="{{ path('validation_bordereau', {'id':user.id, 'resp':"false"}) }}">Invalider</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

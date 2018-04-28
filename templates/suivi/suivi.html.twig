@@ -58,22 +58,31 @@
                                 {% set class_type = class_type ~ ' etape-actuelle' %}
                             {% endif %}
                             {% if apprenti.Dossier.etat == 'En cours' %}
-                                {% if is_granted(etape.typeValidateur) or is_granted('ROLE_IUT') %}
+                                {% if (is_granted(etape.typeValidateur) or is_granted('ROLE_IUT')) %}
                                     {% set class_type = class_type ~ ' validable' %}
                                 {% endif %}
                                 {% if is_granted('ROLE_IUT') %}
                                     {% set class_type = class_type ~ ' annulable' %}
                                 {% endif %}
                             {% endif %}
+
                             {% if etape.positionEtape == 1 and (is_granted('ROLE_ADMIN') or (is_granted('ROLE_APPRENTI') and position_etape_actuelle == 1)) %}
-                                <a href="{{ path('choix_entreprise', {'id': apprenti.compte.id}) }}">
+                                {% set link = path('choix_entreprise', {'id': apprenti.compte.id}) %}
+                            {% endif %}
+                            {% if etape.positionEtape == 2 and (is_granted('ROLE_ADMIN') or (is_granted('ROLE_MAITRE_APP') and position_etape_actuelle == 2)) %}
+                                {% set link = path('consulter_bordereau', {"id":apprenti.compte.id}) %}
+                            {% endif %}
+
+                            {% if link is defined and link is not empty %}
+                                <a href="{{ link }}">
                             {% endif %}
                             <div class="{{ class_type }}" id="{{ etape.id }}">
                                 <div class="cercle center-block col-lg-4"><img class="img-responsive" src="/build/img/Icone_{{ etape.typeIcone }}.png" alt=""/></div>
                                 <p class="col-lg-8">{{ etape.NomEtape }}</p>
                             </div>
-                            {% if etape.positionEtape == 1 %}
+                            {% if link is defined and link is not empty %}
                                 </a>
+                                {% set link = null %}
                             {% endif %}
 
 

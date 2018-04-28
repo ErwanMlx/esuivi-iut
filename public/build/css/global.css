@@ -85,6 +85,17 @@ a:hover {
     color: #22519C;
 }
 
+.etape-actuelle>.cercle {
+    animation: blinker 2s linear infinite;
+
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}
+
 @media (min-width: 1200px){
     .ligne {
         height: 350px;

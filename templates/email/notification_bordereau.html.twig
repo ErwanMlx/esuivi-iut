@@ -1,0 +1,11 @@
+{% extends 'email/template.html.twig' %}
+
+{% block titre %}Bordereau complété{% endblock %}
+
+{% block texte %}
+    <p>Bonjour,</p>
+
+    <p>Le bordereau d'un apprenti, {{ apprenti.compte.prenom ~ ' ' ~ apprenti.compte.nom }}, a été complété.</p>
+
+    <p>Pour accéder au bordereau et le valider (ou l'invalider), suivez ce <a href="{{ absolute_url(path('consulter_bordereau', {"id":apprenti.compte.id})) }}">lien</a>.</p>
+{% endblock %}

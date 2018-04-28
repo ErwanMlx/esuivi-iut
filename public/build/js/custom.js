@@ -32,8 +32,6 @@ $(document).ready(function() {
             }
             if(n == 2)
             {
-                console.log("ok2");
-
                 $.ajax({
                     type: "POST",
                     datatype : "application/json",
@@ -49,7 +47,7 @@ $(document).ready(function() {
                             var $bool = 0;
                             for(var i = 0; i<$etapes.length; i++)
                             {
-                                if($bool == 0)
+                                if($bool === 0)
                                 {
                                     if($($etapes[i]).hasClass('etape-actuelle'))
                                     {
@@ -139,6 +137,10 @@ $(document).ready(function() {
     
     $(document).on("click",".etape-valide",function(e){
         if($(this).is("#1"))
+             {
+                 e.preventDefault();
+             }
+        if($(this).is("#2"))
              {
                  e.preventDefault();
              }

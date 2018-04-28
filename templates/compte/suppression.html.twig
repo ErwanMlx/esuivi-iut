@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Suppression de compte{% endblock %}
+
+{% block page_title %}Suppression de compte{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-offset-3 col-sm-6 contenu text-center">
+
+                <h3>Êtes-vous sûr de vouloir supprimer le compte de {{ user.prenom ~ ' ' ~ user.nom }} ?</h3>
+                <h4>Cela entrainera la suppression de son dossier.</h4>
+                <a class="btn btn-danger" href="{{ path('suppression_compte', {'id':user.id, 'resp':"true"}) }}">Oui</a>
+                <a class="btn btn-success" href="{{ path('suppression_compte', {'id':user.id, 'resp':"false"}) }}">Non</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
