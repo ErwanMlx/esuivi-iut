@@ -11,6 +11,9 @@
             <p>
                 {{ 'resetting.check_email'|trans({'%tokenLifetime%': tokenLifetime})|nl2br }}
             </p>
+            <div class="text-center">
+                <a class="btn btn-default" href="{{ path("home") }}">Accueil</a>
+            </div>
         </div>
     {% endblock %}
 
