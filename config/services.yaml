@@ -2,9 +2,9 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'fr'
-    mailer_email: esuivi-iut@alwaysdata.net
-    mailer_name: Esuivi-IUT
-    router.request_context.host: esuivi-iut.alwaysdata.net
+    mailer_email: '%env(MAILER_EMAIL)%'
+    mailer_name: '%env(MAILER_NAME)%'
+    router.request_context.host: '%env(HOST_URL)%'
     router.request_context.scheme: https
 
 
