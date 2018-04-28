@@ -82,7 +82,7 @@ class DossierApprenti
     /**
      * @var EtapeDossier
      *
-     * @ORM\ManyToOne(targetEntity="EtapeDossier")
+     * @ORM\ManyToOne(targetEntity="EtapeDossier", cascade={"remove"})
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_etape_actuelle", referencedColumnName="id")
      * })

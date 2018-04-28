@@ -108,8 +108,16 @@ class EntrepriseController extends Controller
                     $errorsEn = $validator->validate($ma->getEntreprise(), null, array('ajout_entreprise'));
                     $errorsMa = $validator->validate($ma->getCompte(), null, array('ajout'));
                     if (count($errorsEn) == 0 && count($errorsMa) == 0) {
-                        $addMa = true;
-                        $em->persist($ma->getEntreprise());
+                        $email = $this->getDoctrine()->getRepository(User::class)->findByEmail($ma->getCompte()->getEmail());
+
+                        //Si le mail n'est pas déjà utilisé
+                        if (!$email) {
+                            $addMa = true;
+                            $em->persist($ma->getEntreprise());
+                        } else {
+                            $form->addError(new FormError('Adresse email déjà utilisée'));
+                            $error = true;
+                        }
                     } else {
                         foreach ($errorsEn as &$err) {
                             $input = $err->getPropertyPath();

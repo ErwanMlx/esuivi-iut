@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Apprenti
  *
- * @ORM\Table(name="apprenti", options={"comment":"Les informations sur les apprentis"}, indexes={@ORM\Index(name="IDX_2CB7951CE77D22BA", columns={"id_dossier_apprenti"}), @ORM\Index(name="IDX_2CB7951C81B56FBD", columns={"id_responsable_iut"})})
+ * @ORM\Table(name="apprenti", options={"comment":"Les informations sur les apprentis"}, indexes={@ORM\Index(name="IDX_2CB7951CE77D22BA", columns={"id_dossier_apprenti"})})
  * @ORM\Entity(repositoryClass="App\Repository\ApprentiRepository")
  */
 class Apprenti
