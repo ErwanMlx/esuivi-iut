@@ -21,6 +21,9 @@ class LogAutoController extends Controller
      * @Route("/logauto/", name="page_logauto")
      */
     public function page_logauto() {
+        if($_SERVER['APP_ENV'] != 'dev') {
+            return $this->redirectToRoute('home');
+        }
         return $this->render('accueil/logauto.html.twig');
     }
 
@@ -30,6 +33,10 @@ class LogAutoController extends Controller
      * @Route("/logauto/{type}", name="logauto")
      */
     public function logauto(Request $request, $type) {
+        if($_SERVER['APP_ENV'] != 'dev') {
+            return $this->redirectToRoute('home');
+        }
+
         $role = 'ROLE_'.$type;
 
         $user = $this->getDoctrine()

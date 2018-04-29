@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Kernel;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route; //To define the route to access it
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -20,8 +21,12 @@ class AccueilController extends Controller
             return $this->redirectToRoute('suivi_perso');
         }
         else {
-//            return $this->render('accueil/accueil.html.twig');
-            return $this->render('accueil/logauto.html.twig');
+            if($_SERVER['APP_ENV'] == 'dev') {
+                return $this->render('accueil/logauto.html.twig');
+            }
+            else {
+                return $this->redirectToRoute('fos_user_security_login');
+            }
         }
     }
 }

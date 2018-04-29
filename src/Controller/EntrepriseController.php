@@ -318,8 +318,10 @@ class EntrepriseController extends Controller
                     array('id' => $id_apprenti,
                         'src' => 'bordereau')
                 );
-                $this->addFlash('warning', "Attention, les modifications apportées à cette entreprise seront appliquées à tous les apprentis rattachés à cette entreprise. 
+                if (!$request->isMethod('POST')) {
+                    $this->addFlash('warning', "Attention, les modifications apportées à cette entreprise seront appliquées à tous les apprentis rattachés à cette entreprise. 
                 Si vous souhaitez changer l'entreprise de l'apprenti, merci de passer par ce <a href=\"" . $lien . "\">lien</a>.");
+                }
                 $entreprise = $em->getRepository(Entreprise::class)->find($id);
             }
             else {
