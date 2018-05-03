@@ -310,7 +310,12 @@ class SuiviController extends Controller
         if(!empty($dossier->getEntreprise())) {
             //Si le bordereau n'a pas encore été remplis
             if (empty($dossier->getSujetPropose()) || empty($dossier->getEntreprise()->getRaisonSociale()) || $dossier->getEtapeActuelle()->getTypeEtape()->getPositionEtape() == 2) {
-                return $this->redirectToRoute('remplir_bordereau', array('id' => $id));
+                if($dossier->getEtat() != "Terminé") {
+                    return $this->redirectToRoute('remplir_bordereau', array('id' => $id));
+                }
+                else {
+                    return $this->redirectToRoute('suivi', array('id' => $id));
+                }
             } else {
                 $entreprise = $dossier->getEntreprise();
                 $maitreapprentissage = $dossier->getMaitreApprentissage();

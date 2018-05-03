@@ -21,8 +21,11 @@ $(document).ready(function() {
                             alert(data.error);
                         }
                         else {
-                            console.log("ok");
                             $elem.removeClass('etape-actuelle').addClass('etape-valide');
+                            var $etapes = $('.etape');
+                            if($etapes.last().hasClass('etape-valide')) {
+                                location.reload(true);
+                            }
                             var $etapesSuivantes = $('.etape').not('.etape-valide');
                             var $etapeSuivante = $etapesSuivantes.first();
                             $etapeSuivante.addClass('etape-actuelle');
@@ -103,48 +106,48 @@ $(document).ready(function() {
     };
 
     $(document).on("click",".etape-actuelle.validable",function(){
-            if(!$(this).is("#1"))
-            {
-                Confirm("Confirmation","Etes vous sûr de vouloir valider cette étape ?",
-                    "Oui","Non",$(this),1);
-            }
+        if(!$(this).is("#1"))
+        {
+            Confirm("Confirmation","Etes vous sûr de vouloir valider cette étape ?",
+                "Oui","Non",$(this),1);
+        }
     });
 
     $(document).on("click",".etape-valide.annulable",function(e){
-             if($(this).is("#1"))
-             {
-                 e.preventDefault();
-                 Confirm("Confirmation","Etes vous sûr de vouloir annuler cette étape et les étapes suivantes ?\
+        if($(this).is("#1"))
+        {
+            e.preventDefault();
+            Confirm("Confirmation","Etes vous sûr de vouloir annuler cette étape et les étapes suivantes ?\
                  (Retourner à cette étape annule le choix de l'entreprise et du maître de stage et réinitialise le bordereau de stage)",
-                    "Oui","Non",$(this),2);
-             }
-             else
-             {
-                 Confirm("Confirmation","Etes vous sûr de vouloir annuler cette étape et les étapes suivantes ?",
-                    "Oui","Non",$(this),2);
-             }
+                "Oui","Non",$(this),2);
+        }
+        else
+        {
+            Confirm("Confirmation","Etes vous sûr de vouloir annuler cette étape et les étapes suivantes ?",
+                "Oui","Non",$(this),2);
+        }
     });
-    
+
     $(document).on("click","#abandon",function(){
-            Confirm("Confirmation d'abandon","Etes vous sûr de vouloir abandonner le dossier ?",
-                "Oui","Non",$(this),3);
+        Confirm("Confirmation d'abandon","Etes vous sûr de vouloir abandonner le dossier ?",
+            "Oui","Non",$(this),3);
     });
 
     $(document).on("click","#reactivation",function(){
         Confirm("Confirmation de réactivation","Etes vous sûr de vouloir réactiver le dossier ?",
             "Oui","Non",$(this),4);
     });
-    
+
     $(document).on("click",".etape-valide",function(e){
         if($(this).is("#1"))
-             {
-                 e.preventDefault();
-             }
+        {
+            e.preventDefault();
+        }
         if($(this).is("#2"))
-             {
-                 e.preventDefault();
-             }
+        {
+            e.preventDefault();
+        }
     });
-    
-    
+
+
 });

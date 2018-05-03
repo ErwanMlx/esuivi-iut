@@ -83,7 +83,7 @@ class ApprentiRepository extends ServiceEntityRepository
             ->from(DossierApprenti::class, 'da')
             ->innerJoin(EtapeDossier::class, 'ed', 'WITH', 'ed = da.etapeActuelle')
             ->where('da.etat = \'En cours\'')
-            ->andWhere('ed.dateDebut<(DATE_SUB(CURRENT_TIMESTAMP(), :nbJours, \'DAY\'))')
+            ->andWhere('DATE_DIFF(CURRENT_TIMESTAMP(), ed.dateDebut) = :nbJours')
             ->andWhere($liste_dossier->expr()->in('ed.typeEtape', $liste_type_etape->getDQL()));
 
         $liste_apprenti = $this->createQueryBuilder('a');

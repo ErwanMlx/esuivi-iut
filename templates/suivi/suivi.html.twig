@@ -97,15 +97,19 @@
             <div class="col-xs-12 text-center contenu">
                 <a class="btn btn-default" href="{{ path('profil', {"id":apprenti.compte.id}) }}">Profil</a>
                 <a class="btn btn-default" href="{{ path('historique', {"id":apprenti.compte.id}) }}">Historique</a>
-                {% if apprenti.Dossier.etat != "Abandonné" and (is_granted('ROLE_IUT')) %}
+                {% if apprenti.Dossier.etat == "En cours" and (is_granted('ROLE_IUT')) %}
                     <button id="abandon" class="btn btn-default">Abandonner dossier</button>
                 {% endif %}
-                {% if (apprenti.dossier.entreprise is not empty and (apprenti.dossier.sujetpropose is not empty or (is_granted('ROLE_MAITRE_APP') or is_granted('ROLE_IUT')))) %}
+                {% if (apprenti.dossier.entreprise is not empty
+                    and (apprenti.dossier.sujetpropose is not empty or (is_granted('ROLE_MAITRE_APP') or is_granted('ROLE_IUT')))) %}
                     <a class="btn btn-default" href="{{ path('consulter_bordereau', {"id":apprenti.compte.id}) }}">Bordereau</a>
                 {% endif %}
                 {% if apprenti.Dossier.etat == "Abandonné" and (is_granted('ROLE_IUT')) %}
                     <button id="reactivation" class="btn btn-default">Réactiver dossier</button>
                 {% endif %}
+                {#{% if is_granted('ROLE_IUT') and position_etape_actuelle == 2 %}#}
+                    {#<a class="btn btn-default" href="{{ path('choix_entreprise', {'id': apprenti.compte.id, 'src':"suivi"}) }}">Changer entreprise et maitre d'apprentissage</a>#}
+                {#{% endif %}#}
             </div>
         </div>
     </div>

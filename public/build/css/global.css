@@ -240,6 +240,17 @@ body {
 
 }
 
+@media (max-width: 480px) {
+    body {
+        margin-bottom: 80px;
+    }
+
+    .footer {
+        height: 81px;
+
+    }
+}
+
 .text-muted {
     margin: 20px 0;
     color: #22519C;

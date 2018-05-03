@@ -349,6 +349,8 @@ class EntrepriseController extends Controller
                         return $this->redirectToRoute('remplir_bordereau', array('id' => $id_dossier));
                     } else if($request->get('src') == "bordereau") {
                         return $this->redirectToRoute('consulter_bordereau', array('id' => $request->get('app')));
+                    } else if($request->get('src') == "suivi") {
+                        return $this->redirectToRoute('suivi', array('id' => $request->get('app')));
                     } else {
                         return $this->redirectToRoute('liste');
                     }
