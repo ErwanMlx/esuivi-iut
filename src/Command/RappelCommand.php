@@ -23,11 +23,16 @@ class RappelCommand extends ContainerAwareCommand {
 
         // On set l'aide
         $this->setHelp("Voir src/Command/RappelCommand");
+
+        $this->addArgument('nbJours', InputArgument::OPTIONAL, "Au bout de combien de jours faut-il faire une relance ?");
     }
 
     public function execute (InputInterface $input, OutputInterface $output) {
 
-        $nbJours = 15;
+        $nbJours = $input->getArgument('nbJours');
+        if(empty($nbJours)) {
+            $nbJours = 15;
+        }
 
         $liste_apprentis_retard = $this->getContainer()->get('doctrine')->getRepository(Apprenti::class)->searchApprentiRetard($nbJours, 'ROLE_APPRENTI');
 

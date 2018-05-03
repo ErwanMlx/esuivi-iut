@@ -100,8 +100,16 @@
                 {% if apprenti.Dossier.etat == "En cours" and (is_granted('ROLE_IUT')) %}
                     <button id="abandon" class="btn btn-default">Abandonner dossier</button>
                 {% endif %}
-                {% if (apprenti.dossier.entreprise is not empty
-                    and (apprenti.dossier.sujetpropose is not empty or (is_granted('ROLE_MAITRE_APP') or is_granted('ROLE_IUT')))) %}
+                {% if apprenti.Dossier.etat == "En cours"
+                    and (is_granted('ROLE_MAITRE_APP') or is_granted('ROLE_IUT'))
+                    and position_etape_actuelle == 2
+                 %}
+                    <a class="btn btn-default" href="{{ path('remplir_bordereau', {"id":apprenti.compte.id}) }}">Remplir Bordereau</a>
+                {% endif %}
+                {% if position_etape_actuelle > 2
+                    and (is_granted('ROLE_MAITRE_APP') or is_granted('ROLE_IUT'))
+                    and apprenti.dossier.sujetpropose is not empty
+                %}
                     <a class="btn btn-default" href="{{ path('consulter_bordereau', {"id":apprenti.compte.id}) }}">Bordereau</a>
                 {% endif %}
                 {% if apprenti.Dossier.etat == "Abandonné" and (is_granted('ROLE_IUT')) %}

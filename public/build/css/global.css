@@ -256,7 +256,12 @@ body {
     color: #22519C;
 }
 
-/* Fin sticky footer
+/* Fin sticky footer*/
+
+label.required:before {
+    content: "*";
+    color: red;
+}
 
 
 
