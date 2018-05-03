@@ -12,7 +12,11 @@
                 <p>Nom : {{ user.nom }}</p>
                 <p>Email : {{ user.email }}</p>
                 <p>Dernière connexion : {{ user.lastlogin|date() }}</p>
-
+                {% if "ROLE_ADMIN" in user.roles %}
+                    <p>Privilèges administrateur : Oui</p>
+                {% elseif "ROLE_IUT" in user.roles %}
+                    <p>Privilèges administrateur : Non</p>
+                {% endif %}
                 {% if apprenti %}
                     <p>Téléphone : {{ apprenti.telephone|default('Non renseigné') }}</p>
                     <p>Adresse : {{ apprenti.adresse|default('Non renseigné') }}</p>
@@ -32,7 +36,7 @@
                         <a class="btn btn-default" href="{{ path('fos_user_change_password') }}">Modification mot de passe</a>
                     {% endif %}
                     {% if delete %}
-                        <a class="btn btn-default" href="{{ path('suppression_compte', {'id':user.id}) }}">Supprimer apprenti</a>
+                        <a class="btn btn-default" href="{{ path('suppression_compte', {'id':user.id}) }}">Supprimer compte</a>
                     {% endif %}
                 </div>
             </div>

@@ -1,18 +1,26 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ajout de compte{% endblock %}
+{% block title %}Gestion des comptes{% endblock %}
 
-{% block page_title %}Ajout de compte{% endblock %}
+{% block page_title %}Gestion des comptes{% endblock %}
 
 {% block body %}
     <div class="container">
         <div class="row">
-            <div class="text-center contenu">
+            <div class="text-center col-xs-12 contenu">
+                <div class="page-header">
+                    <h1>Ajout compte</h1>
+                </div>
                 <a class="btn btn-default" href="{{ path('ajout_compte', {'type': "apprenti"}) }}">Ajouter un Apprenti</a>
                 <a class="btn btn-default" href="{{ path('ajout_compte', {'type': "cfa"}) }}">Ajouter un responsable CFA</a>
                 {% if is_granted('ROLE_ADMIN') %}
                     <a class="btn btn-default" href="{{ path('ajout_compte', {'type': "iut"}) }}">Ajouter un responsable IUT</a>
                 {% endif %}
+                <div class="page-header">
+                    <h1>Liste comptes</h1>
+                </div>
+                <a class="btn btn-default" href="{{ path('liste_comptes', {'type': "iut"}) }}">Liste comptes IUT</a>
+                <a class="btn btn-default" href="{{ path('liste_comptes', {'type': "cfa"}) }}">Liste comptes CFA</a>
             </div>
         </div>
     </div>

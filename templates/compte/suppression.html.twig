@@ -10,7 +10,9 @@
             <div class="col-sm-offset-3 col-sm-6 contenu text-center">
 
                 <h3>Êtes-vous sûr de vouloir supprimer le compte de {{ user.prenom ~ ' ' ~ user.nom }} ?</h3>
-                <h4>Cela entrainera la suppression de son dossier.</h4>
+                {% if "ROLE_APPRENTI" in user.roles %}
+                    <h4>Cela entrainera la suppression de son dossier.</h4>
+                {% endif %}
                 <a class="btn btn-danger" href="{{ path('suppression_compte', {'id':user.id, 'resp':"true"}) }}">Oui</a>
                 <a class="btn btn-success" href="{{ path('suppression_compte', {'id':user.id, 'resp':"false"}) }}">Non</a>
             </div>

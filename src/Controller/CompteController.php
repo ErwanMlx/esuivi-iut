@@ -38,11 +38,11 @@ class CompteController extends Controller
     /**
      * Affichage de la page de choix d'ajout de compte
      *
-     * @Route("/compte/ajout/", name="choix_ajout")
+     * @Route("/compte/gestion/", name="gestion_compte")
      * @IsGranted("ROLE_IUT")
      */
-    public function choix_ajout() {
-        return $this->render('compte/choix_ajout.html.twig');
+    public function gestion_compte() {
+        return $this->render('compte/gestion_compte.html.twig');
     }
 
     /**
@@ -288,10 +288,16 @@ class CompteController extends Controller
                 'typeMessage' => "Utilisateur non trouvé", 'message' => 'Pas d`\'utilisateur trouvé pour l\'ID ' . $id
             ));
         }
-        if ($this->getUser()->getId()==$id || ($authChecker->isGranted('ROLE_IUT') && !$user->hasRole('ROLE_IUT'))) {
-            $edit = true;
-            if($authChecker->isGranted('ROLE_ADMIN') && $user->hasRole('ROLE_APPRENTI')) {
-                $delete = true;
+        if ($this->getUser()->getId()==$id || ($authChecker->isGranted('ROLE_IUT'))) {
+            if($user->hasRole('ROLE_ADMIN') && !$authChecker->isGranted('ROLE_ADMIN')) {
+                $edit = false;
+            }
+            else {
+                $edit = true;
+            }
+            if($authChecker->isGranted('ROLE_ADMIN')) {
+                if($user->hasRole('ROLE_APPRENTI') || $user->hasRole('ROLE_CFA') || $user->hasRole('ROLE_IUT'))
+                    $delete = true;
             }
         }
 
@@ -333,24 +339,32 @@ class CompteController extends Controller
         if(!$user) {
             throw new NotFoundHttpException();
         }
-        if ($user->hasRole('ROLE_APPRENTI')) {
+        if ($user->hasRole('ROLE_APPRENTI') || $user->hasRole('ROLE_CFA') || $user->hasRole('ROLE_IUT')) {
             $resp = $request->query->get(
                 'resp');
             if($resp == "true") {
-                $apprenti = $this->getDoctrine()->getRepository(Apprenti::class)->findOneByCompte($user->getId());
                 $em = $this->getDoctrine()->getEntityManager();
-                $liste_etapes = $this->getDoctrine()->getRepository(EtapeDossier::class)->findByDossier($apprenti->getDossier()->getId());
-                foreach ($liste_etapes as &$etape) {
-                    $em->remove($etape);
+
+                if($user->hasRole('ROLE_APPRENTI')) {
+                    $apprenti = $this->getDoctrine()->getRepository(Apprenti::class)->findOneByCompte($user->getId());
+                    $liste_etapes = $this->getDoctrine()->getRepository(EtapeDossier::class)->findByDossier($apprenti->getDossier()->getId());
+                    foreach ($liste_etapes as &$etape) {
+                        $em->remove($etape);
+                    }
+                    $em->remove($apprenti->getDossier());
+                    $em->remove($apprenti);
                 }
-                $em->remove($apprenti->getDossier());
-                $em->remove($apprenti);
+
                 $em->remove($user);
                 $em->flush();
 
-
                 $this->addFlash('success', "Compte supprimé avec succès.");
-                return $this->redirectToRoute('liste');
+
+                if($user->hasRole('ROLE_APPRENTI')) {
+                    return $this->redirectToRoute('liste');
+                } else {
+                    return $this->redirectToRoute('gestion_compte');
+                }
             } elseif($resp == "false") {
                 return $this->redirectToRoute('profil', array('id' => $id));
             }
@@ -358,6 +372,33 @@ class CompteController extends Controller
         return $this->render('compte/suppression.html.twig', array(
             'user' => $user
         ));
+    }
+
+    /**
+     * Liste des comptes par type
+     *
+     * @Route("/compte/liste/{type}", name="liste_comptes", requirements={"type"="(cfa|iut)"})
+     * @IsGranted("ROLE_IUT")
+     */
+    public function liste_comptes(Request $request, AuthorizationCheckerInterface $authChecker, $type) {
+        $role = null;
+        if($type == "cfa") {
+            $liste_users = $this->getDoctrine()
+                ->getRepository(User::class)
+                ->findByRole("ROLE_CFA");
+            $type = "CFA";
+        }
+        elseif($type == "iut") {
+            $liste_users = $this->getDoctrine()
+                ->getRepository(User::class)
+                ->findAllIUT();
+            $type = "IUT";
+        }
+        else {
+            throw new AccessDeniedException();
+        }
+
+        return $this->render('compte/liste_users.html.twig', array('liste_users' => $liste_users, 'type' => $type));
     }
 
 

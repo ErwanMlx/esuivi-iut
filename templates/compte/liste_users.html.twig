@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des utilisateurs{% endblock %}
+
+{% block page_title %}Liste des comptes {{ type }}{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 contenu">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Email</th>
+                        {#{% if type == "IUT" %}#}
+                            {#<th>Admin</th>#}
+                        {#{% endif %}#}
+                        <th>Profil</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in liste_users %}
+                        <tr>
+                            <td>{{ user.nom }}</td>
+                            <td>{{ user.prenom }}</td>
+                            <td>{{ user.email }}</td>
+                        {#{% if type == "IUT" %}#}
+                            {#{% if "ROLE_ADMIN" in user.roles %}#}
+                                {#<td>Oui</td>#}
+                            {#{% else %}#}
+                                {#<td>Non</td>#}
+                            {#{% endif %}#}
+                        {#{% endif %}#}
+                            <td><a href="{{ path('profil', {"id":user.id}) }}">Accès profil</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

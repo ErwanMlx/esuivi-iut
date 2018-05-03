@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,7 +52,7 @@
                     {% endif %}
                     {% if is_granted('ROLE_IUT') %}
                         <li><a href="{{ path('statistiques') }}">Statistiques</a></li>
-                        <li><a href="{{ path('choix_ajout') }}">Gestion Comptes</a></li>
+                        <li><a href="{{ path('gestion_compte') }}">Gestion Comptes</a></li>
                     {% endif %}
                     <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
                 </ul>

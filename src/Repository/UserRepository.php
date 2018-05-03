@@ -32,7 +32,23 @@ class UserRepository extends ServiceEntityRepository
         $qb->select('u')
             ->from($this->_entityName, 'u')
             ->where('u.roles LIKE :roles')
-            ->setParameter('roles', '%"' . $role . '"%');
+            ->setParameter('roles', '%"' . $role . '"%')
+            ->orderBy('u.nom', 'ASC')
+            ->addOrderBy('u.prenom', 'ASC');
+        return $qb->getQuery()->execute();
+    }
+
+    public function findAllIUT() {
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('u')
+            ->from($this->_entityName, 'u')
+            ->where('u.roles LIKE :role_iut')
+            ->orWhere('u.roles LIKE :role_admin')
+            ->setParameter('role_iut', '%"' . "ROLE_IUT" . '"%')
+            ->setParameter('role_admin', '%"' . "ROLE_ADMIN" . '"%')
+            ->orderBy('u.nom', 'ASC')
+            ->addOrderBy('u.prenom', 'ASC');
+
         return $qb->getQuery()->execute();
     }
 }
