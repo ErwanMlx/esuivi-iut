@@ -21,7 +21,7 @@
                         </div>
                     {% endfor %}
                 {% endfor %}
-                <div class="chercher ">
+                <div class="chercher">
                     <form id="form-search" class="navbar-form" method="get" action="{{ path('liste') }}" role="search">
                         <div class="input-group search col-xs-12">
                             <input type="text" class="form-control" placeholder="Chercher un apprenti" name="search" {{ (search is not empty ? "value=" ~ search) }}>

@@ -8,6 +8,14 @@
     <div class="container">
         <div class="row">
             <div class="text-center col-xs-12 contenu">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }} alert-dismissable">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
                 <div class="page-header">
                     <h1>Ajout compte</h1>
                 </div>

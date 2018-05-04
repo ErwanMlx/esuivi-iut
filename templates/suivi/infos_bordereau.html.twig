@@ -8,6 +8,14 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-offset-2 col-sm-8 contenu">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }} alert-dismissable">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
                 <h3>Entreprise</h3>
                 <p>Nom : {{ entreprise.nom }}</p>
                 <p>Raison sociale : {{ entreprise.raisonsociale }}</p>
