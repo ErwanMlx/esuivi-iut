@@ -17,7 +17,7 @@ class ApprentiRepository extends ServiceEntityRepository
     }
 
 //select * from apprenti join utilisateur ON (id_compte=id) WHERE (nom||' '||prenom) LIKE '%PM Erwan%' OR (prenom||' '||nom) LIKE '%PM Erwan%' OR nom LIKE '%PM Erwan%' OR prenom LIKE '%PM Erwan%'
-    public function search($search) {
+    public function search($search, $etat = null) {
         $qb = $this->createQueryBuilder('a')
             ->join('a.compte', 'c')
             ->where('LOWER(c.nom) LIKE LOWER(:search)')
@@ -26,13 +26,17 @@ class ApprentiRepository extends ServiceEntityRepository
             ->orWhere('LOWER(CONCAT(c.prenom, \' \', c.nom)) LIKE LOWER(:search)')
             ->setParameter('search', '%'.$search.'%')
             ->orderBy('c.nom', 'ASC')
-            ->addOrderBy('c.prenom', 'ASC')
-            ->getQuery();
+            ->addOrderBy('c.prenom', 'ASC');
+        if(!empty($etat)) {
+            $qb->join('a.dossier', 'd')
+                ->andWhere('d.etat = :etat')
+                ->setParameter('etat', $etat);
+        }
 
-        return $qb->execute();
+        return $qb->getQuery()->execute();
     }
 
-    public function searchForMaitreApp($search, $id_maitre_app) {
+    public function searchForMaitreApp($search, $id_maitre_app, $etat = null) {
         $qb = $this->createQueryBuilder('a')
             ->join('a.dossier', 'd')
             ->where('d.maitreApprentissage = :id_maitre_app')
@@ -43,10 +47,14 @@ class ApprentiRepository extends ServiceEntityRepository
             ->setParameter('search', '%'.$search.'%')
             ->join('a.compte', 'c')
             ->orderBy('c.nom', 'ASC')
-            ->addOrderBy('c.prenom', 'ASC')
-            ->getQuery();
+            ->addOrderBy('c.prenom', 'ASC');
 
-        return $qb->execute();
+        if(!empty($etat)) {
+            $qb->andWhere('d.etat = :etat')
+                ->setParameter('etat', $etat);
+        }
+
+        return $qb->getQuery()->execute();
     }
 
     public function findByMaitreApp($id_maitre_app) {

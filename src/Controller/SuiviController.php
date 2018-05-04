@@ -22,6 +22,40 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class SuiviController extends Controller
 {
+
+    /**
+     * On récupère les résultats de la recherche d'apprentis
+     *
+     */
+    public function results_recherche(AuthorizationCheckerInterface $authChecker, Request $req) {
+        //On récupère la recherche d'apprenti
+        $search = $req->get('search');
+        $etat = (int) $req->get('etat');
+        if(empty($etat)) {
+            $etat = 2;
+        }
+        if($etat == 1) {
+            $etat_s = null;
+        } elseif($etat == 2) {
+            $etat_s = "En cours";
+        } elseif($etat == 3) {
+            $etat_s = "Abandonné";
+        } elseif($etat == 4) {
+            $etat_s = "Terminé";
+        }
+
+        if ($authChecker->isGranted('ROLE_MAITRE_APP')) {
+            $id_maitre_app = $this->getUser()->getId();
+            $liste = $this->getDoctrine()
+                ->getRepository(Apprenti::class)->searchForMaitreApp($search, $id_maitre_app, $etat_s);
+        }
+        else {
+            $liste = $this->getDoctrine()
+                ->getRepository(Apprenti::class)->search($search, $etat_s);
+        }
+        return array($liste, $etat, $search);
+    }
+
     /**
      * Affichage de la liste des apprentis
      *
@@ -33,36 +67,13 @@ class SuiviController extends Controller
             throw new AccessDeniedException();
         }
 
-        //On récupère la recherche d'apprenti
-        $search = $req->get('search');
-
-        //Si il y en a une on cherche les apprentis correspondant
-        if($search != null) {
-            if ($authChecker->isGranted('ROLE_MAITRE_APP')) {
-                $id_maitre_app = $this->getUser()->getId();
-                $liste = $this->getDoctrine()
-                    ->getRepository(Apprenti::class)->searchForMaitreApp($search, $id_maitre_app);
-            }
-            else {
-                $liste = $this->getDoctrine()
-                    ->getRepository(Apprenti::class)->search($search);
-            }
-        }
-        //Sinon on affiche tous les apprentis
-        else {
-            if($authChecker->isGranted('ROLE_MAITRE_APP')) {
-                $liste = $this->getDoctrine()
-                    ->getRepository(Apprenti::class)
-                    ->findByMaitreApp($this->getUser()->getId());
-            } else {
-                $liste = $this->getDoctrine()
-                    ->getRepository(Apprenti::class)
-                    ->findAll();
-            }
-        }
+        $res = $this->results_recherche($authChecker, $req);
+        $liste = $res[0];
+        $etat = $res[1];
+        $search = $res[2];
 
         return $this->render('suivi/liste.html.twig', array(
-            'liste' => $liste,
+            'liste' => $liste, 'etat' => $etat, 'search' => $search
         ));
     }
 
@@ -77,16 +88,9 @@ class SuiviController extends Controller
             if ($authChecker->isGranted('ROLE_APPRENTI')) {
                 throw new AccessDeniedException();
             }
-            $search = $req->get('search');
-            if ($authChecker->isGranted('ROLE_MAITRE_APP')) {
-                $id_maitre_app = $this->getUser()->getId();
-                $liste = $this->getDoctrine()
-                    ->getRepository(Apprenti::class)->searchForMaitreApp($search, $id_maitre_app);
-            }
-            else {
-                $liste = $this->getDoctrine()
-                    ->getRepository(Apprenti::class)->search($search);
-            }
+
+            $res = $this->results_recherche($authChecker, $req);
+            $liste = $res[0];
 
             $apprenti_json = array();
             foreach ($liste as &$apprenti) {
